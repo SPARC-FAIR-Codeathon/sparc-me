@@ -25,18 +25,15 @@ def add_data(source_path, destination_path, copy=True, overwrite=False):
     # Create destination folder
     os.makedirs(destination_path)
 
-    # Read all data from input directory 
-    files=os.listdir(source_path) 
-
-    for fname in files:
-        file_path = os.path.join(source_path,fname)
+    for fname in os.listdir(source_path):
+        file_path = os.path.join(source_path, fname)
         if os.path.isdir(file_path):
-        # Warn user if a subdirectory exist in the input_path
-            print(f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying") # TODO: Change print to logs
+            # Warn user if a subdirectory exist in the input_path
+            print(f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying") 
         else:
             if copy:
                 # Copy data
                 shutil.copy2(file_path, destination_path)
             else:
                 # Move data
-                os.replace(file_path, os.path.join(destination_path,fname))
+                shutil.move(file_path, os.path.join(destination_path, fname))

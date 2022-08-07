@@ -557,4 +557,3 @@ class Dataset(object):
             # TODO:If entry exist, modify
             self.append(category="subjects", row=subject_metadata)
         self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
-
