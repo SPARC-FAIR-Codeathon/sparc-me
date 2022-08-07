@@ -2,7 +2,7 @@
 A python tool to explore, enhance, and expand SPARC datasets and their descriptions
 
 [![Contributors][contributors-shield]][contributors-url]
-[![GitHub commits](https://badgen.net/github/commits/Naereen/Strapdown.js)](https://GitHub.com/Naereen/StrapDown.js/commit/)
+[![GitHub commits](https://badgen.net/github/commits/SPARC-FAIR-Codeathon/sparc-me)](https://github.com/SPARC-FAIR-Codeathon/sparc-me/commit/) 
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
