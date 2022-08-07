@@ -88,7 +88,7 @@ sparc-me will elevate the impact of the SPARC program by providing the fundament
 
 #### Downloading source code
 ```
-git clone https://github.com/SPARC-FAIR-Codeathon/sparc-me.git
+git clone git@github.com:SPARC-FAIR-Codeathon/sparc-me.git
 ```
 
 #### Installing dependencies
