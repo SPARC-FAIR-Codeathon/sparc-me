@@ -557,3 +557,36 @@ class Dataset(object):
             # TODO:If entry exist, modify
             self.append(category="subjects", row=subject_metadata)
         self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
+
+
+    def add_derivative_data(self, source_path, subject, sample, sds_parent_dir, copy=True, overwrite=False):
+        """Add raw data of a sample to correct SDS location and update relavent metadata files. 
+        Requires you to already have the folder structure inplace.
+
+        :param source_path: original location of raw data
+        :type source_path: string
+        :param subject: subject id
+        :type subject: string
+        :param sample: sample id
+        :type sample: string
+        :param sds_parent_dir: path to existing sds dataset parent
+        :type sds_parent_dir: string, optional
+        :param copy: if True, source directory data will not be deleted after copying, defaults to True
+        :type copy: bool, optional
+        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
+        :type overwrite: bool, optional
+        :raises NotADirectoryError: if the derivative in sds_parent_dir is not a folder, this wil be raised.
+        """
+
+        derivative_folder = os.path.join(sds_parent_dir, 'derivative')
+        
+        # Check if sds_parent_directory contains the derivative folder. If not create it.
+        if os.path.exists(derivative_folder):
+            if not os.path.isdir(derivative_folder):
+                raise NotADirectoryError(f'{derivative_folder} is not a directory')
+        else:
+            os.mkdir(derivative_folder)
+
+        destination_folder = os.path.join(derivative_folder, subject, sample)
+
+        add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
