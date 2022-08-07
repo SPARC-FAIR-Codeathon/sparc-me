@@ -19,3 +19,7 @@ Installing dependencies
 ```
 pip install -r requirements.txt
 ```
+
+#### Running the examples
+
+A base example is located in ./examples/base_example.py for loading/saving/editing dataset/metadata 
