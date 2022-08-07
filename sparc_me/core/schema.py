@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+from pathlib import Path
 import openpyxl
 import os
 import math
@@ -21,8 +22,6 @@ class Schema(object):
         self._schema_dir = Path()
 
     def generate_from_template(self, file, save_dir):
-        # column_based = ["dataset_description", "code_description"]
-
         wb = openpyxl.load_workbook(file)
         sheetnames = wb.sheetnames
 
@@ -34,9 +33,6 @@ class Schema(object):
 
             schema = {"type": "object", "properties": {}, "required": []}
             required_list = list()
-
-            builder = SchemaBuilder()
-            builder.add_schema(schema)
 
             for index, row in schema_pd.iterrows():
                 element = row.get("Element")
@@ -62,10 +58,6 @@ class Schema(object):
                     "description": description,
                     "example": example
                 }
-
-                # builder.add_object({element: example})
-
-            # schema = builder.to_schema()
 
             schema["required"] = required_list
             self._schemas[sheet] = schema
