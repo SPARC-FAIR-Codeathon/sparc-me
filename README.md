@@ -7,4 +7,15 @@ This is the repository of Team sparc-me (Team #7) of the 2022 SPARC Codeathon. C
 ## Using sparc-me
 ### From source code
 #### Pre-requisites 
+- [Git](https://git-scm.com/)
 #### Installing
+
+Downloading source code
+```
+git clone https://github.com/SPARC-FAIR-Codeathon/sparc-me.git
+```
+
+Installing dependencies
+```
+pip install -r requirements.txt
+```
