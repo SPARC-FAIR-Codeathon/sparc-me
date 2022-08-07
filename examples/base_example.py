@@ -31,3 +31,9 @@ if __name__ == '__main__':
 
     dataset.save("./tmp/template/")
 
+    # Copy data from "source_data" to a "sds_dataset" parent directory adhering to SDS framework
+    dataset.add_primary_data("source_data", "subject-xyz", "sample-abc", sds_parent_dir="sds_dataset")
+    dataset.add_primary_data("source_data", "subject-xyz", "sample-pqr", sds_parent_dir="sds_dataset")
+
+    # Move data from "source_data" to a temporary sds_dataset directory
+    dataset.add_primary_data("source_data", "subject-xyz", "sample-pqr", copy=False)
