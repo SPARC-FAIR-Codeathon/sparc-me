@@ -44,13 +44,13 @@ The NIH Common Fund program on **[Stimulating Peripheral Activity to Relieve Con
 ## The problem
 There is **currently no approach available**:
 - for users to **programmatically access and interrogate all metadata fields in SDS datasets** from a scientific programming language such as python.
-- for contributors to **programmatically create new SDS datasets** (schemas for the SDS dataset validation are not yet publicly available).
+- for contributors to **programmatically create new SDS datasets** (schemas for SDS dataset validation are not yet publicly available).
 
-This requires attention, as it limits the ability of members of the SPARC and the wider scientific community to apply FAIR principles for:
+This limits the ability of members of the SPARC and the wider scientific community to apply FAIR principles for:
 - interacting with SDS datasets for conducting their research (**limits accessibilty**).
-- reusing the SDS specification for storing and curating results from their instrumentation and computational physiology workflows (especially from automated workflows that can generate large quantities of data and multiple datasets that may be impractical to store in SDS format through a step-by-step interactive tools like SODA) (**limits reusability**).
-- quickly prototyping novel infrastructure/tools to elevate the impact of the SPARC program.  (**limits application**)
-- propose and support extensions to the SDS ([similar to BIDS extensions](https://bids.neuroimaging.io/get_involved.html#extending-the-bids-specification)) to further expand the SPARC community e.g. by storing clinical data (**limits interoperabilty**)
+- reusing the SDS specification for storing and curating results from their instrumentation and computational physiology workflows (especially from automated workflows that can generate large quantities of data that may be impractical to store in SDS format using existing interactive tools like SODA) (**limits reusability**).
+- quickly prototyping novel infrastructure/tools to elevate the impact of the SPARC program (**limits application**).
+- propose and support extensions to the SDS ([similar to BIDS extensions](https://bids.neuroimaging.io/get_involved.html#extending-the-bids-specification)) to further expand the SPARC community e.g. to enable storing clinical data (**limits interoperabilty**).
 
 ## Our solution - sparc-me
 To address this problem, we have **developed a python module called the SPARC Metadata Editor (sparc-me)** that can be used to enhance the FAIRness of SPARC data by enabling:
