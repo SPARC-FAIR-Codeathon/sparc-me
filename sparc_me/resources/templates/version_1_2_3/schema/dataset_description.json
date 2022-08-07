@@ -51,7 +51,7 @@
         },
         "Acknowledgements": {
             "type": "string",
-            "required": "Y",
+            "required": "N",
             "description": "Acknowledgements beyond funding and contributors",
             "example": "Thank you everyone!"
         },
@@ -63,7 +63,7 @@
         },
         "Originating Article DOI": {
             "type": "string",
-            "required": "Y",
+            "required": "N",
             "description": "DOIs of published articles that were generated from this dataset",
             "example": "https://doi.org/10.13003/5jchdy"
         },
@@ -75,13 +75,13 @@
         },
         "Additional Links": {
             "type": "string",
-            "required": "Y",
+            "required": "N",
             "description": "URLs of additional resources used by this dataset (e.g., a link to a code repository)",
             "example": "https://github.com/myuser/code-for-really-cool-data"
         },
         "Link Description": {
             "type": "string",
-            "required": "Y",
+            "required": "N",
             "description": "Short description of URL content, you do not need to fill this in for Originating Article DOI or Protocol URL or DOI ",
             "example": "link to GitHub repository for code used in this study"
         },
@@ -131,12 +131,8 @@
         "Contributor Affiliation",
         "Contributor Role",
         "Is Contact Person",
-        "Acknowledgements",
         "Funding",
-        "Originating Article DOI",
         "Protocol URL or DOI",
-        "Additional Links",
-        "Link Description",
         "Number of subjects",
         "Number of samples"
     ]
