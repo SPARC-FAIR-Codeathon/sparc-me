@@ -87,6 +87,56 @@ class Schema(object):
 
         self._schema_dir = Path()
 
+        self._column_based = ["dataset_description", "code_description"]
+
+    def load_data(self, path):
+        path = Path(path)
+        filename = path.stem
+        try:
+            data_pd = pd.read_excel(path)
+        except XLRDError:
+            data_pd = pd.read_excel(path, engine='openpyxl')
+
+        data_dict = data_pd.to_dict()
+
+        if filename in self._column_based:
+            data = {}
+            elements = data_dict.get("Metadata element")
+            values = data_dict.get("Value")
+            length = len(elements)
+            for idx in range(length):
+                element = elements[idx]
+                value = values[idx]
+                try:
+                    if math.isnan(value):
+                        continue
+                except:
+                    pass
+
+                data[element] = value
+        else:
+            data = list()
+
+            elements = list(data_dict)
+            length = len(data_dict[elements[0]])
+            for idx in range(length):
+                instance = {}
+                for element in elements:
+                    value = data_dict[element][idx]
+
+                    try:
+                        if math.isnan(value):
+                            continue
+                    except:
+                        pass
+
+                    instance[element] = value
+
+                if instance:
+                    data.append(instance)
+
+        return data
+
     def generate_from_template(self, file, save_dir):
         wb = openpyxl.load_workbook(file)
         sheetnames = wb.sheetnames
