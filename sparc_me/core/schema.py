@@ -5,13 +5,79 @@ import openpyxl
 import os
 import math
 
-from pathlib import Path
-from genson import SchemaBuilder
 from xlrd import XLRDError
 
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import best_match
 
 current_dir = Path(__file__).parent.resolve()
 resources_dir = Path.joinpath(current_dir, "../resources")
+
+
+def convert_version_format(version):
+    """
+    Convert version format
+    :param version: dataset/template version
+    :type version: string
+    :return: version in the converted format
+    :rtype:
+    """
+    version = version.replace(".", "_")
+
+    if "_" not in version:
+        version = version + "_0_0"
+
+    return version
+
+
+class Validator(object):
+    def __init__(self):
+        self._version = None
+        self._category = None
+        self._schema_ref = None
+
+    def validate(self, data, category, version):
+        self._category = category
+        self._version = convert_version_format(version)
+        self._load_reference_schema()
+        if isinstance(data, dict):
+            self._execute(data)
+        elif isinstance(data, list):
+            for idx in range(len(data)):
+                self._execute(data[idx])
+        else:
+            print("Input data type invalid")
+
+    def _load_reference_schema(self):
+        version = "version_" + self._version
+        filename = self._category + ".json"
+        schema_path = resources_dir / "templates" / version / "schema" / filename
+        if not schema_path.exists():
+            raise ValueError("Reference schema not found!")
+
+        with open(schema_path) as file:
+            schema_details = json.load(file)
+
+        schema = {"type": schema_details.get("type"), "properties": {}, "required": schema_details.get("required")}
+        for element, value in schema_details["properties"].items():
+            data_type = value.get("type")
+            schema["properties"][element] = {
+                "type": data_type
+            }
+
+        self._schema_ref = schema
+
+    def _execute(self, data):
+        # validate(instance=instance, schema=self._schema_ref)
+        try:
+            validate(instance=data, schema=self._schema_ref)
+            print("Validation: Passed")
+        except ValidationError:
+            print(best_match(Draft202012Validator(self._schema_ref).iter_errors(data)).message)
+        except Exception as e:
+            print(str(e))
 
 
 class Schema(object):
@@ -80,3 +146,6 @@ if __name__ == '__main__':
     schema = Schema()
     schema.generate_from_template(schema_xlsm, save_dir=save_dir)
 
+    # instance = {"Name": "test", "Description": "test", "Keywords":"sassf"}
+    # validator = Validator()
+    # validator.validate(instance, category="dataset_description", version="1.2.3")
