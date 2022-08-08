@@ -26,6 +26,7 @@ class Dataset(object):
         self._dataset_path = Path()
         self._dataset = dict()
         self._metadata_extensions = EXTENSIONS
+        self._column_based = ["dataset_description", "code_description"]
 
     def set_dataset_path(self, path):
         """
@@ -590,3 +591,13 @@ class Dataset(object):
         destination_folder = os.path.join(derivative_folder, subject, sample)
 
         add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
+
+    def add_element(self, category, element):
+        metadata = self._dataset.get(category).get("metadata")
+        if category in self._column_based:
+            row_pd = pd.DataFrame([{"Metadata element": element}])
+            metadata = pd.concat([metadata, row_pd], axis=0, ignore_index=True)
+        else:
+            metadata[element] = None
+
+        self._dataset[category]["metadata"] = metadata
