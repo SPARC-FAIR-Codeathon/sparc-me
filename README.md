@@ -91,6 +91,7 @@ sparc-me will elevate the impact of the SPARC program by providing the fundament
    - 3.8.6
 
 #### Downloading source code
+Clone the sparc-me repository from github, e.g.:
 ```
 git clone git@github.com:SPARC-FAIR-Codeathon/sparc-me.git
 ```
