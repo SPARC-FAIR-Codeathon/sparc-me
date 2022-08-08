@@ -140,6 +140,12 @@ class Schema(object):
     def set_schema(self, schema):
         self._schema = schema
 
+    def add_property(self, property_name, property):
+        self._schema["properties"][property_name] = property
+        required = property.get("required")
+        if required == 'Y':
+            self._schema["required"].append(property_name)
+
     def load_data(self, path):
         """
         Load in a metadata
