@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import io
 import pandas as pd
+import csv
 import re
 import zipfile
 
@@ -157,16 +158,34 @@ class Dataset_Api:
         :param savepath:
         :return:
         '''
+        pathList = filepath.split('.')
+        extension = pathList[1]
+        fileStrList = filepath.split('/')
+        i = len(fileStrList)
+        filename = fileStrList[i-1]
+        relative_path='/'
+        for r in fileStrList[0:i-1]:
+            relative_path+=r+"/"
+        savepath = savepath+relative_path
+
         save_dir = Path(savepath)
         if not save_dir.is_dir():
             save_dir.mkdir(parents=True, exist_ok=False)
         response = self.download_file(datasetId, filepath)
-        with io.BytesIO(response.content) as fh:
-            df = pd.io.excel.read_excel(fh, engine='openpyxl')
-        df.dropna(axis=0, how='all', inplace=True)
-        writer = pd.ExcelWriter(savepath + filepath[5:])
-        df.to_excel(writer)
-        writer.save()
+
+        if extension == "xlsx":
+            with io.BytesIO(response.content) as fh:
+                df = pd.io.excel.read_excel(fh, engine='openpyxl')
+            df.dropna(axis=0, how='all', inplace=True)
+            writer = pd.ExcelWriter(savepath + filename)
+            df.to_excel(writer)
+            writer.save()
+
+        elif extension == "csv":
+            with io.BytesIO(response.content) as fh:
+                df = pd.read_csv(fh)
+            df.to_csv(savepath + filename, sep=',', header=False, index=False)
+
 
     '''
     not finish
