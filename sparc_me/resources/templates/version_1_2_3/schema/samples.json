@@ -1,0 +1,146 @@
+{
+    "type": "object",
+    "properties": {
+        "subject_id": {
+            "type": "string",
+            "required": "Y",
+            "description": "Lab-based schema for identifying each subject",
+            "example": "sub-1"
+        },
+        "sample_id": {
+            "type": "string",
+            "required": "Y",
+            "description": "Lab-based schema for identifying each sample, must be unique",
+            "example": "sub-1_sam-2"
+        },
+        "wasDerivedFromSample": {
+            "type": "string",
+            "required": "Y",
+            "description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.)",
+            "example": "sub-1_sam-1"
+        },
+        "pool_id": {
+            "type": "string",
+            "required": "Y",
+            "description": "If data is collected on multiple samples at the same time include the identifier of the pool where the data file will be found.",
+            "example": "pool-1"
+        },
+        "experimental group": {
+            "type": "string",
+            "required": "Y",
+            "description": "Experimental group subject is assigned to in research project. If you have experimental groups for samples please add another column.",
+            "example": "Control"
+        },
+        "specimen type": {
+            "type": "string",
+            "required": "Y",
+            "description": "Physical type of the specimen from which the data were extracted",
+            "example": "tissue"
+        },
+        "specimen anatomica location": {
+            "type": "string",
+            "required": "Y",
+            "description": "The organ, or subregion of organ from which the data were extracted",
+            "example": "dentate gyrus"
+        },
+        "Additional Fields (e.g. MINDS)": {
+            "type": "string",
+            "required": "N",
+            "description": NaN,
+            "example": null
+        },
+        "species": {
+            "type": "string",
+            "required": "N",
+            "description": "Subject species",
+            "example": "Rattus norvegicus"
+        },
+        "sex": {
+            "type": "string",
+            "required": "N",
+            "description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
+            "example": "Female"
+        },
+        "age": {
+            "type": "string",
+            "required": "N",
+            "description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
+            "example": "4 weeks"
+        },
+        "age category": {
+            "type": "string",
+            "required": "N",
+            "description": "Qualitative description of age category derived from UBERON life cycle stage",
+            "example": "prime adult stage"
+        },
+        "age range (min)": {
+            "type": "string",
+            "required": "N",
+            "description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "example": "10 days"
+        },
+        "age range (max)": {
+            "type": "string",
+            "required": "N",
+            "description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "example": "20 days"
+        },
+        "handedness": {
+            "type": "string",
+            "required": "N",
+            "description": "Preference of the subject to use the right or left hand, if applicable",
+            "example": "right"
+        },
+        "strain": {
+            "type": "string",
+            "required": "N",
+            "description": "Organism strain of the subject",
+            "example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "type": "string",
+            "required": "N",
+            "description": "RRID for the strain For this field",
+            "example": "RRID:RGD_10395233"
+        },
+        "genotype": {
+            "type": "string",
+            "required": "N",
+            "description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
+            "example": "MGI:3851780"
+        },
+        "reference atlas": {
+            "type": "string",
+            "required": "N",
+            "description": "The reference atlas and organ",
+            "example": "Paxinos Rat V3"
+        },
+        "protocol title": {
+            "type": "string",
+            "required": "N",
+            "description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "example": "Spinal Cord extraction"
+        },
+        "protocol.io location": {
+            "type": "string",
+            "required": "N",
+            "description": "The Protocol.io URL for the protocol. Once the protocol is uploaded to Protocols.io, the protocol must be shared with the SPARC group and the Protocol.io URL is noted in this field. Please share with the SPARC group.",
+            "example": "https://www.protocols.io/view/corcheapaper-based-microfluidic-device-vtwe6pe"
+        },
+        "experimental log file name": {
+            "type": "string",
+            "required": "N",
+            "description": "A file containing experimental records for each sample.",
+            "example": null
+        }
+    },
+    "required": [
+        "subject_id",
+        "sample_id",
+        "wasDerivedFromSample",
+        "pool_id",
+        "experimental group",
+        "specimen type",
+        "specimen anatomica location"
+    ]
+}

@@ -1,0 +1,139 @@
+{
+    "type": "object",
+    "properties": {
+        "Name": {
+            "type": "string",
+            "required": "Y",
+            "description": "Descriptive title for the data set. Equivalent to the title of a scientific paper. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "example": "My SPARC dataset"
+        },
+        "Description": {
+            "type": "string",
+            "required": "Y",
+            "description": "NOTE This field is not currently used when publishing a SPARC dataset. Brief description of the study and the data set. Equivalent to the abstract of a scientific paper. Include the rationale for the approach, the types of data collected, the techniques used, formats and number of files and an approximate size. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "example": "A really cool dataset that I collected to answer some question."
+        },
+        "Keywords": {
+            "type": "string",
+            "required": "Y",
+            "description": "A set of 3-5 keywords other than the above that will aid in search",
+            "example": "spinal cord, electrophysiology, RNA-seq, mouse"
+        },
+        "Contributors": {
+            "type": "string",
+            "required": "Y",
+            "description": "Name of any contributors to the dataset.  These individuals need not have been authors on any publications describing the data, but should be acknowledged for their role in producing and publishing the data set.  If more than one, add each contributor in a new column.",
+            "example": "Last, First Middle"
+        },
+        "Contributor ORCID ID": {
+            "type": "string",
+            "required": "Y",
+            "description": "ORCID ID. If you don't have an ORCID, we suggest you sign up for one.",
+            "example": "https://orcid.org/0000-0002-5497-0243"
+        },
+        "Contributor Affiliation": {
+            "type": "string",
+            "required": "Y",
+            "description": "Institutional affiliation for contributors",
+            "example": "https://ror.org/0168r3w48"
+        },
+        "Contributor Role": {
+            "type": "string",
+            "required": "Y",
+            "description": "Contributor role, e.g., PrincipleInvestigator, Creator, CoInvestigator, ContactPerson, DataCollector, DataCurator, DataManager, Distributor, Editor, Producer, ProjectLeader, ProjectManager, ProjectMember, RelatedPerson, Researcher, ResearchGroup, Sponsor, Supervisor, WorkPackageLeader, Other.  These roles are provided by the Data Cite schema.  If more than one, add additional columns",
+            "example": "Data Collector"
+        },
+        "Is Contact Person": {
+            "type": "string",
+            "required": "Y",
+            "description": "Yes or No if the contributor is a contact person for the dataset",
+            "example": "Yes"
+        },
+        "Acknowledgements": {
+            "type": "string",
+            "required": "N",
+            "description": "Acknowledgements beyond funding and contributors",
+            "example": "Thank you everyone!"
+        },
+        "Funding": {
+            "type": "string",
+            "required": "Y",
+            "description": "Funding sources",
+            "example": "OT2OD025349"
+        },
+        "Originating Article DOI": {
+            "type": "string",
+            "required": "N",
+            "description": "DOIs of published articles that were generated from this dataset",
+            "example": "https://doi.org/10.13003/5jchdy"
+        },
+        "Protocol URL or DOI": {
+            "type": "string",
+            "required": "Y",
+            "description": "URLs (if still private) / DOIs (if public) of protocols from protocols.io related to this dataset",
+            "example": null
+        },
+        "Additional Links": {
+            "type": "string",
+            "required": "N",
+            "description": "URLs of additional resources used by this dataset (e.g., a link to a code repository)",
+            "example": "https://github.com/myuser/code-for-really-cool-data"
+        },
+        "Link Description": {
+            "type": "string",
+            "required": "N",
+            "description": "Short description of URL content, you do not need to fill this in for Originating Article DOI or Protocol URL or DOI ",
+            "example": "link to GitHub repository for code used in this study"
+        },
+        "Number of subjects": {
+            "type": "integer",
+            "required": "Y",
+            "description": "Number of unique subjects in this dataset, should match subjects metadata file.",
+            "example": 1
+        },
+        "Number of samples": {
+            "type": "integer",
+            "required": "Y",
+            "description": "Number of unique samples in this dataset, should match samples metadata file. Set to zero if there are no samples.",
+            "example": 0
+        },
+        "Completeness of data set": {
+            "type": "string",
+            "required": "N",
+            "description": "Is the data set as uploaded complete or is it part of an ongoing study.  Use \"hasNext\" to indicate that you expect more data on different subjects as a continuation of this study. Use \u201chasChildren\u201d to indicate that you expect more data on the same subjects or samples derived from those subjects.",
+            "example": "hasNext, hasChildren"
+        },
+        "Parent dataset ID": {
+            "type": "string",
+            "required": "N",
+            "description": "If this is a part of a larger data set, or refereces subjects or samples from a parent dataset, what was the accession number of the prior batch.  You need only give us the number of the last batch, not all batches. If samples and subjects are from multiple parent datasets please create a comma separated list of all parent ids.",
+            "example": "N:dataset:c5c2f40f-76be-4979-bfc4-b9f9947231cf"
+        },
+        "Title for complete data set": {
+            "type": "string",
+            "required": "N",
+            "description": "Please give us a provisional title for the entire data set.",
+            "example": null
+        },
+        "Metadata Version DO NOT CHANGE": {
+            "type": "string",
+            "required": "N",
+            "description": "1.2.3",
+            "example": "1.2.3"
+        }
+    },
+    "required": [
+        "Name",
+        "Description",
+        "Keywords",
+        "Contributors",
+        "Contributor ORCID ID",
+        "Contributor Affiliation",
+        "Contributor Role",
+        "Is Contact Person",
+        "Funding",
+        "Protocol URL or DOI",
+        "Number of subjects",
+        "Number of samples"
+    ]
+}

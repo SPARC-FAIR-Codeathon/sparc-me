@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "properties": {
+        "SPARC Award number": {
+            "type": "string",
+            "required": NaN,
+            "description": "Grant number supporting the milestone",
+            "example": null
+        },
+        "Milestone achieved": {
+            "type": "string",
+            "required": NaN,
+            "description": "From milestones supplied to NIH",
+            "example": null
+        },
+        "Milestone completion date": {
+            "type": "string",
+            "required": NaN,
+            "description": "Date of milestone completion. This date starts the countdown for submission (30 days after completion), length of embargo and publication date (12 months from completion of milestone)",
+            "example": null
+        }
+    },
+    "required": []
+}
