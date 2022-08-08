@@ -1,6 +1,9 @@
 # python -m pip install requests
 import requests
 import json
+from pathlib import Path
+import re
+import zipfile
 
 
 class Dataset_Api:
@@ -89,7 +92,7 @@ class Dataset_Api:
         response = requests.get(url, headers=headers)
 
         if response.status_code == 200:
-            return response.text
+            return json.loads(response.text)
 
     def get_metadata_pensieve(self, datasetId, versionId):
         '''
@@ -110,3 +113,17 @@ class Dataset_Api:
         print(isinstance(response.text, str))
         if response.status_code == 200:
             return json.loads(response.text)
+
+    def get_dataset_latest_version_number(self, datasetId):
+        if not isinstance(datasetId, str):
+            datasetId = str(datasetId)
+        url = "https://api.pennsieve.io/discover/datasets/" + datasetId
+        headers = {"Accept": "application/json"}
+        response = requests.request("GET", url, headers=headers)
+        response_json = json.loads(response.text)
+        if response.status_code == 200:
+            versionId = str(response_json['version'])
+        else:
+            versionId = ""
+        return versionId
+
