@@ -77,9 +77,11 @@ class Validator(object):
             return True
         except ValidationError:
             print(best_match(Draft202012Validator(self._schema_ref).iter_errors(data)).message)
+            print("Validation: Failed")
             return False
         except Exception as e:
             print(str(e))
+            print("Validation: Failed")
             return False
 
 
