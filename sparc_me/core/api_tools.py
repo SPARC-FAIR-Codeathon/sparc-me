@@ -127,3 +127,22 @@ class Dataset_Api:
             versionId = ""
         return versionId
 
+    '''
+    not finish
+    '''
+    def download_file(self, datasetId, filepath):
+        versionId = self.get_dataset_latest_version(datasetId)
+
+        url = "https://api.pennsieve.io/zipit/discover"
+
+        payload = {"data": {
+            "paths": [filepath],
+            "datasetId": datasetId,
+            "version": versionId
+        }}
+        headers = {"Content-Type": "application/json"}
+        response = requests.request("POST", url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return response
+        else:
+            return response.reason
