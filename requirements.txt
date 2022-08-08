@@ -14,3 +14,4 @@ six==1.16.0
 styleframe==4.1
 xlrd==2.0.1
 zipp==3.8.1
+pybids==0.15.2
