@@ -39,6 +39,17 @@ class Validator(object):
         self._schema_ref = None
 
     def validate(self, data, category, version):
+        """
+        Validate data instance
+        :param data: Target data
+        :type data: dict or list
+        :param category: metadata filename
+        :type category: string
+        :param version: dataset version
+        :type version: string
+        :return:
+        :rtype:
+        """
         self._category = category
         self._version = convert_version_format(version)
         self._load_reference_schema()
@@ -51,6 +62,11 @@ class Validator(object):
             print("Input data type invalid")
 
     def _load_reference_schema(self):
+        """
+        Load the reference schema which will be used to validate the target metadata
+        :return:
+        :rtype:
+        """
         version = "version_" + self._version
         filename = self._category + ".json"
         schema_path = resources_dir / "templates" / version / "schema" / filename
@@ -70,6 +86,13 @@ class Validator(object):
         self._schema_ref = schema
 
     def _execute(self, data):
+        """
+        Run the validation
+        :param data: target data
+        :type data: dict
+        :return: validation status
+        :rtype: bool
+        """
         print("Target instance: " + str(data))
         # validate(instance=instance, schema=self._schema_ref)
         try:
@@ -96,6 +119,13 @@ class Schema(object):
         self._column_based = ["dataset_description", "code_description"]
 
     def load_data(self, path):
+        """
+        Load in a metadata
+        :param path: path to the metadata file
+        :type path: string
+        :return: data instance
+        :rtype: dict or list
+        """
         path = Path(path)
         filename = path.stem
         try:
@@ -144,6 +174,16 @@ class Schema(object):
         return data
 
     def generate_from_template(self, file, save_dir):
+        """
+        Generate schema from template
+        (the element_description.xlsx file in the template folder)
+        :param file: path to the template
+        :type file: string
+        :param save_dir: directory to save the schema files
+        :type save_dir: string
+        :return:
+        :rtype:
+        """
         wb = openpyxl.load_workbook(file)
         sheetnames = wb.sheetnames
 
@@ -187,6 +227,17 @@ class Schema(object):
             self.save(save_dir, schema, sheet)
 
     def save(self, save_dir, schema, sheet):
+        """
+        Save schema
+        :param save_dir: path to the destination directory
+        :type save_dir: string
+        :param schema: metadata schema
+        :type schema: dict
+        :param sheet: metadata category (filename)
+        :type sheet: string
+        :return:
+        :rtype:
+        """
         if not save_dir.exists():
             os.makedirs(save_dir)
         filename = '{sheet}.json'.format(sheet=sheet)
