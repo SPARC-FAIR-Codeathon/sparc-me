@@ -35,12 +35,12 @@ if __name__ == '__main__':
     dataset.save(save_dir)
 
     # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework
-    dataset.add_primary_data(source_path="test_data/sample1/raw", subject="subject-xyz", sample="sample-1", sds_parent_dir=save_dir)
+    dataset.add_primary_data(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1", sds_parent_dir=save_dir)
     # If you want to move the data to destination directory, set copy to 'False'
-    dataset.add_primary_data(source_path="test_data/sample2/raw", subject="subject-xyz", sample="sample-2", sds_parent_dir=save_dir)
+    dataset.add_primary_data(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2", sds_parent_dir=save_dir)
 
     # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework
-    dataset.add_derivative_data(source_path="test_data/sample1/derived", subject="subject-xyz", sample="sample-abc", sds_parent_dir=save_dir)
+    dataset.add_derivative_data(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc", sds_parent_dir=save_dir)
 
     # Move data from "source_data_raw" to a temporary sds_dataset directory
-    dataset.add_primary_data(source_path="test_data/sample1/raw", subject="subject-xyz", sample="sample-pqr")
+    dataset.add_primary_data(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-pqr")
