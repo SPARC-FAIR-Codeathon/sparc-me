@@ -31,6 +31,5 @@ def get_All_latest_DataSets_from_SPARC():
 
 
 if __name__ == '__main__':
-    # get_All_latest_DataSets_from_SPARC()
-    # get_All_Datasets()
-    api_tools.download_dataset(156,1, "./datasets")
+    get_All_latest_DataSets_from_SPARC()
+    get_All_Datasets()

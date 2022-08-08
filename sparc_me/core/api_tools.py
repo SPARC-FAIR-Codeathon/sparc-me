@@ -2,6 +2,8 @@
 import requests
 import json
 from pathlib import Path
+import io
+import pandas as pd
 import re
 import zipfile
 
@@ -127,10 +129,10 @@ class Dataset_Api:
             versionId = ""
         return versionId
 
-    '''
-    not finish
-    '''
     def download_file(self, datasetId, filepath):
+        '''
+          Download bytes files from Pennsieve
+        '''
         versionId = self.get_dataset_latest_version_number(datasetId)
 
         url = "https://api.pennsieve.io/zipit/discover"
@@ -147,9 +149,29 @@ class Dataset_Api:
         else:
             return response.reason
 
+    def get_xlsx_file_pennsieve(self, datasetId, filepath, savepath):
+        '''
+            store excel file locally
+        :param datasetId:
+        :param filepath:
+        :param savepath:
+        :return:
+        '''
+        save_dir = Path(savepath)
+        if not save_dir.is_dir():
+            save_dir.mkdir(parents=True, exist_ok=False)
+        response = self.download_file(datasetId, filepath)
+        with io.BytesIO(response.content) as fh:
+            df = pd.io.excel.read_excel(fh, engine='openpyxl')
+        df.dropna(axis=0, how='all', inplace=True)
+        writer = pd.ExcelWriter(savepath + filepath[5:])
+        df.to_excel(writer)
+        writer.save()
+
     '''
     not finish
     '''
+
     def download_dataset(self, datasetId, versionId, save_dir):
         if not isinstance(datasetId, str):
             datasetId = str(datasetId)
@@ -183,9 +205,9 @@ class Dataset_Api:
         return protocol_url
 
     def get_protocolsio_text(self, datasetId, dir):
-        dir = Path(dir)
-        if not dir.is_dir():
-            dir.mkdir(parents=True, exist_ok=False)
+        save_dir = Path(dir)
+        if not save_dir.is_dir():
+            save_dir.mkdir(parents=True, exist_ok=False)
 
         protocol_url = self.get_dataset_protocolsio_link(datasetId)
         if protocol_url:
@@ -202,7 +224,6 @@ class Dataset_Api:
                 "GET", url, headers=headers, params=querystring)
             if response.status_code == 200:
                 protocol_json = json.loads(response.content)
-                js = json.dumps(protocol_json, sort_keys=True, indent=4, separators=(',', ':'))
-                print(js)
-                with open(dir + 'protocol_data.json', 'w') as f:
+                with open(dir + '/protocol_data.json', 'w') as f:
                     json.dump(protocol_json, f)
+
