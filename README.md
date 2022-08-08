@@ -87,16 +87,37 @@ sparc-me will elevate the impact of the SPARC program by providing the fundament
 ### From source code
 #### Pre-requisites 
 - [Git](https://git-scm.com/)
+- Python. Tested on:
+   - 3.8.6
 
 #### Downloading source code
+Clone the sparc-me repository from github, e.g.:
 ```
 git clone git@github.com:SPARC-FAIR-Codeathon/sparc-me.git
 ```
 
 #### Installing dependencies
-```
-pip install -r requirements.txt
-```
+
+1. Setting up virtual environment (optional but recommended). 
+   In this step, we will create a virtual environment in a new folder named **venv**, 
+   and activate the virtual environment.
+   
+   * Linux
+   ```
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+   
+   * Windows
+   ```
+   python3 -m venv venv
+   venv\Scripts\activate
+   ```
+   
+2. Installing dependencies via pip
+    ```
+    pip install -r requirements.txt
+    ```
 
 ## Using sparc-me
 
