@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import tempfile
 
 from pathlib import Path
 from distutils.dir_util import copy_tree
@@ -8,7 +9,7 @@ from distutils.dir_util import copy_tree
 import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
-
+from sparc_me.core.utils import add_data
 
 class Dataset(object):
     def __init__(self):
@@ -472,3 +473,120 @@ class Dataset(object):
                 metadata.loc[index, "Value"] = value
 
         return metadata
+
+    
+    def generate_file_from_template(self, save_path, category, data=pd.DataFrame()):
+        """Generate file from a template and populate with data if givn
+
+        :param save_path: destination to save the generated file
+        :type save_path: string
+        :param category: SDS category (Ex: samples, subjects)
+        :type category: string
+        :param data: pandas dataframe containing data, defaults to pd.DataFrame()
+        :type data: pd.DataFrame, optional
+        """
+        self._template_dir = self._get_template_dir(version=self._version)
+        sf = StyleFrame.read_excel_as_template(os.path.join(self._template_dir, f'{category}.xlsx'), data)
+        writer = StyleFrame.ExcelWriter(save_path)
+        sf.to_excel(writer)
+        writer.save()
+
+
+    def add_primary_data(self, source_path, subject, sample, sds_parent_dir=None, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
+        """Add raw data of a sample to correct SDS location and update relavent metadata files
+
+        :param source_path: original location of raw data
+        :type source_path: string
+        :param subject: subject id
+        :type subject: string
+        :param sample: sample id
+        :type sample: string
+        :param sds_parent_dir: path to existing sds dataset or desired save location for new sds dataset, defaults to None
+        :type sds_parent_dir: string, optional
+        :param copy: if True, source directory data will not be deleted after copying, defaults to True
+        :type copy: bool, optional
+        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
+        :type overwrite: bool, optional
+        :param sample_metadata: metadata for the sample (Ex: sample anatomical location), defaults to {}
+        :type sample_metadata: dict, optional
+        :param subject_metadata: metadata for the subject (Ex: sex, age), defaults to {}
+        :type subject_metadata: dict, optional
+        :raises NotADirectoryError: if the primary in sds_parent_dir is not a folder, this wil be raised.
+        """
+        if sds_parent_dir is None:
+            if not os.path.exists('tmp'):
+                os.mkdir('tmp')
+            sds_parent_dir = tempfile.mkdtemp(prefix="sds_dataset_", dir='tmp')
+        
+        primary_folder = os.path.join(sds_parent_dir, 'primary')
+
+        if os.path.exists(primary_folder):
+            if os.path.isdir(primary_folder):
+                self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
+            else:
+                raise NotADirectoryError(f'{primary_folder} is not a directory')
+        else:
+            self.load_dataset(dataset_path=sds_parent_dir, from_template=True, version=self._version)
+            self.save(save_dir=sds_parent_dir)
+
+        destination_folder = os.path.join(primary_folder, subject, sample)
+
+        add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
+
+        # TODO: Make this version agnostic
+        samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
+        subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+
+        if not os.path.exists(samples_file_path):
+            self.generate_file_from_template(samples_file_path, 'samples')
+        if not os.path.exists(subjects_file_path):
+            self.generate_file_from_template(subjects_file_path, 'subjects')
+
+        self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
+        
+        if not sample_metadata:
+            self.append(category="samples", row={"subject id": subject, "sample id": sample})
+        else:
+            self.append(category="samples", row=sample_metadata)
+        self.generate_file_from_template(samples_file_path, 'samples', self._dataset['samples']['metadata'])
+
+        if not subject_metadata:
+            # TODO:Check if subject id already exist, if do, don't update
+            self.append(category="subjects", row={"subject id": subject})
+        else:
+            # TODO:If entry exist, modify
+            self.append(category="subjects", row=subject_metadata)
+        self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
+
+
+    def add_derivative_data(self, source_path, subject, sample, sds_parent_dir, copy=True, overwrite=False):
+        """Add raw data of a sample to correct SDS location and update relavent metadata files. 
+        Requires you to already have the folder structure inplace.
+
+        :param source_path: original location of raw data
+        :type source_path: string
+        :param subject: subject id
+        :type subject: string
+        :param sample: sample id
+        :type sample: string
+        :param sds_parent_dir: path to existing sds dataset parent
+        :type sds_parent_dir: string, optional
+        :param copy: if True, source directory data will not be deleted after copying, defaults to True
+        :type copy: bool, optional
+        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
+        :type overwrite: bool, optional
+        :raises NotADirectoryError: if the derivative in sds_parent_dir is not a folder, this wil be raised.
+        """
+
+        derivative_folder = os.path.join(sds_parent_dir, 'derivative')
+        
+        # Check if sds_parent_directory contains the derivative folder. If not create it.
+        if os.path.exists(derivative_folder):
+            if not os.path.isdir(derivative_folder):
+                raise NotADirectoryError(f'{derivative_folder} is not a directory')
+        else:
+            os.mkdir(derivative_folder)
+
+        destination_folder = os.path.join(derivative_folder, subject, sample)
+
+        add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
