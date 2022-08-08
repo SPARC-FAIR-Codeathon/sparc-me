@@ -127,12 +127,12 @@ Guided tutorials have been developed describing how to use sparc-me in different
   </tr>
   <tr>
     <td> 3 </td>
-    <td> Create a version-controlled extension of the SDS to include additional metadata fields, and apply it to the dataset considered in Tutorial 1 to include data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
+    <td> Interacting with SDS datasets on O2SPARC with sparc-me.</td>
     <td>&#10060</td>
   </tr>
   <tr>
     <td> 4 </td>
-    <td> Interacting with SDS datasets on O2SPARC with sparc-me.</td>
+    <td> Create a version-controlled extension of the SDS to include additional metadata fields, and apply it to the dataset considered in Tutorial 1 to include data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
     <td>&#10060</td>
   </tr> 
   <tr>
@@ -154,9 +154,10 @@ To report an issue or suggest a new feature, use the [issues page](https://githu
 Fork this repository and submit a pull request to contribute. Before doing so, please read our [Code of Conduct](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/CODE_OF_CONDUCT.md) and [Contributing Guidelines](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/CONTRIBUTING.md). Please add a GitHub Star to support developments!
 
 ### Project structure
-* `/sparc-me/` - Parent directory of sparc-me python module
-* `/sparc-me/core/` - Core classes of sparc-me
-* `/sparc-me/resources/templates/` - Location of SPARC dataset Structure templates
+* `/sparc_me/` - Parent directory of sparc-me python module
+* `/sparc_me/core/` - Core classes of sparc-me
+* `/sparc_me/resources/templates/` - Location of SPARC dataset Structure templates
+* `/test_data/` - Test data used for sparc-me examples and tutorials
 * `/examples/` - Parent directory of sparc-me examples
 * `/tutorials/` - Parent directory of sparc-me tutorials
 
