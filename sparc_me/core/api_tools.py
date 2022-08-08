@@ -1,12 +1,8 @@
-# python -m pip install requests
 import requests
 import json
 from pathlib import Path
 import io
 import pandas as pd
-import csv
-import re
-import zipfile
 
 
 class Dataset_Api:
@@ -150,7 +146,7 @@ class Dataset_Api:
         else:
             return response.reason
 
-    def get_xlsx_file_pennsieve(self, datasetId, filepath, savepath):
+    def get_xlsx_csv_file_pennsieve(self, datasetId, filepath, savepath):
         '''
             store excel file locally
         :param datasetId:
@@ -186,9 +182,15 @@ class Dataset_Api:
                 df = pd.read_csv(fh)
             df.to_csv(savepath + filename, sep=',', header=False, index=False)
 
+    def get_UBERONs_From_Dataset(self,datasetId,filepath):
+        response = self.download_file(datasetId, filepath)
+        with io.BytesIO(response.content) as fh:
+            df = pd.read_csv(fh)
+        df = df.dropna(axis=0, how='any')
+        return df['Term ID']
 
     '''
-    not finish
+    TODO: download whole dataset
     '''
 
     def download_dataset(self, datasetId, versionId, save_dir):
