@@ -123,7 +123,7 @@ Guided tutorials have been developed describing how to use sparc-me in different
   </tr>
   <tr>
     <td> 2</td>
-    <td> Creating an SDS dataset from new input data.</td>
+    <td> Creating an SDS dataset programmatically from input data, editing metadata values and filtering metadata.</td>
     <td>&#10060</td>
   </tr>
   <tr>
