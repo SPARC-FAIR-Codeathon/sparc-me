@@ -131,7 +131,7 @@ class Dataset_Api:
     not finish
     '''
     def download_file(self, datasetId, filepath):
-        versionId = self.get_dataset_latest_version(datasetId)
+        versionId = self.get_dataset_latest_version_number(datasetId)
 
         url = "https://api.pennsieve.io/zipit/discover"
 
@@ -146,3 +146,38 @@ class Dataset_Api:
             return response
         else:
             return response.reason
+
+    '''
+    not finish
+    '''
+    def download_dataset(self, datasetId, versionId, save_dir):
+        if not isinstance(datasetId, str):
+            datasetId = str(datasetId)
+            versionId = str(versionId)
+        save_dir = Path(save_dir)
+        if not save_dir.is_dir():
+            save_dir.mkdir(parents=True, exist_ok=False)
+
+        url = "https://api.pennsieve.io/discover/datasets/" + datasetId + "/versions/" + versionId + "/download?downloadOrigin = SPARC"
+
+        headers = {"Accept": "application/json"}
+
+        response = requests.get(url, headers=headers)
+
+        # zip = response.content
+        # # print(zip)
+        # zFile = zipfile.ZipFile(zip, "r")
+        # for fileM in zFile.namelist():
+        #     print(fileM)
+        #     zFile.extract(fileM, save_dir)
+        # zFile.close()
+
+    def get_dataset_protocolsio_link(self, datasetId):
+        dataset = self.get_dataset_latest_version_pensieve(datasetId)
+        protocol_url = ""
+
+        if dataset:
+            if (len(dataset["externalPublications"]) > 0):
+                protocol_url = dataset["externalPublications"][0]["doi"]
+
+        return protocol_url
