@@ -117,12 +117,12 @@ Guided tutorials have been developed describing how to use sparc-me in different
 <tbody>
   <tr>
     <td> 1</td>
-    <td> Download an existing curated SDS dataset (<a href="10.26275/fvsg-hzg1">human whole-body computational scaffold with embedded organs</a>), and use existing tools to query ontology terms that have been used to annotate SDS datasets using the SciCrunch knowledgebase.</td>
+    <td> Downloading an existing curated SDS dataset (<a href="10.26275/fvsg-hzg1">human whole-body computational scaffold with embedded organs</a>), and use existing tools to query ontology terms that have been used to annotate SDS datasets using the SciCrunch knowledgebase.</td>
     <td>&#10060</td>
   </tr>
   <tr>
     <td> 2</td>
-    <td> Create an SDS dataset from input data from a jet-injection experiment.</td>
+    <td> Creating an SDS dataset from input data from a jet-injection experiment.</td>
     <td>&#10060</td>
   </tr>
   <tr>
@@ -132,7 +132,7 @@ Guided tutorials have been developed describing how to use sparc-me in different
   </tr>
   <tr>
     <td> 4 </td>
-    <td> Create a version-controlled extension of the SDS to include additional metadata fields, and apply it to the dataset considered in Tutorial 1 to include data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
+    <td> Creating a version-controlled extension of the SDS to include additional metadata fields, and apply it to the dataset considered in Tutorial 1 to include data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
     <td>&#10060</td>
   </tr> 
   <tr>
