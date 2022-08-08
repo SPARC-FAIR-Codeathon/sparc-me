@@ -1,7 +1,7 @@
 """Example for downloading and exploring curated SPARC datasets.
 
-   Dataset 156 described on the SPARC Portal 
-   (https://sparc.science/datasets/156?type=dataset) is used as an example.
+Dataset 156 described on the SPARC Portal 
+(https://sparc.science/datasets/156?type=dataset) is used as an example.
 """
 
 from sparc_me import Dataset_Api
