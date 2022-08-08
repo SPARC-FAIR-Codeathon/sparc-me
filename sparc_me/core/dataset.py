@@ -413,6 +413,45 @@ class Dataset(object):
 
         return self._dataset
 
+    def set_field_using_row_name(self, category, row_name, header, value):
+        """
+        Set single cell. The row is identified by the given unique name and column is identified by the header.
+
+        :param category: metadata category
+        :type category: string
+        :param row_name: Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
+        :type row_name: string
+        :param header: column name. the header is the first row
+        :type header: string
+        :param value: field value
+        :type value: string
+        :return: updated dataset
+        :rtype: dict
+        """
+        if not self._dataset:
+            msg = "Dataset not defined. Please load the dataset in advance."
+            raise ValueError(msg)
+
+        metadata = self._dataset.get(category).get("metadata")
+
+        if not isinstance(row_name, str):
+            msg = "row_name should be string."
+            raise ValueError(msg)
+
+        # Assumes that all excel files first column is contains the unique value field
+        matching_indices = metadata.index[metadata[metadata.columns[0]]==row_name].tolist()
+
+        if not matching_indices:
+            msg = f"No row with given unique name, {row_name}, was found in the unique column {metadata.columns[0]}"
+            raise ValueError(msg)
+        elif len(matching_indices)>1:
+            msg = f"More than one row with given unique name, {row_name}, was found in the unique column {metadata.columns[0]}"
+            raise ValueError(msg)
+        else:
+            excel_row_index = matching_indices[0] + 2
+            return self.set_field(category=category, row_index=excel_row_index, header=header, value=value)
+
+        
     def append(self, category, row):
         """
         Append a row to a metadata file
@@ -534,9 +573,17 @@ class Dataset(object):
 
         add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
 
-        # TODO: Make this version agnostic
-        samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
-        subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+        # In future, we can move this switch case one scope up
+        if self._version == "2.0.0":
+            subject_id_field = "subject id"
+            sample_id_field = "sample id"
+            samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
+            subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+        else:
+            subject_id_field = "subject_id"
+            sample_id_field = "sample_id"
+            samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
+            subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
 
         if not os.path.exists(samples_file_path):
             self.generate_file_from_template(samples_file_path, 'samples')
@@ -546,14 +593,14 @@ class Dataset(object):
         self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
         
         if not sample_metadata:
-            self.append(category="samples", row={"subject id": subject, "sample id": sample})
+            self.append(category="samples", row={subject_id_field: subject, sample_id_field: sample})
         else:
             self.append(category="samples", row=sample_metadata)
         self.generate_file_from_template(samples_file_path, 'samples', self._dataset['samples']['metadata'])
 
         if not subject_metadata:
             # TODO:Check if subject id already exist, if do, don't update
-            self.append(category="subjects", row={"subject id": subject})
+            self.append(category="subjects", row={subject_id_field: subject})
         else:
             # TODO:If entry exist, modify
             self.append(category="subjects", row=subject_metadata)
