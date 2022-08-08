@@ -56,10 +56,11 @@ This limits the ability of members of the SPARC and the wider scientific communi
 ## Our solution - sparc-me
 To address this problem, we have **developed a python module called the SPARC Metadata Editor (sparc-me)** that can be used to enhance the FAIRness of SPARC data by enabling:
 
+- *Findability*
+  - Exploring data and metadata within SDS datasets
 - *Accessibility*
   - Accessing curated SDS datasets and their metadata (using the Pennsieve API)
   - Accessing protocols used by existing SDS datasets (using the protocols.io API)
-  - Exploring data and metadata within SDS datasets
   - Conversion between BIDS datasets and SDS datasets
 - *Interoperability*
   - Conversion between BIDS datasets and SDS datasets
@@ -124,7 +125,7 @@ Guided tutorials have been developed describing how to use sparc-me in different
   <tr>
     <td> 2</td>
     <td> Creating an SDS dataset programmatically from input data, editing metadata values and filtering metadata.</td>
-    <td>&#10060</td>
+    <td>&#9989</td>
   </tr>
   <tr>
     <td> 3 </td>
@@ -134,7 +135,7 @@ Guided tutorials have been developed describing how to use sparc-me in different
   <tr>
     <td> 4 </td>
     <td> Creating an extension of the SDS to include additional metadata fields, and apply it to the dataset considered in Tutorial 1 to include data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
-    <td>&#10060</td>
+    <td>&#9989</td>
   </tr> 
   <tr>
     <td> 5 </td>
