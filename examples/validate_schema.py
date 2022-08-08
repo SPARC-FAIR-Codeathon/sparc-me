@@ -3,7 +3,7 @@ from pathlib import Path
 from sparc_me.core.schema import Schema, Validator
 
 if __name__ == '__main__':
-    dataset_dir = Path("../test_data")
+    dataset_dir = Path("test_data")
 
     # Validate dataset_description
     print("Validating dataset_description")
