@@ -1,3 +1,7 @@
+"""Example for Validating schema.
+- To validate a schema that read from raw data file.
+"""
+
 from pathlib import Path
 
 from sparc_me.core.schema import Schema, Validator
