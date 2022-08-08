@@ -26,7 +26,7 @@ if __name__ == '__main__':
     dataset.save(save_dir="./tmp/template/")
 
     # Import bids and associated metadata. 
-    layout = BIDSLayout('test_data/bids_data')
+    layout = BIDSLayout('bids_data')
     subjlist = layout.get_subjects()
     
     # Read json and nii using get(). 
