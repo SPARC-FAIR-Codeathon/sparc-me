@@ -1,3 +1,8 @@
+"""Example for access SPARC dataset by Pennsieve API.
+This example shows we can list all SPARC datasets from Pennsieve API
+
+"""
+
 from sparc_me import Dataset_Api
 import time
 
