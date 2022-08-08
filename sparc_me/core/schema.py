@@ -226,21 +226,21 @@ class Schema(object):
 
             self.save(save_dir, schema, sheet)
 
-    def save(self, save_dir, schema, sheet):
+    def save(self, save_dir, schema, category):
         """
         Save schema
         :param save_dir: path to the destination directory
         :type save_dir: string
         :param schema: metadata schema
         :type schema: dict
-        :param sheet: metadata category (filename)
-        :type sheet: string
+        :param category: metadata category (filename)
+        :type category: string
         :return:
         :rtype:
         """
         if not save_dir.exists():
             os.makedirs(save_dir)
-        filename = '{sheet}.json'.format(sheet=sheet)
+        filename = '{sheet}.json'.format(sheet=category)
         save_path = Path.joinpath(save_dir, filename)
         with open(save_path, 'w', encoding='utf-8') as f:
             json.dump(schema, f, indent=4)
