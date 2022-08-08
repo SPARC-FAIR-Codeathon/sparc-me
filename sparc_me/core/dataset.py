@@ -573,9 +573,17 @@ class Dataset(object):
 
         add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
 
-        # TODO: Make this version agnostic
-        samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
-        subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+        # In future, we can move this switch case one scope up
+        if self._version == "2.0.0":
+            subject_id_field = "subject id"
+            sample_id_field = "sample id"
+            samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
+            subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+        else:
+            subject_id_field = "subject_id"
+            sample_id_field = "sample_id"
+            samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
+            subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
 
         if not os.path.exists(samples_file_path):
             self.generate_file_from_template(samples_file_path, 'samples')
@@ -585,14 +593,14 @@ class Dataset(object):
         self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
         
         if not sample_metadata:
-            self.append(category="samples", row={"subject id": subject, "sample id": sample})
+            self.append(category="samples", row={subject_id_field: subject, sample_id_field: sample})
         else:
             self.append(category="samples", row=sample_metadata)
         self.generate_file_from_template(samples_file_path, 'samples', self._dataset['samples']['metadata'])
 
         if not subject_metadata:
             # TODO:Check if subject id already exist, if do, don't update
-            self.append(category="subjects", row={"subject id": subject})
+            self.append(category="subjects", row={subject_id_field: subject})
         else:
             # TODO:If entry exist, modify
             self.append(category="subjects", row=subject_metadata)
