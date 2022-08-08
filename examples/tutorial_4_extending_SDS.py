@@ -1,6 +1,6 @@
 """
 This tutorial will walk you through the steps of
-extending a field to a existing metadata
+adding a field to an existing metadata
 and updating the metadata schema accordingly
 """
 from pathlib import Path
