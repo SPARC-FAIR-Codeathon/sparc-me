@@ -74,10 +74,13 @@ class Validator(object):
         try:
             validate(instance=data, schema=self._schema_ref)
             print("Validation: Passed")
+            return True
         except ValidationError:
             print(best_match(Draft202012Validator(self._schema_ref).iter_errors(data)).message)
+            return False
         except Exception as e:
             print(str(e))
+            return False
 
 
 class Schema(object):
