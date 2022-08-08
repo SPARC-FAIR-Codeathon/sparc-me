@@ -32,11 +32,11 @@ if __name__ == '__main__':
     dataset.save("./tmp/template/")
 
     # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework
-    dataset.add_primary_data("test_data/primary/subject1/sample1", "subject-xyz", "sample-abc", sds_parent_dir="sds_dataset")
-    dataset.add_primary_data("test_data/primary/subject1/sample2", "subject-xyz", "sample-pqr", sds_parent_dir="sds_dataset")
+    dataset.add_primary_data("test_data/sample1/raw", "subject-xyz", "sample-1", sds_parent_dir="sds_dataset")
+    dataset.add_primary_data("test_data/sample2/raw", "subject-xyz", "sample-2", sds_parent_dir="sds_dataset", copy=False)
 
     # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework
-    dataset.add_derivative_data("test_data/derived/subject1/sample1", "subject-xyz", "sample-abc", "sds_dataset")
+    dataset.add_derivative_data("test_data/sample1/derived", "subject-xyz", "sample-abc", "sds_dataset")
 
     # Move data from "source_data_raw" to a temporary sds_dataset directory
-    dataset.add_primary_data("test_data/primary/subject1/sample1", "subject-xyz", "sample-pqr", copy=False)
+    dataset.add_primary_data("test_data/sample1/raw", "subject-xyz", "sample-pqr")
