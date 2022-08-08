@@ -1,0 +1,54 @@
+
+# bids-examples
+
+This repository contains a set of
+(https://bids.neuroimaging.io/) datasets with **empty raw data
+files**. These datasets can be useful to:
+
+1. write lightweight software tests
+1. serve as an example on how a BIDS dataset can be structured
+
+**ALL RAW DATA FILES IN THIS REPOSITORY ARE EMPTY!**
+
+However for some of the data, the headers containing the metadata are still
+intact. (For example the NIfTI headers for `.nii` files, the BrainVision data
+headers for `.vhdr` files, or the OME-XML headers for `.ome.tif` files.)
+
+Headers are intact for the following datasets:
+
+- `synthetic`
+- Most EEG or iEEG data in BrainVision format (e.g., `eeg_matchingpennies`)
+
+## Validating BIDS examples
+
+The next three sections mention a few details on how the `bids-examples` can be
+validated using `bids-validator`.
+
+For general information on the `bids-validator`, including installation and
+usage, see the
+(https://github.com/bids-standard/bids-validator#quickstart).
+
+### Validating individual examples
+
+Since all raw data files in this repository are empty, the `bids-validator` must
+to be configured to not report empty data files as errors. (See more on
+bids-validator configuration in the
+(https://github.com/bids-standard/bids-validator#configuration).)
+
+Just run the validator as follows (using the `eeg_matchingpennies` dataset as an
+example, and assuming you are in a command line at the root of the
+`bids-examples` repository):
+
+`bids-validator eeg_matchingpennies --config.ignore=99`
+
+The `--config.ignore=99` "flag" tells the bids-validator to ignore empty data
+files rather than to report the "empty file" error .
+
+For datasets that contain NIfTI `.nii` files, you also need to add the
+`ignoreNiftiHeaders` flag to the `bids-validator` call, to suppress the issue
+that NIfTI headers are not found.
+
+For example:
+
+`bids-validator ds003 --config.ignore=99 --ignoreNiftiHeaders`
+
