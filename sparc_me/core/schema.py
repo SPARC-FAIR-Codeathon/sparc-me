@@ -70,6 +70,7 @@ class Validator(object):
         self._schema_ref = schema
 
     def _execute(self, data):
+        print("Target instance: " + str(data))
         # validate(instance=instance, schema=self._schema_ref)
         try:
             validate(instance=data, schema=self._schema_ref)
