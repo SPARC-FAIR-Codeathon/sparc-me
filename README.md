@@ -122,7 +122,7 @@ Guided tutorials have been developed describing how to use sparc-me in different
   </tr>
   <tr>
     <td> 2</td>
-    <td> Creating an SDS dataset from input data from a jet-injection experiment.</td>
+    <td> Creating an SDS dataset from input data from a jet-injection experiment, viewing the automatically generated metadata, editing metadata values and filtering metadata.</td>
     <td>&#10060</td>
   </tr>
   <tr>
@@ -169,6 +169,7 @@ Zenodo. https://doi.org/TODO.
 ```
 
 ## FAIR practices
+We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:
 
 ## License
 sparc-me is fully open source and distributed under the very permissive Apache License 2.0. See [LICENSE](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/LICENSE) for more information.
