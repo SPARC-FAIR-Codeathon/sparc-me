@@ -181,3 +181,28 @@ class Dataset_Api:
                 protocol_url = dataset["externalPublications"][0]["doi"]
 
         return protocol_url
+
+    def get_protocolsio_text(self, datasetId, dir):
+        dir = Path(dir)
+        if not dir.is_dir():
+            dir.mkdir(parents=True, exist_ok=False)
+
+        protocol_url = self.get_dataset_protocolsio_link(datasetId)
+        if protocol_url:
+            doi = protocol_url
+            url = "https://www.protocols.io/api/v4/protocols/" + doi
+            querystring = {
+                "Authorization": "9335c865c035bcabc986e443e4bfab3547fd3c8a4e052746ac2a10290d91b6cb",
+            }
+            headers = {
+                "Accept": "*/*",
+                "Content-Type": "application/json"
+            }
+            response = requests.request(
+                "GET", url, headers=headers, params=querystring)
+            if response.status_code == 200:
+                protocol_json = json.loads(response.content)
+                js = json.dumps(protocol_json, sort_keys=True, indent=4, separators=(',', ':'))
+                print(js)
+                with open(dir + 'protocol_data.json', 'w') as f:
+                    json.dump(protocol_json, f)
