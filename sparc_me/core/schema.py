@@ -111,12 +111,34 @@ class Validator(object):
 
 class Schema(object):
     def __init__(self):
+        self._version = None
+        self._schema = dict()
         self._schemas = dict()
         self._categories = list()
 
         self._schema_dir = Path()
 
         self._column_based = ["dataset_description", "code_description"]
+
+    @staticmethod
+    def get_default_schema(version, category):
+        version = convert_version_format(version)
+        version = "version_" + version
+        filename = category + ".json"
+        schema_path = resources_dir / "templates" / version / "schema" / filename
+        if not schema_path.exists():
+            raise ValueError("Reference schema not found!")
+
+        with open(schema_path) as file:
+            schema = json.load(file)
+
+        return schema
+
+    def get_schema(self):
+        return self._schema
+
+    def set_schema(self, schema):
+        self._schema = schema
 
     def load_data(self, path):
         """
@@ -226,7 +248,7 @@ class Schema(object):
 
             self.save(save_dir, schema, sheet)
 
-    def save(self, save_dir, schema, category):
+    def save(self, save_dir, category):
         """
         Save schema
         :param save_dir: path to the destination directory
@@ -238,12 +260,13 @@ class Schema(object):
         :return:
         :rtype:
         """
+        save_dir = Path(save_dir)
         if not save_dir.exists():
             os.makedirs(save_dir)
         filename = '{sheet}.json'.format(sheet=category)
         save_path = Path.joinpath(save_dir, filename)
         with open(save_path, 'w', encoding='utf-8') as f:
-            json.dump(schema, f, indent=4)
+            json.dump(self._schema, f, indent=4)
 
 
 if __name__ == '__main__':
