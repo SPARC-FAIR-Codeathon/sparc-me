@@ -32,8 +32,9 @@ if __name__ == '__main__':
     dataset.set_field(category="dataset_description", row_index=2, header="Value", value="testValue")
     dataset.set_field(category="dataset_description", row_index=2, header="Value 2", value="testValue")
 
-    # # Append a row to the "subjects" metadata file. "subject id" will be set to "test_id". 
-    dataset.append(category="subjects", row={"subject id": "test_id"})
+    # # Append a row to the "subjects" metadata file. "subject id" will be set to "test_id"
+    dataset.append(category="subjects", row={"subject_id": "test_id"}) # in version 2.0.0 they used "subject id" where as in 1.2.3 they used "subject_id"
+    dataset.set_field_using_row_name(category="subjects", row_name="test_id", header="sex", value="male")
 
     dataset.save(save_dir)
 
