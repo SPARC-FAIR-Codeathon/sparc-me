@@ -1,0 +1,123 @@
+{
+    "type": "object",
+    "properties": {
+        "subject_id": {
+            "type": "string",
+            "required": "Y",
+            "description": "Lab-based schema for identifying each subject, should match folder names",
+            "example": "sub-1"
+        },
+        "pool_id": {
+            "type": "string",
+            "required": "Y",
+            "description": "If data is collected on multiple subjects at the same time include the identifier of the pool where the data file will be found. If this is included it should be the name of the top level folder inside primary.",
+            "example": "pool-1"
+        },
+        "experimental group": {
+            "type": "string",
+            "required": "Y",
+            "description": "Experimental group subject is assigned to in research project",
+            "example": "Control"
+        },
+        "age": {
+            "type": "string",
+            "required": "Y",
+            "description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
+            "example": "4 weeks"
+        },
+        "sex": {
+            "type": "string",
+            "required": "Y",
+            "description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
+            "example": "Female"
+        },
+        "species": {
+            "type": "string",
+            "required": "Y",
+            "description": "Subject species",
+            "example": "Rattus norvegicus"
+        },
+        "strain": {
+            "type": "string",
+            "required": "Y",
+            "description": "Organism strain of the subject",
+            "example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "type": "string",
+            "required": "Y",
+            "description": "Research Resource Identifier Identification (RRID) for the strain For this field",
+            "example": "RRID:RGD_10395233"
+        },
+        "Additional Fields (e.g.MINDS)": {
+            "type": "string",
+            "required": "N",
+            "description": "MINDS = minimal information about a neuroscience dataset",
+            "example": null
+        },
+        "age category": {
+            "type": "string",
+            "required": "N",
+            "description": "description of age category from derived from UBERON life cycle stage",
+            "example": "prime adult stage"
+        },
+        "age range (min)": {
+            "type": "string",
+            "required": "N",
+            "description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "example": "10 days"
+        },
+        "age range (max)": {
+            "type": "string",
+            "required": "N",
+            "description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "example": "20 days"
+        },
+        "handedness": {
+            "type": "string",
+            "required": "N",
+            "description": "Preference of the subject to use the right or left hand, if applicable",
+            "example": "right"
+        },
+        "genotype": {
+            "type": "string",
+            "required": "N",
+            "description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
+            "example": "MGI:3851780"
+        },
+        "reference atlas": {
+            "type": "string",
+            "required": "N",
+            "description": "The reference atlas and organ",
+            "example": "Paxinos and Watson, The Rat Brain In Stereotaxic Coordinates, 7th Ed, 2013"
+        },
+        "protocol title": {
+            "type": "string",
+            "required": "N",
+            "description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "example": "Spinal Cord extraction"
+        },
+        "protocol.io location": {
+            "type": "string",
+            "required": "N",
+            "description": "The Protocol.io URL for the protocol. Once the protocol is uploaded to Protocols.io, the protocol must be shared with the SPARC group and the Protocol.io URL is noted in this field. Please share with the SPARC group.",
+            "example": "https://www.protocols.io/view/corchea-paper-based-microfluidic-device-vtwe6pe"
+        },
+        "experimental log file name": {
+            "type": "string",
+            "required": "N",
+            "description": "A file containing experimental records for each sample.",
+            "example": null
+        }
+    },
+    "required": [
+        "subject_id",
+        "pool_id",
+        "experimental group",
+        "age",
+        "sex",
+        "species",
+        "strain",
+        "RRID for strain"
+    ]
+}
