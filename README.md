@@ -169,6 +169,7 @@ Zenodo. https://doi.org/TODO.
 ```
 
 ## FAIR practices
+We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:
 
 ## License
 sparc-me is fully open source and distributed under the very permissive Apache License 2.0. See [LICENSE](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/LICENSE) for more information.
