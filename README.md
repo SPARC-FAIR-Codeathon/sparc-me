@@ -100,10 +100,6 @@ pip install -r requirements.txt
 
 ## Using sparc-me
 
-### Running examples
-
-A base example is located in ./examples/base_example.py for loading/saving/editing dataset/metadata 
-
 ### Running tutorials
 
 Guided tutorials have been developed describing how to use sparc-me in different scenarios:
@@ -148,6 +144,13 @@ Guided tutorials have been developed describing how to use sparc-me in different
 <i> &#9989 = available, &#10060 = not fully ready </i>
 </p>
 <br/>
+
+### Running examples
+
+A base example is located in ./examples/base_example.py for loading/saving/editing dataset/metadata 
+
+* `/examples/base_example.py` - Example outlining basic functionality for the loading/saving/editing of dataset/metadata.
+* `/examples/validate_schema.py/` - Example showing how to validate SDS entries against the SDS schema stored in the `/sparc_me/resources/templates/` folder for a given SDS version.
 
 ## Reporting issues 
 To report an issue or suggest a new feature, please use the [issues page](https://github.com/SPARC-FAIR-Codeathon/sparc-me/issues). Please check existing issues before submitting a new one.
