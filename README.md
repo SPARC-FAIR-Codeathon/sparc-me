@@ -134,7 +134,7 @@ Guided tutorials have been developed describing how to use sparc-me in different
   </tr>
   <tr>
     <td> 4 </td>
-    <td> Creating an extension of the SDS to include additional metadata fields, and apply it to the dataset considered in Tutorial 1 to include data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
+    <td> Creating an extension of the SDS to include an additional metadata field that defines data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
     <td>&#9989</td>
   </tr> 
   <tr>
