@@ -1,5 +1,5 @@
 ---
-name: Document request
+name: Document request 📖
 about: Suggest any missing documentations you will love to see
 title: ''
 labels: ''
