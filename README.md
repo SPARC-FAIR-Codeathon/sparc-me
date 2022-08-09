@@ -1,5 +1,5 @@
 # SPARC Metadata Editor (sparc-me)
-A python tool to explore, enhance, and expand SPARC datasets and their descriptions
+A python tool to explore, enhance, and expand SPARC datasets and their descriptions in accordance with FAIR principles.
 
 [![Contributors][contributors-shield]][contributors-url]
 [![GitHub commits](https://badgen.net/github/commits/SPARC-FAIR-Codeathon/sparc-me)](https://github.com/SPARC-FAIR-Codeathon/sparc-me/commit/) 
@@ -56,14 +56,14 @@ This limits the ability of members of the SPARC and the wider scientific communi
 ## Our solution - sparc-me
 To address this problem, we have **developed a python module called the SPARC Metadata Editor (sparc-me)** that can be used to enhance the FAIRness of SPARC data by enabling:
 
-- *Findability*
+- **F***indability*
   - Exploring data and metadata within SDS datasets
-- *Accessibility*
+- **A***ccessibility*
   - Accessing curated SDS datasets and their metadata (using the Pennsieve API)
   - Accessing protocols used by existing SDS datasets (using the protocols.io API)
-- *Interoperability*
+- **I***nteroperability*
   - Conversion between BIDS datasets and SDS datasets
-- *Reusability*
+- **R***eusability*
   - Extending SDS descriptions/creating schemas[^1]
 
 Examples and guided tutorials have been created to demonstrate each of the features above. 
@@ -200,10 +200,12 @@ sparc-me is fully open source and distributed under the very permissive Apache L
 * [Linkun Gao](https://github.com/LinkunGao) (Developer, Writer - Documentation)
 * [Haribalan Kumar](https://github.com/haribalankumar) (Developer, Writer - Documentation)
 * [Chinchien Lin](https://github.com/LIN810116) (SysAdmin, Writer - Documentation)
-* [Thiranja Prasad Babarenda Gamage](https://github.com/PrasadBabarendaGamage) (Lead, Writer - Manuscript)
+* [Thiranja Prasad Babarenda Gamage](https://github.com/PrasadBabarendaGamage) (Lead, Writer - Documentation)
 
 ## Acknowledgements
-We would like to thank the organizers of the 2022 SPARC Codeathon for their guidance and support during this Codeathon.
+- We would like to thank the organizers of the 2022 SPARC Codeathon for their guidance and support during this Codeathon.
+- Initial code defining the loading of SDS datasets using python was adopted from https://github.com/ABI-CTT-Group/meta…
+…data-manager/releases/tag/v1.0.0 at the start of the project.
 
 [contributors-shield]: https://img.shields.io/github/contributors/SPARC-FAIR-Codeathon/sparc-me.svg?style=flat-square
 [contributors-url]: https://github.com/SPARC-FAIR-Codeathon/sparc-me/graphs/contributors
