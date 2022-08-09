@@ -94,7 +94,7 @@ sparc-me will elevate the impact of the SPARC program by providing the fundament
    
 ### PyPI
 
-Here is the link to our project on PyPI
+Here is the [link](https://pypi.org/project/sparc-me/) to our project on PyPI
 ```
 pip install sparc-me
 ```
