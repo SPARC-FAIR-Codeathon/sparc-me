@@ -21,11 +21,11 @@ A python tool to explore, enhance, and expand SPARC datasets and their descripti
 * [Reporting issues](#reporting-issues)
 * [Contributing](#contributing)
 * [Cite us](#cite-us)
+* [FAIR practices](#fair-practices)
 * [License](#license)
 * [Team](#team)
 * [Acknowledgements](#acknowledgements)
 
-<!--* [FAIR practices](#fair-practices)-->
 <!--* [Use-cases of sparc-me](#use-cases-of-sparc-me)-->
 
 
@@ -211,8 +211,8 @@ Savindi Wijenayaka, Linkun Gao, Michael Hoffman, David Nickerson, Haribalan Kuma
 Zenodo. https://doi.org/10.5281/zenodo.6975692.
 ```
 
-<!--*## FAIR practices-->
-<!--*We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:-->
+## FAIR practices
+We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following [document](https://docs.google.com/document/d/1l8rj2_ZYOtgT5mfvetQNtaZ8vdoJvuVzxI9XXzdkHHI/edit).
 
 ## License
 sparc-me is fully open source and distributed under the very permissive Apache License 2.0. See [LICENSE](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/LICENSE) for more information.
