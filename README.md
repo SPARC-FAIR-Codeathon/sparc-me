@@ -43,8 +43,8 @@ The NIH Common Fund program on **[Stimulating Peripheral Activity to Relieve Con
 
 ## The problem
 There is **currently no publicly available programmatic appraoch for**:
-- **accessing and interrogating all metadata fields in SDS datasets.**
-- **creating new SDS datasets** (schemas for SDS dataset validation are not yet publicly available).
+- **Accessing and interrogating all metadata fields in SDS datasets.**
+- **Creating new SDS datasets** (schemas for SDS dataset validation are not yet publicly available).
 
 This limits the ability of members of the SPARC and the wider scientific community to apply FAIR principles for:
 - interacting with SDS datasets for conducting their research (**limits accessibilty**).
@@ -61,7 +61,6 @@ To address this problem, we have **developed a python module called the SPARC Me
 - *Accessibility*
   - Accessing curated SDS datasets and their metadata (using the Pennsieve API)
   - Accessing protocols used by existing SDS datasets (using the protocols.io API)
-  - Conversion between BIDS datasets and SDS datasets
 - *Interoperability*
   - Conversion between BIDS datasets and SDS datasets
 - *Reusability*
@@ -161,10 +160,12 @@ Guided tutorials have been developed describing how to use sparc-me in different
 
 ### Running examples
 
-A base example is located in ./examples/base_example.py for loading/saving/editing dataset/metadata 
-
-* `/examples/base_example.py` - Example outlining basic functionality for the loading/saving/editing of dataset/metadata.
-* `/examples/validate_schema.py/` - Example showing how to validate SDS entries against the SDS schema stored in the `/sparc_me/resources/templates/` folder for a given SDS version.
+In additional to the tutorials, the following examples are also provided in the example folder to help highlight the functionality of sparc-me:
+* `example_for_base_functionality.py` - Example outlining basic functionality for the loading/saving/editing of dataset/metadata.
+* `example_for_validating_schema.py` - Example showing how to validate SDS entries against the SDS schema stored in the `/sparc_me/resources/templates/` folder for a given SDS version.
+* `example_for_listing_all_curated_datasets.py` - Example for listing all curated SPARC datasets from Pennsieve.
+* `example_for_accessing_dataset_protocol.py` - Example for retrieving the protocol for a curated SPARC dataset from protocosls.io.
+* `example_for_downloading_dataset_files.py` - Example for downloading files in curated SPARC datasets through the sparc-me API.
 
 ## Reporting issues 
 To report an issue or suggest a new feature, please use the [issues page](https://github.com/SPARC-FAIR-Codeathon/sparc-me/issues). Please check existing issues before submitting a new one.
@@ -173,11 +174,12 @@ To report an issue or suggest a new feature, please use the [issues page](https:
 Fork this repository and submit a pull request to contribute. Before doing so, please read our [Code of Conduct](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/CODE_OF_CONDUCT.md) and [Contributing Guidelines](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/CONTRIBUTING.md). Please add a GitHub Star to support developments!
 
 ### Project structure
-* `/sparc_me/` - Parent directory of sparc-me python module
-* `/sparc_me/core/` - Core classes of sparc-me
-* `/sparc_me/resources/templates/` - Location of SPARC dataset Structure templates
-* `/examples/` - Parent directory of sparc-me examples and tutorials
-* `/examples/test_data/` - Test data used for sparc-me examples and tutorials
+* `/sparc_me/` - Parent directory of sparc-me python module.
+* `/sparc_me/core/` - Core classes of sparc-me.
+* `/sparc_me/resources/templates/` - Location of SPARC dataset Structure templates.
+* `/examples/` - Parent directory of sparc-me examples and tutorials.
+* `/examples/test_data/` - Test data used for sparc-me examples and tutorials.
+* `/docs/images/` - Images used in sparc-me tutorials.
 
 ## Cite us
 If you use sparc-me to make new discoveries or use the source code, please cite us as follows:
