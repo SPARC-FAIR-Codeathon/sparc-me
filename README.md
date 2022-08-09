@@ -47,10 +47,10 @@ There is **currently no publicly available programmatic appraoch for**:
 - **Creating new SDS datasets** (schemas for SDS dataset validation are not yet publicly available).
 
 This limits the ability of members of the SPARC and the wider scientific community to apply FAIR principles for:
-- interacting with SDS datasets for conducting their research (**limits accessibilty**).
-- applying the SDS specification for storing and curating results from their instrumentation and computational physiology workflows (especially from automated workflows that can generate large quantities of data that may be impractical to store in SDS format using existing interactive tools like SODA) (**limits interoperabilty**).
-- proposing and supporting extensions to the SDS ([similar to BIDS extensions](https://bids.neuroimaging.io/get_involved.html#extending-the-bids-specification)) to further expand the SPARC community e.g. to enable storing clinical data (**limits reusability**).
-- quickly prototyping novel infrastructure/tools to elevate the impact of the SPARC program (**limits application**).
+- Interacting with SDS datasets for conducting their research (**limits accessibilty**).
+- Applying the SDS specification for storing and curating results from their instrumentation and computational physiology workflows (especially from automated workflows that can generate large quantities of data that may be impractical to store in SDS format using existing interactive tools like SODA) (**limits interoperabilty**).
+- Proposing and supporting extensions to the SDS ([similar to BIDS extensions](https://bids.neuroimaging.io/get_involved.html#extending-the-bids-specification)) to further expand the SPARC community e.g. to enable storing clinical data (**limits reusability**).
+- Quickly prototyping novel infrastructure/tools to elevate the impact of the SPARC program (**limits application**).
 
 
 ## Our solution - sparc-me
@@ -75,11 +75,11 @@ Potential application scenarios for sparc-me are illustrated in the figure below
 
 ## Impact
 sparc-me will elevate the impact of the SPARC program by providing the fundamental tools needed by users to programmatically interact with SDS datasets and efficiently build novel resources and tools from SPARC data. This includes:
-- **supporting [SPARC Data and Resource Centre (DRC)](https://docs.sparc.science/docs/getting-started) and communnity developments** including:
-  - assisting with efforts for automating SPARC data curation e.g. via realtime/on-the-fly dataset validation by users prior submission for curation.
-  - improving efficiency of software developments (e.g. future codeathons and [SPARC portal roadmap developments](https://docs.sparc.science/docs/sparc-portal-roadmap)) by reducing the need to reimplement common functions. 
-- **supporting and promoting reuse/harmonisation/compatibility with other research initiatives**. For example, sparc-me could be used to programatically map SDS descriptions to [Gen3 data dictionaries](https://gen3.org/resources/user/dictionary/) used in other NIH-funded initiatives such as the Common Fund’s [NIH Data Commons program](https://commonfund.nih.gov/commons).
- - **enabling extensions of the SDS specification** to be proposed/explored (similar to BIDS extensions). This will enable other initiatives to build upon the extensive and ground-breaking developments of the SPARC community e.g. for storing results from [computational physiology workflows and digital twins that are being developed for precision medicine](https://doi.org/10.52843/cassyni.m56qzg) using the SDS specification.
+- **Supporting [SPARC Data and Resource Centre (DRC)](https://docs.sparc.science/docs/getting-started) and communnity developments** including:
+  - Assisting with efforts for automating SPARC data curation e.g. via realtime/on-the-fly dataset validation by users prior submission for curation.
+  - Improving efficiency of software developments (e.g. future codeathons and [SPARC portal roadmap developments](https://docs.sparc.science/docs/sparc-portal-roadmap)) by reducing the need to reimplement common functions. 
+- **Supporting and promoting reuse/harmonisation/compatibility with other research initiatives**. For example, sparc-me could be used to programatically map SDS descriptions to [Gen3 data dictionaries](https://gen3.org/resources/user/dictionary/) used in other NIH-funded initiatives such as the Common Fund’s [NIH Data Commons program](https://commonfund.nih.gov/commons).
+ - **Enabling extensions of the SDS specification** to be proposed/explored (similar to BIDS extensions). This will enable other initiatives to build upon the extensive and ground-breaking developments of the SPARC community e.g. for storing results from [computational physiology workflows and digital twins that are being developed for precision medicine](https://doi.org/10.52843/cassyni.m56qzg) using the SDS specification.
 
 ## Setting up sparc-me
 
