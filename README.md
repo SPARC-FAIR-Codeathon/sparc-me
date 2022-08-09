@@ -161,10 +161,32 @@ Guided tutorials have been developed describing how to use sparc-me in different
 
 ### Running examples
 
-A base example is located in ./examples/base_example.py for loading/saving/editing dataset/metadata 
+- A base example is located in ./examples/base_example.py for loading/saving/editing dataset/metadata 
 
-* `/examples/base_example.py` - Example outlining basic functionality for the loading/saving/editing of dataset/metadata.
-* `/examples/validate_schema.py/` - Example showing how to validate SDS entries against the SDS schema stored in the `/sparc_me/resources/templates/` folder for a given SDS version.
+    * `/examples/base_example.py` - Example outlining basic functionality for the loading/saving/editing of dataset/metadata.
+    * `/examples/validate_schema.py/` - Example showing how to validate SDS entries against the SDS schema stored in the `/sparc_me/resources/templates/` folder for a given SDS version.
+- Examples of interaction with Pennsieve and Protocols
+   
+    * An example for listing all curated datasets `/example_for_listing_all_curated_datasets.py`
+        
+        - It is located in ./examples/example_for_listing_all_curated_datasets.py
+            
+            This example shows users can get all latest version datasets from SPARC, and also can get all datasets with all versions. 
+   
+    * An example for accessing protocol dataset through Pennsive api `/example_for_accessing_dataset_protocol.py`
+        
+        - It is located in ./examples/example_for_accessing_dataset_protocol.py
+            
+            This example shows users can through our api to get protocol doi from Pennsieve dataset, then through the doi the api will query data from protocol and store the data as `JSON` format locally.
+          
+   * An example for downloading dataset files and store locally `/example_for_downloading_dataset_files.py`
+        - It is located in ./examples/example_for_downloading_dataset_files.py
+            This example shows users can download actual files through sparc_me api. 
+          
+            To use this api, users should provide the actual file's path from SPARC dataset, such as `files/docs/humanWholeBody_annotations.csv`.
+          
+            click [here](https://sparc.science/datasets/156?type=dataset&datasetDetailsTab=files&path=files%2Fdocs) to find out a file's path.
+
 
 ## Reporting issues 
 To report an issue or suggest a new feature, please use the [issues page](https://github.com/SPARC-FAIR-Codeathon/sparc-me/issues). Please check existing issues before submitting a new one.
