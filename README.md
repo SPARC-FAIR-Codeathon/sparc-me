@@ -86,11 +86,20 @@ sparc-me will elevate the impact of the SPARC program by providing the fundament
 
 ## Setting up sparc-me
 
-### From source code
-#### Pre-requisites 
+### Pre-requisites 
 - [Git](https://git-scm.com/)
 - Python. Tested on:
    - 3.8.6
+   - 3.9
+   
+### PyPI
+
+Here is the link to our project on PyPI
+```
+pip install sparc-me
+```
+
+### From source code
 
 #### Downloading source code
 Clone the sparc-me repository from github, e.g.:
