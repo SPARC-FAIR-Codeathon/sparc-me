@@ -41,6 +41,8 @@ The NIH Common Fund program on **[Stimulating Peripheral Activity to Relieve Con
 - **An experimental protocol** that has been submitted to Protocols.io, shared with the SPARC working group, curated, and published with a valid DOI.
 - **Data files are organized into folders** by the investigators and curated according to the [SPARC Dataset Structure (SDS)](https://docs.sparc.science/docs/overview-of-sparc-dataset-format) and stored on the [Pennsieve data management system](https://sparc.science/resources/2j9lC0YFl5P34wGlkJOb49). The SDS was adapted from the [Brain Imaging Data Structure (BIDS)](https://bids.neuroimaging.io/index.html) specification. Data organization and submission that is in compliance with the SDS is greatly simplified using a cross-platform opensource [Software to Organize Data Automatically (SODA)](https://docs.sodaforsparc.io/) through a step-by-step interactive graphical user interface (GUI).
 
+Information regarding [how to navigate a SPARC dataset](https://docs.sparc.science/docs/navigating-a-sparc-dataset) and [how a dataset is formatted](https://docs.sparc.science/docs/overview-of-sparc-dataset-format) can be found on the SPARC Portal.
+
 ## The problem
 There is **currently no publicly available programmatic appraoch for**:
 - **Accessing and interrogating all metadata fields in SDS datasets.**
