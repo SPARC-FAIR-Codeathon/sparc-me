@@ -207,8 +207,7 @@ sparc-me is fully open source and distributed under the very permissive Apache L
 
 ## Acknowledgements
 - We would like to thank the organizers of the 2022 SPARC Codeathon for their guidance and support during this Codeathon.
-- Initial code defining the loading of SDS datasets using python was adopted from https://github.com/ABI-CTT-Group/meta…
-…data-manager/releases/tag/v1.0.0 at the start of the project.
+- Initial code defining the loading of SDS datasets using python was adopted from https://github.com/ABI-CTT-Group/metadata-manager/releases/tag/v1.0.0 at the start of the project.
 
 [contributors-shield]: https://img.shields.io/github/contributors/SPARC-FAIR-Codeathon/sparc-me.svg?style=flat-square
 [contributors-url]: https://github.com/SPARC-FAIR-Codeathon/sparc-me/graphs/contributors
