@@ -1,13 +1,12 @@
 # SPARC Metadata Editor (sparc-me)
-A python tool to explore, enhance, and expand SPARC datasets and their descriptions
+A python tool to explore, enhance, and expand SPARC datasets and their descriptions in accordance with FAIR principles.
 
 [![Contributors][contributors-shield]][contributors-url]
-[![GitHub commits](https://badgen.net/github/commits/SPARC-FAIR-Codeathon/sparc-me)](https://github.com/SPARC-FAIR-Codeathon/sparc-me/commit/) 
 [![Stargazers][stars-shield]][stars-url]
+[![GitHub issues-closed](https://img.shields.io/github/issues-closed/SPARC-FAIR-Codeathon/sparc-me.svg)](https://GitHub.com/SPARC-FAIR-Codeathon/sparc-me/issues?q=is%3Aissue+is%3Aclosed)
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
-[![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org)
 <!-- [![PyPI download month](https://img.shields.io/pypi/dm/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/) -->
 
 ## Table of contents
@@ -15,17 +14,19 @@ A python tool to explore, enhance, and expand SPARC datasets and their descripti
 * [Introduction](#introduction)
 * [The problem](#the-problem)
 * [Our solution - sparc-me](#our-solution---sparc-me)
-* [Use-cases of sparc-me](#use-cases-of-sparc-me)
 * [Impact](#impact)
 * [Setting up sparc-me](#setting-up-sparc-me)
 * [Using sparc-me](#using-sparc-me)
 * [Reporting issues](#reporting-issues)
 * [Contributing](#contributing)
 * [Cite us](#cite-us)
-* [FAIR practices](#fair-practices)
 * [License](#license)
 * [Team](#team)
 * [Acknowledgements](#acknowledgements)
+
+<!--* [FAIR practices](#fair-practices)-->
+<!--* [Use-cases of sparc-me](#use-cases-of-sparc-me)-->
+
 
 ## About
 This is the repository of Team sparc-me (Team #7) of the 2022 SPARC Codeathon. Click [here](https://sparc.science/help/2022-sparc-fair-codeathon) to find out more about the SPARC Codeathon 2022. Check out the [Team Section](#team) of this page to find out more about our team members.
@@ -40,6 +41,8 @@ The NIH Common Fund program on **[Stimulating Peripheral Activity to Relieve Con
 **A SPARC dataset comprises** the following data and structure:
 - **An experimental protocol** that has been submitted to Protocols.io, shared with the SPARC working group, curated, and published with a valid DOI.
 - **Data files are organized into folders** by the investigators and curated according to the [SPARC Dataset Structure (SDS)](https://docs.sparc.science/docs/overview-of-sparc-dataset-format) and stored on the [Pennsieve data management system](https://sparc.science/resources/2j9lC0YFl5P34wGlkJOb49). The SDS was adapted from the [Brain Imaging Data Structure (BIDS)](https://bids.neuroimaging.io/index.html) specification. Data organization and submission that is in compliance with the SDS is greatly simplified using a cross-platform opensource [Software to Organize Data Automatically (SODA)](https://docs.sodaforsparc.io/) through a step-by-step interactive graphical user interface (GUI).
+
+Information regarding [how to navigate a SPARC dataset](https://docs.sparc.science/docs/navigating-a-sparc-dataset) and [how a dataset is formatted](https://docs.sparc.science/docs/overview-of-sparc-dataset-format) can be found on the SPARC Portal.
 
 ## The problem
 There is **currently no publicly available programmatic appraoch for**:
@@ -56,22 +59,22 @@ This limits the ability of members of the SPARC and the wider scientific communi
 ## Our solution - sparc-me
 To address this problem, we have **developed a python module called the SPARC Metadata Editor (sparc-me)** that can be used to enhance the FAIRness of SPARC data by enabling:
 
-- *Findability*
+- **F***indability*
   - Exploring data and metadata within SDS datasets
-- *Accessibility*
+- **A***ccessibility*
   - Accessing curated SDS datasets and their metadata (using the Pennsieve API)
   - Accessing protocols used by existing SDS datasets (using the protocols.io API)
-- *Interoperability*
+- **I***nteroperability*
   - Conversion between BIDS datasets and SDS datasets
-- *Reusability*
+- **R***eusability*
   - Extending SDS descriptions/creating schemas[^1]
 
 Examples and guided tutorials have been created to demonstrate each of the features above. 
 
 [^1]: Please note that the schemas derived in the current version of sparc-me have been generated based on basic rules (e.g. required fields, data type etc). These will be replaced when an official schema is released by the SPARC curation team (elements of the internal schema used by the SPARC curators for curating SPARC datasets can be found [here](https://github.com/SciCrunch/sparc-curation)).
 
-## Use-cases of sparc-me
-Potential application scenarios for sparc-me are illustrated in the figure below.
+<!-- ## Use-cases of sparc-me -->
+<!-- Potential application scenarios for sparc-me are illustrated in the figure below. -->
 
 ## Impact
 sparc-me will elevate the impact of the SPARC program by providing the fundamental tools needed by users to programmatically interact with SDS datasets and efficiently build novel resources and tools from SPARC data. This includes:
@@ -188,8 +191,8 @@ Savindi Wijenayaka, Michael Hoffman, Linkun Gao, Haribalan Kumar, Chinchien Lin,
 Zenodo. https://doi.org/TODO.
 ```
 
-## FAIR practices
-We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:
+<!--*## FAIR practices-->
+<!--*We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:-->
 
 ## License
 sparc-me is fully open source and distributed under the very permissive Apache License 2.0. See [LICENSE](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/LICENSE) for more information.
@@ -200,10 +203,11 @@ sparc-me is fully open source and distributed under the very permissive Apache L
 * [Linkun Gao](https://github.com/LinkunGao) (Developer, Writer - Documentation)
 * [Haribalan Kumar](https://github.com/haribalankumar) (Developer, Writer - Documentation)
 * [Chinchien Lin](https://github.com/LIN810116) (SysAdmin, Writer - Documentation)
-* [Thiranja Prasad Babarenda Gamage](https://github.com/PrasadBabarendaGamage) (Lead, Writer - Manuscript)
+* [Thiranja Prasad Babarenda Gamage](https://github.com/PrasadBabarendaGamage) (Lead, Writer - Documentation)
 
 ## Acknowledgements
-We would like to thank the organizers of the 2022 SPARC Codeathon for their guidance and support during this Codeathon.
+- We would like to thank the organizers of the 2022 SPARC Codeathon for their guidance and support during this Codeathon.
+- Initial code defining the loading of SDS datasets using python was adopted from https://github.com/ABI-CTT-Group/metadata-manager/releases/tag/v1.0.0 at the start of the project.
 
 [contributors-shield]: https://img.shields.io/github/contributors/SPARC-FAIR-Codeathon/sparc-me.svg?style=flat-square
 [contributors-url]: https://github.com/SPARC-FAIR-Codeathon/sparc-me/graphs/contributors
