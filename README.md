@@ -2,12 +2,11 @@
 A python tool to explore, enhance, and expand SPARC datasets and their descriptions in accordance with FAIR principles.
 
 [![Contributors][contributors-shield]][contributors-url]
-[![GitHub commits](https://badgen.net/github/commits/SPARC-FAIR-Codeathon/sparc-me)](https://github.com/SPARC-FAIR-Codeathon/sparc-me/commit/) 
 [![Stargazers][stars-shield]][stars-url]
+[![GitHub issues-closed](https://img.shields.io/github/issues-closed/SPARC-FAIR-Codeathon/sparc-me.svg)](https://GitHub.com/SPARC-FAIR-Codeathon/sparc-me/issues?q=is%3Aissue+is%3Aclosed)
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
-[![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org)
 <!-- [![PyPI download month](https://img.shields.io/pypi/dm/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/) -->
 
 ## Table of contents
