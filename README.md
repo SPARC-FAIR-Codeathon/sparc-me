@@ -15,17 +15,19 @@ A python tool to explore, enhance, and expand SPARC datasets and their descripti
 * [Introduction](#introduction)
 * [The problem](#the-problem)
 * [Our solution - sparc-me](#our-solution---sparc-me)
-* [Use-cases of sparc-me](#use-cases-of-sparc-me)
 * [Impact](#impact)
 * [Setting up sparc-me](#setting-up-sparc-me)
 * [Using sparc-me](#using-sparc-me)
 * [Reporting issues](#reporting-issues)
 * [Contributing](#contributing)
 * [Cite us](#cite-us)
-* [FAIR practices](#fair-practices)
 * [License](#license)
 * [Team](#team)
 * [Acknowledgements](#acknowledgements)
+
+<!--* [FAIR practices](#fair-practices)-->
+<!--* [Use-cases of sparc-me](#use-cases-of-sparc-me)-->
+
 
 ## About
 This is the repository of Team sparc-me (Team #7) of the 2022 SPARC Codeathon. Click [here](https://sparc.science/help/2022-sparc-fair-codeathon) to find out more about the SPARC Codeathon 2022. Check out the [Team Section](#team) of this page to find out more about our team members.
@@ -72,8 +74,8 @@ Examples and guided tutorials have been created to demonstrate each of the featu
 
 [^1]: Please note that the schemas derived in the current version of sparc-me have been generated based on basic rules (e.g. required fields, data type etc). These will be replaced when an official schema is released by the SPARC curation team (elements of the internal schema used by the SPARC curators for curating SPARC datasets can be found [here](https://github.com/SciCrunch/sparc-curation)).
 
-## Use-cases of sparc-me
-Potential application scenarios for sparc-me are illustrated in the figure below.
+<!-- ## Use-cases of sparc-me -->
+<!-- Potential application scenarios for sparc-me are illustrated in the figure below. -->
 
 ## Impact
 sparc-me will elevate the impact of the SPARC program by providing the fundamental tools needed by users to programmatically interact with SDS datasets and efficiently build novel resources and tools from SPARC data. This includes:
@@ -190,8 +192,8 @@ Savindi Wijenayaka, Michael Hoffman, Linkun Gao, Haribalan Kumar, Chinchien Lin,
 Zenodo. https://doi.org/TODO.
 ```
 
-## FAIR practices
-We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:
+<!--*## FAIR practices-->
+<!--*We have assessed the FAIRness of our sparc-me tool against the FAIR Principles established for research software. The details are available in the following document TODO:-->
 
 ## License
 sparc-me is fully open source and distributed under the very permissive Apache License 2.0. See [LICENSE](https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/LICENSE) for more information.
