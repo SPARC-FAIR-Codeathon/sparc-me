@@ -574,7 +574,7 @@ class Dataset(object):
         add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
 
         # In future, we can move this switch case one scope up
-        if self._version == "2.0.0":
+        if self._version == '2_0_0':
             subject_id_field = "subject id"
             sample_id_field = "sample id"
             samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
