@@ -146,23 +146,33 @@ Guided tutorials have been developed describing how to use sparc-me in different
 </thead>
 <tbody>
   <tr>
-    <td> 1</td>
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_1_download_and_explore_curated_datasets.ipynb">
+    1
+    </a></td>
     <td> Downloading an existing curated SDS dataset (<a href="10.26275/fvsg-hzg1">human whole-body computational scaffold with embedded organs</a>), and use existing tools to query ontology terms that have been used to annotate SDS datasets using the SciCrunch knowledgebase.</td>
   </tr>
   <tr>
-    <td> 2</td>
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_2_create_new_datasets.ipynb">
+    2
+    </a></td>
     <td> Creating an SDS dataset programmatically from input data, editing metadata values and filtering metadata.</td>
   </tr>
   <tr>
-    <td> 3 </td>
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_3_osparc.ipynb">
+    3
+    </a></td>
     <td> Interacting with SDS datasets on O2SPARC with sparc-me.</td>
   </tr>
   <tr>
-    <td> 4 </td>
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_4.ipynb">
+    4
+    </a></td>
     <td> Creating an extension of the SDS to include an additional metadata field that defines data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
   </tr> 
   <tr>
-    <td> 5 </td>
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_5_bids_converter.py">
+    5
+    </a></td>
     <td> Converting a BIDS dataset to an SDS dataset.</td>
   </tr>
 </tbody>
