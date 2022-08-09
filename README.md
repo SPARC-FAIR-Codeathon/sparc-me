@@ -7,7 +7,8 @@ A python tool to explore, enhance, and expand SPARC datasets and their descripti
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
-<!-- [![PyPI download month](https://img.shields.io/pypi/dm/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/) -->
+[![DOI](https://zenodo.org/badge/521932775.svg)](https://zenodo.org/badge/latestdoi/521932775)
+[![PyPI version fury.io](https://badge.fury.io/py/sparc-me.svg)](https://pypi.python.org/pypi/sparc-me/)
 
 ## Table of contents
 * [About](#about)
@@ -196,8 +197,8 @@ Fork this repository and submit a pull request to contribute. Before doing so, p
 ## Cite us
 If you use sparc-me to make new discoveries or use the source code, please cite us as follows:
 ```
-Savindi Wijenayaka, Michael Hoffman, Linkun Gao, Haribalan Kumar, Chinchien Lin, Thiranja Prasad Babarenda Gamage (2022). sparc-me: v1.0.0 - A python tool to explore, enhance, and expand SPARC datasets and their descriptions. 
-Zenodo. https://doi.org/TODO.
+Savindi Wijenayaka, Linkun Gao, Michael Hoffman, David Nickerson, Haribalan Kumar, Chinchien Lin, Thiranja Prasad Babarenda Gamage (2022). sparc-me: v1.0.0 - A python tool to explore, enhance, and expand SPARC datasets and their descriptions in accordance with FAIR principles. 
+Zenodo. https://doi.org/10.5281/zenodo.6975692.
 ```
 
 <!--*## FAIR practices-->
@@ -208,8 +209,8 @@ sparc-me is fully open source and distributed under the very permissive Apache L
 
 ## Team
 * [Savindi Wijenayaka](https://github.com/savindi-wijenayaka) (Developer, Writer - Documentation)
-* [Michael Hoffman](https://github.com/Moffhan) (Writer - Documentation)
 * [Linkun Gao](https://github.com/LinkunGao) (Developer, Writer - Documentation)
+* [Michael Hoffman](https://github.com/Moffhan) (Writer - Documentation)
 * [Haribalan Kumar](https://github.com/haribalankumar) (Developer, Writer - Documentation)
 * [Chinchien Lin](https://github.com/LIN810116) (SysAdmin, Writer - Documentation)
 * [Thiranja Prasad Babarenda Gamage](https://github.com/PrasadBabarendaGamage) (Lead, Writer - Documentation)
