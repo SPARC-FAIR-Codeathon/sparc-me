@@ -438,7 +438,7 @@ class Dataset(object):
             msg = "row_name should be string."
             raise ValueError(msg)
 
-        # Assumes that all excel files first column is contains the unique value field
+        # Assumes that all excel files first column contains the unique value field
         matching_indices = metadata.index[metadata[metadata.columns[0]]==row_name].tolist()
 
         if not matching_indices:
