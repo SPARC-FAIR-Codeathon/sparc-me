@@ -37,3 +37,25 @@ def add_data(source_path, destination_path, copy=True, overwrite=False):
             else:
                 # Move data
                 shutil.move(file_path, os.path.join(destination_path, fname))
+
+
+def check_row_exist(dataframe, unique_value):
+    """Check if a row exist with given unique value
+
+    :param dataframe: metadata dataframe that must be checked
+    :type dataframe: Pandas DataFrame
+    :param unique_value: value that can be used to uniquely identifies a row
+    :type unique_value: string
+    :return: row index of the row identified with the unique value, or -1 if there is no row corresponding to the unique value
+    :rtype: int
+    :raises ValueError: if more than one row can be identified with given unique value
+    """
+    row_index = dataframe.index[dataframe[dataframe.columns[0]]==unique_value].tolist()
+    if not row_index:
+        row_index = -1
+    elif len(row_index)>1:
+        error_msg = "More than one row can be identified with given unique value"
+        raise ValueError(error_msg)
+    else:
+        row_index = row_index[0]
+    return row_index

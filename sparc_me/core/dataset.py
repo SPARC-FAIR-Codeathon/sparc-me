@@ -9,7 +9,7 @@ from distutils.dir_util import copy_tree
 import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
-from sparc_me.core.utils import add_data
+from sparc_me.core.utils import add_data, check_row_exist
 
 class Dataset(object):
     def __init__(self):
@@ -452,7 +452,7 @@ class Dataset(object):
             return self.set_field(category=category, row_index=excel_row_index, header=header, value=value)
 
         
-    def append(self, category, row):
+    def append(self, category, row, check_exist=False):
         """
         Append a row to a metadata file
 
@@ -460,6 +460,9 @@ class Dataset(object):
         :type category: string
         :param row: a row to be appended
         :type row: dic
+        :param check_exist: Check if row exist before appending, if exist, update row, defaults to False
+        :type check_exist: bool, optional
+        :raises ValueError: _description_
         :return: updated dataset
         :rtype: dict
         """
@@ -467,13 +470,27 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        row_df = pd.DataFrame([row])
-
         metadata = self._dataset.get(category).get("metadata")
-        metadata = pd.concat([metadata, row_df], axis=0, ignore_index=True)     #If new header comes, it will be added as a new column with its value
 
+        if check_exist:
+            try:
+                row_index = check_row_exist(metadata, row[metadata.columns[0]])
+            except ValueError:
+                error_msg = "Row values provided does not contain a unique identifier"
+                raise ValueError(error_msg)
+        else:
+            row_index = -1
+
+        if row_index == -1:
+            # Add row
+            row_df = pd.DataFrame([row])
+            metadata = pd.concat([metadata, row_df], axis=0, ignore_index=True)     #If new header comes, it will be added as a new column with its value
+        else:
+            # Append row with additional values
+            for key, value in row.items():
+                metadata.loc[row_index, key] = value
+            
         self._dataset[category]["metadata"] = metadata
-
         return self._dataset
 
     def update_by_json(self, category, json_file):
