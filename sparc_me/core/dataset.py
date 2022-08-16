@@ -467,8 +467,10 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
+        row_df = pd.DataFrame([row])
+
         metadata = self._dataset.get(category).get("metadata")
-        metadata = metadata.append(row, ignore_index=True)
+        metadata = pd.concat([metadata, row_df], axis=0, ignore_index=True)     #If new header comes, it will be added as a new column with its value
 
         self._dataset[category]["metadata"] = metadata
 
