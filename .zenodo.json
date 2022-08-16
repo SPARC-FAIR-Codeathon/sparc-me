@@ -1,0 +1,38 @@
+{
+    "creators": [
+        {
+            "orcid": "0000-0001-5109-0219",
+            "affiliation": "Auckland Bioengineering Institute, University of Auckland",
+            "name": "Babarenda Gamage, Thiranja Prasad"
+        },
+        {
+            "orcid": "0000-0001-6237-6642",
+            "affiliation": "Auckland Bioengineering Institute, University of Auckland",
+            "name": "Gao, Linkun"
+        },
+        {
+            "orcid": "0000-0001-8170-199X",
+            "affiliation": "Auckland Bioengineering Institute, University of Auckland",
+            "name": "Lin, Chinchien"
+        },
+        {
+            "orcid": "0000-0001-8729-3472",
+            "affiliation": "Auckland Bioengineering Institute, University of Auckland",
+            "name": "Kumar, Haribalan"
+        },
+        {
+            "orcid": "0000-0003-1876-7042",
+            "affiliation": "Auckland Bioengineering Institute, University of Auckland",
+            "name": "Hoffman, Michael"
+        },
+        {
+            "orcid": "0000-0002-5929-9794",
+            "affiliation": "Auckland Bioengineering Institute, University of Auckland",
+            "name": "Wijenayaka, Savindi"
+        }
+    ],
+
+    "license": "Apache-2.0",
+
+    "title": "SPARC Metadata Editor (sparc-me)"
+}
