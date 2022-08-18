@@ -9,7 +9,7 @@ from distutils.dir_util import copy_tree
 import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
-from sparc_me.core.utils import add_data
+from sparc_me.core.utils import add_data, check_row_exist
 
 class Dataset(object):
     def __init__(self):
@@ -438,7 +438,9 @@ class Dataset(object):
             msg = "row_name should be string."
             raise ValueError(msg)
 
-        # Assumes that all excel files first column is contains the unique value field
+        # Assumes that all excel files first column contains the unique value field
+        # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified. 
+        # This method need to be fixed to accomadate this 
         matching_indices = metadata.index[metadata[metadata.columns[0]]==row_name].tolist()
 
         if not matching_indices:
@@ -452,7 +454,7 @@ class Dataset(object):
             return self.set_field(category=category, row_index=excel_row_index, header=header, value=value)
 
         
-    def append(self, category, row):
+    def append(self, category, row, check_exist=False, unique_column=None):
         """
         Append a row to a metadata file
 
@@ -460,6 +462,11 @@ class Dataset(object):
         :type category: string
         :param row: a row to be appended
         :type row: dic
+        :param check_exist: Check if row exist before appending, if exist, update row, defaults to False
+        :type check_exist: bool, optional
+        :param unique_column: if check_exist is True, provide which column in category is unique, defaults to None
+        :type unique_column: string, optional
+        :raises ValueError: _description_
         :return: updated dataset
         :rtype: dict
         """
@@ -468,10 +475,31 @@ class Dataset(object):
             raise ValueError(msg)
 
         metadata = self._dataset.get(category).get("metadata")
-        metadata = metadata.append(row, ignore_index=True)
 
+        if check_exist:
+            # In version 1, the unique column is not the column 0. Hence, unique column must be specified
+            if unique_column is None:
+                error_msg = "Provide which column in category is unique. Ex: subject_id"
+                raise ValueError(error_msg)
+            
+            try:
+                row_index = check_row_exist(metadata, unique_column, unique_value=row[unique_column])
+            except ValueError:
+                error_msg = "Row values provided does not contain a unique identifier"
+                raise ValueError(error_msg)
+        else:
+            row_index = -1
+
+        if row_index == -1:
+            # Add row
+            row_df = pd.DataFrame([row])
+            metadata = pd.concat([metadata, row_df], axis=0, ignore_index=True)     #If new header comes, it will be added as a new column with its value
+        else:
+            # Append row with additional values
+            for key, value in row.items():
+                metadata.loc[row_index, key] = value
+            
         self._dataset[category]["metadata"] = metadata
-
         return self._dataset
 
     def update_by_json(self, category, json_file):
@@ -593,17 +621,15 @@ class Dataset(object):
         self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
         
         if not sample_metadata:
-            self.append(category="samples", row={subject_id_field: subject, sample_id_field: sample})
+            self.append(category="samples", row={subject_id_field: subject, sample_id_field: sample}, check_exist=True, unique_column=sample_id_field)
         else:
-            self.append(category="samples", row=sample_metadata)
+            self.append(category="samples", row=sample_metadata, check_exist=True, unique_column=sample_id_field)
         self.generate_file_from_template(samples_file_path, 'samples', self._dataset['samples']['metadata'])
 
         if not subject_metadata:
-            # TODO:Check if subject id already exist, if do, don't update
-            self.append(category="subjects", row={subject_id_field: subject})
+            self.append(category="subjects", row={subject_id_field: subject}, check_exist=True, unique_column=subject_id_field)
         else:
-            # TODO:If entry exist, modify
-            self.append(category="subjects", row=subject_metadata)
+            self.append(category="subjects", row=subject_metadata, check_exist=True, unique_column=subject_id_field)
         self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
 
 
