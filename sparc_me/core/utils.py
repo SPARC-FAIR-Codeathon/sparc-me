@@ -39,7 +39,7 @@ def add_data(source_path, destination_path, copy=True, overwrite=False):
                 shutil.move(file_path, os.path.join(destination_path, fname))
 
 
-def check_row_exist(dataframe, unique_value):
+def check_row_exist(dataframe, unique_column, unique_value):
     """Check if a row exist with given unique value
 
     :param dataframe: metadata dataframe that must be checked
@@ -50,7 +50,7 @@ def check_row_exist(dataframe, unique_value):
     :rtype: int
     :raises ValueError: if more than one row can be identified with given unique value
     """
-    row_index = dataframe.index[dataframe[dataframe.columns[0]]==unique_value].tolist()
+    row_index = dataframe.index[dataframe[unique_column]==unique_value].tolist()
     if not row_index:
         row_index = -1
     elif len(row_index)>1:

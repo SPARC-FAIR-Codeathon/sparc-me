@@ -439,6 +439,8 @@ class Dataset(object):
             raise ValueError(msg)
 
         # Assumes that all excel files first column contains the unique value field
+        # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified. 
+        # This method need to be fixed to accomadate this 
         matching_indices = metadata.index[metadata[metadata.columns[0]]==row_name].tolist()
 
         if not matching_indices:
@@ -481,7 +483,7 @@ class Dataset(object):
                 raise ValueError(error_msg)
             
             try:
-                row_index = check_row_exist(metadata, row[unique_column])
+                row_index = check_row_exist(metadata, unique_column, unique_value=row[unique_column])
             except ValueError:
                 error_msg = "Row values provided does not contain a unique identifier"
                 raise ValueError(error_msg)
