@@ -27,6 +27,8 @@ class Dataset(object):
         self._dataset = dict()
         self._metadata_extensions = EXTENSIONS
         self._column_based = ["dataset_description", "code_description"]
+        self._subject_id_field = None
+        self._sample_id_field = None
 
     def set_dataset_path(self, path):
         """
@@ -64,8 +66,28 @@ class Dataset(object):
         :param version: template version
         :type version: string
         """
-        version = version.replace(".", "_")
+        version = self._convert_version_format(version)
         self._template_version = version
+        self._set_version_specific_variables(version)
+
+    
+    def _set_version_specific_variables(self, version):
+        """Set version specific variables
+
+        :param version: SDS version to use Ex: 2_0_0
+        :type version: string
+        :raises ValueError: if the given version is not an acceptable SDS version
+        """
+        if version == "2_0_0":
+            self._subject_id_field = "subject id"
+            self._sample_id_field = "sample id"
+        elif version == "1_2_3":
+            self._subject_id_field = "subject_id"
+            self._sample_id_field = "sample_id"
+        else:
+            error_msg = f"Unsupported version {version}"
+            raise ValueError(error_msg)
+
 
     def _load(self, dir_path):
         """
@@ -142,6 +164,7 @@ class Dataset(object):
         version = self._convert_version_format(version)
 
         self._version = version
+        self._set_version_specific_variables(version)
 
     def load_template(self, version):
         """
@@ -601,17 +624,8 @@ class Dataset(object):
 
         add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
 
-        # In future, we can move this switch case one scope up
-        if self._version == '2_0_0':
-            subject_id_field = "subject id"
-            sample_id_field = "sample id"
-            samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
-            subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
-        else:
-            subject_id_field = "subject_id"
-            sample_id_field = "sample_id"
-            samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
-            subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+        samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
+        subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
 
         if not os.path.exists(samples_file_path):
             self.generate_file_from_template(samples_file_path, 'samples')
@@ -621,15 +635,35 @@ class Dataset(object):
         self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
         
         if not sample_metadata:
-            self.append(category="samples", row={subject_id_field: subject, sample_id_field: sample}, check_exist=True, unique_column=sample_id_field)
+            self.append(
+                category="samples", 
+                row={self._subject_id_field: subject, self._sample_id_field: sample}, 
+                check_exist=True, 
+                unique_column=self._sample_id_field
+                )
         else:
-            self.append(category="samples", row=sample_metadata, check_exist=True, unique_column=sample_id_field)
+            self.append(
+                category="samples", 
+                row=sample_metadata, 
+                check_exist=True, 
+                unique_column=self._sample_id_field
+                )
         self.generate_file_from_template(samples_file_path, 'samples', self._dataset['samples']['metadata'])
 
         if not subject_metadata:
-            self.append(category="subjects", row={subject_id_field: subject}, check_exist=True, unique_column=subject_id_field)
+            self.append(
+                category="subjects", 
+                row={self._subject_id_field: subject}, 
+                check_exist=True, 
+                unique_column=self._subject_id_field
+                )
         else:
-            self.append(category="subjects", row=subject_metadata, check_exist=True, unique_column=subject_id_field)
+            self.append(
+                category="subjects", 
+                row=subject_metadata, 
+                check_exist=True, 
+                unique_column=self._subject_id_field
+                )
         self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
 
 
