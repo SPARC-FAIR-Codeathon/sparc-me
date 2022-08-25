@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 import io
 import pandas as pd
+import queue
+import threading
+import os
 
 
 class Dataset_Api:
@@ -158,11 +161,11 @@ class Dataset_Api:
         extension = pathList[1]
         fileStrList = filepath.split('/')
         i = len(fileStrList)
-        filename = fileStrList[i-1]
-        relative_path='/'
-        for r in fileStrList[0:i-1]:
-            relative_path+=r+"/"
-        savepath = savepath+relative_path
+        filename = fileStrList[i - 1]
+        relative_path = '/'
+        for r in fileStrList[0:i - 1]:
+            relative_path += r + "/"
+        savepath = savepath + relative_path
 
         save_dir = Path(savepath)
         if not save_dir.is_dir():
@@ -182,7 +185,7 @@ class Dataset_Api:
                 df = pd.read_csv(fh)
             df.to_csv(savepath + filename, sep=',', header=False, index=False)
 
-    def get_UBERONs_From_Dataset(self,datasetId,filepath):
+    def get_UBERONs_From_Dataset(self, datasetId, filepath):
         response = self.download_file(datasetId, filepath)
         with io.BytesIO(response.content) as fh:
             df = pd.read_csv(fh)
@@ -193,27 +196,110 @@ class Dataset_Api:
     TODO: download whole dataset
     '''
 
-    def download_dataset(self, datasetId, versionId, save_dir):
-        if not isinstance(datasetId, str):
-            datasetId = str(datasetId)
-            versionId = str(versionId)
-        save_dir = Path(save_dir)
-        if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
+    def mkdir(self, paths):
+        for path in paths:
+            savepath = "dataset/"
+            fileStrList = path.split('/')
+            i = len(fileStrList)
+            relative_path = '/'
+            for r in fileStrList[0:i - 1]:
+                relative_path += r + "/"
+            savepath = savepath + relative_path
+            folder = os.path.exists(savepath)
+            if not folder:
+                os.makedirs(savepath)
 
-        url = "https://api.pennsieve.io/discover/datasets/" + datasetId + "/versions/" + versionId + "/download?downloadOrigin = SPARC"
+    def get_all_files_path(self, dataset_id, version_id):
+        url = f"https://api.pennsieve.io/discover/datasets/{dataset_id}/versions/{version_id}/metadata"
 
         headers = {"Accept": "application/json"}
 
         response = requests.get(url, headers=headers)
 
-        # zip = response.content
-        # # print(zip)
-        # zFile = zipfile.ZipFile(zip, "r")
-        # for fileM in zFile.namelist():
-        #     print(fileM)
-        #     zFile.extract(fileM, save_dir)
-        # zFile.close()
+        if response.status_code == 200:
+            files = json.loads(response.text)["files"]
+            paths = []
+            for idx in range(len(files)):
+                paths.append(files[idx]["path"])
+            return paths
+
+    def craw(self, datasetId, versionId, url_queue: queue.Queue, html_queue: queue.Queue):
+        '''
+          Download bytes files from Pennsieve
+        '''
+        while True:
+            if url_queue.qsize() == 0:
+                break
+            filepath = url_queue.get()
+            if filepath is None:
+                html_queue.put(None)
+                continue
+
+            url = "https://api.pennsieve.io/zipit/discover"
+
+            payload = {"data": {
+                "paths": [filepath],
+                "datasetId": datasetId,
+                "version": versionId
+            }}
+            headers = {"Content-Type": "application/json"}
+            response = requests.request("POST", url, json=payload, headers=headers)
+            if response.status_code == 200:
+                contentObj = {
+                    "content": response.content,
+                    "filepath": filepath,
+                }
+                html_queue.put(contentObj)
+
+    def parse(self, html_queue: queue.Queue):
+        while True:
+            res = html_queue.get()
+            if res is None:
+                print("finish downloading dataset!")
+                break
+            with io.BytesIO(res["content"]) as io_file:
+                with open("dataset/" + res["filepath"], 'wb') as file:
+                    file.write(io_file.getvalue())
+
+    def download_dataset(self, dataset_id, version_id=None):
+        latest_version_id = self.get_dataset_latest_version_number(dataset_id)
+        if latest_version_id == '':
+            print("No dataset from SPARC!")
+            return
+        if version_id is None:
+            version_id = latest_version_id
+        version_id = str(version_id)
+        if int(version_id) > int(latest_version_id):
+            version_id = latest_version_id
+            print(
+                "Your input version ID is greater that the one exist in SPARC dataset, Now will download the latest version in SPARC for you!")
+        if int(version_id) < 1:
+            version_id = "1"
+            print("Invalid version id, Now will download the first version of the dataset for you!")
+
+        paths = self.get_all_files_path(dataset_id, version_id)
+        self.mkdir(paths)
+        url_queue = queue.Queue()
+        html_queue = queue.Queue()
+        threads = []
+
+        for url in paths:
+            url_queue.put(url)
+
+        url_queue.put(None)
+        url_queue.put(None)
+        url_queue.put(None)
+
+        for idx in range(3):
+            t1 = threading.Thread(target=self.craw, args=(dataset_id, version_id, url_queue, html_queue))
+            threads.append(t1)
+            t1.start()
+        for idx in range(2):
+            t2 = threading.Thread(target=self.parse, args=(html_queue,))
+            t2.start()
+
+        for t in threads:
+            t.join()
 
     def get_dataset_protocolsio_link(self, datasetId):
         dataset = self.get_dataset_latest_version_pensieve(datasetId)
@@ -247,4 +333,3 @@ class Dataset_Api:
                 protocol_json = json.loads(response.content)
                 with open(dir + '/protocol_data.json', 'w') as f:
                     json.dump(protocol_json, f)
-
