@@ -192,10 +192,10 @@ class Dataset_Api:
         df = df.dropna(axis=0, how='any')
         return df['Term ID']
 
-
     '''
     TODO: download whole dataset
     '''
+
     def mkdir(self, paths):
         for path in paths:
             savepath = "dataset/"
@@ -209,8 +209,8 @@ class Dataset_Api:
             if not folder:
                 os.makedirs(savepath)
 
-    def get_all_files_path(self):
-        url = "https://api.pennsieve.io/discover/datasets/156/versions/1/metadata"
+    def get_all_files_path(self, dataset_id, version_id):
+        url = f"https://api.pennsieve.io/discover/datasets/{dataset_id}/versions/{version_id}/metadata"
 
         headers = {"Accept": "application/json"}
 
@@ -255,16 +255,24 @@ class Dataset_Api:
         while True:
             res = html_queue.get()
             if res is None:
-                print("finish consumer")
+                print("finish downloading dataset!")
                 break
             with io.BytesIO(res["content"]) as io_file:
                 with open("dataset/" + res["filepath"], 'wb') as file:
                     file.write(io_file.getvalue())
 
-    def download_dataset(self, datasetId):
-        paths = self.get_all_files_path()
+    def download_dataset(self, dataset_id, version_id=None):
+        latest_version_id = self.get_dataset_latest_version_number(dataset_id)
+        if latest_version_id == '':
+            print("No dataset from SPARC!")
+            return
+        if version_id is None:
+            version_id = latest_version_id
+        if version_id >= int(latest_version_id):
+            version_id = int(latest_version_id)
+
+        paths = self.get_all_files_path(dataset_id, version_id)
         self.mkdir(paths)
-        versionId = self.get_dataset_latest_version_number(datasetId)
         url_queue = queue.Queue()
         html_queue = queue.Queue()
         threads = []
@@ -277,7 +285,7 @@ class Dataset_Api:
         url_queue.put(None)
 
         for idx in range(3):
-            t1 = threading.Thread(target=self.craw, args=(datasetId, versionId, url_queue, html_queue))
+            t1 = threading.Thread(target=self.craw, args=(dataset_id, version_id, url_queue, html_queue))
             threads.append(t1)
             t1.start()
         for idx in range(2):
@@ -286,7 +294,6 @@ class Dataset_Api:
 
         for t in threads:
             t.join()
-
 
     def get_dataset_protocolsio_link(self, datasetId):
         dataset = self.get_dataset_latest_version_pensieve(datasetId)
