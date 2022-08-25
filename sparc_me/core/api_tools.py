@@ -268,8 +268,14 @@ class Dataset_Api:
             return
         if version_id is None:
             version_id = latest_version_id
-        if version_id >= int(latest_version_id):
-            version_id = int(latest_version_id)
+        version_id = str(version_id)
+        if int(version_id) > int(latest_version_id):
+            version_id = latest_version_id
+            print(
+                "Your input version ID is greater that the one exist in SPARC dataset, Now will download the latest version in SPARC for you!")
+        if int(version_id) < 1:
+            version_id = "1"
+            print("Invalid version id, Now will download the first version of the dataset for you!")
 
         paths = self.get_all_files_path(dataset_id, version_id)
         self.mkdir(paths)
