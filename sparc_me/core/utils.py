@@ -50,11 +50,11 @@ def modify_manifest(fname, destination_path):
     manifest_file_path = [f for f in files if "manifest" in f]
     # Case 1: manifest file exists
     if len(manifest_file_path)!=0:
-        manifest_file_path = manifest_file_path[0]
+        manifest_file_path = os.path.join(destination_path, manifest_file_path[0])
         # Check the extension and read file accordingly
         extension = os.path.splitext(manifest_file_path)[-1].lower()
         if extension == ".xlsx":
-            df = pd.read_excel(manifest_file_path)
+            df = pd.read_excel(manifest_file_path, index_col=0)
         elif extension == ".csv":
             df = pd.read_csv(manifest_file_path)
         elif extension == ".json":
