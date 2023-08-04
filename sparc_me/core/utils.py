@@ -1,5 +1,7 @@
 import os
 import shutil
+import pandas as pd
+from datetime import datetime, timezone
 
 def add_data(source_path, destination_path, copy=True, overwrite=False):
     """Copy or move data from source folder to destination folder
@@ -37,6 +39,60 @@ def add_data(source_path, destination_path, copy=True, overwrite=False):
             else:
                 # Move data
                 shutil.move(file_path, os.path.join(destination_path, fname))
+            # Modify the manifest file
+            modify_manifest(fname, destination_path)
+
+
+def modify_manifest(fname, destination_path):
+    # Check if manifest exist
+    # If can be "xlsx", "csv" or "json"
+    files = os.listdir(destination_path)
+    manifest_file_path = [f for f in files if "manifest" in f]
+    # Case 1: manifest file exists
+    if len(manifest_file_path)!=0:
+        manifest_file_path = os.path.join(destination_path, manifest_file_path[0])
+        # Check the extension and read file accordingly
+        extension = os.path.splitext(manifest_file_path)[-1].lower()
+        if extension == ".xlsx":
+            df = pd.read_excel(manifest_file_path, index_col=0)
+        elif extension == ".csv":
+            df = pd.read_csv(manifest_file_path)
+        elif extension == ".json":
+            # TODO: Check what structure a manifest json is in
+            # Below code assumes json structure is like
+            # '{"row 1":{"col 1":"a","col 2":"b"},"row 2":{"col 1":"c","col 2":"d"}}'
+            df = pd.read_json(manifest_file_path, orient="index")
+        else:
+            raise ValueError(f"Unauthorized manifest file extension: {extension}")
+    # Case 2: create manifest file
+    else:
+        # Default extension to xlsx
+        extension = ".xlsx"
+        # Creat manifest file path
+        manifest_file_path = os.path.join(destination_path, "manifest.xlsx")
+        df = pd.DataFrame(columns = ['filename', 'description', 'timestamp', 'file type'])
+
+    # Edit manifest
+    sample = destination_path.split(os.path.sep)[-1]
+    subject = destination_path.split(os.path.sep)[-2]
+
+    row = {
+        'filename': os.path.splitext(fname)[0],
+        'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        'description': f"File of subject {subject} sample {sample}",
+        'file type': os.path.splitext(fname)[-1].lower()[1:]
+    }
+    row_pd = pd.DataFrame([row])
+    df = pd.concat([df, row_pd], axis=0, ignore_index=True)
+    
+    # Save editted manifest file
+    if extension == ".xlsx":
+        df.to_excel(manifest_file_path)
+    elif extension == ".csv":
+        df = pd.to_csv(manifest_file_path)
+    elif extension == ".json":
+        df = pd.read_json(manifest_file_path, orient="index")
+    return
 
 
 def check_row_exist(dataframe, unique_column, unique_value):
