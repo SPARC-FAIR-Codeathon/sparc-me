@@ -374,6 +374,7 @@ class Dataset(object):
             print("Category: " + str(category))
             for index, row in element_description.iterrows():
                 print(str(row["Element"]))
+                print("    Required: " + str(row["Required"]))
                 print("    Type: " + str(row["Type"]))
                 print("    Description: " + str(row["Description"]))
                 print("    Example: " + str(row["Example"]))
