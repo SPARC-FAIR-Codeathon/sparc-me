@@ -364,7 +364,7 @@ class Dataset(object):
             version = self._convert_version_format(version)
             template_dir = self._get_template_dir(version)
 
-            element_description_file = template_dir / "../element_descriptions.xlsx"
+            element_description_file = template_dir / "../schema.xlsx"
 
             try:
                 element_description = pd.read_excel(element_description_file, sheet_name=category)
