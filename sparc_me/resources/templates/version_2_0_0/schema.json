@@ -1,4 +1,387 @@
 {
+    "dataset_description": {
+        "Metadata Version": {
+            "Type": "string",
+            "Description": "2.0.0",
+            "Example": "2.0.0"
+        },
+        "Type": {
+            "Type": "string",
+            "Description": "The type of this dataset, specifically whether it is experimental or computation. The only valid values are experimental or computational. If experimental subjects are required, if computational, subjects are not required. Set to experimental by default, if you are submitting a computational study be sure to change it.",
+            "Example": "experimental"
+        },
+        "Title": {
+            "Type": "string",
+            "Description": "Descriptive title for the data set. Equivalent to the title of a scientific paper. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "Example": "My SPARC dataset"
+        },
+        "Subtitle": {
+            "Type": "string",
+            "Description": "NOTE This field is not currently used when publishing a SPARC dataset. Brief description of the study and the data set. Equivalent to the abstract of a scientific paper. Include the rationale for the approach, the types of data collected, the techniques used, formats and number of files and an approximate size. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "Example": "A really cool dataset that I collected to answer some question."
+        },
+        "Keywords": {
+            "Type": "string",
+            "Description": "A set of keywords to assist in search.",
+            "Example": "spinal cord, electrophysiology, RNA-seq, mouse"
+        },
+        "Funding": {
+            "Type": "string",
+            "Description": "Funding sources",
+            "Example": "OT2OD025349"
+        },
+        "Acknowledgments": {
+            "Type": "string",
+            "Description": "Acknowledgments beyond funding and contributors",
+            "Example": "Thank you everyone!"
+        },
+        "Study purpose": {
+            "Type": "string",
+            "Description": "A description of the study purpose for the structured abstract.",
+            "Example": "This study was conducted to demonstrate data wranglers how to fill out dataset templates."
+        },
+        "Study data collection": {
+            "Type": "string",
+            "Description": "A description of the study data collection process for this dataset. Used to generate the structured abstract.",
+            "Example": "Using an earlier version of this template we measured how much it confused data wranglers by counting the number of emails we had to exchange with them in order to fill it out."
+        },
+        "Study primary conclusion": {
+            "Type": "string",
+            "Description": "A description of the primary conclusion drawn from the study for the structured abstract.",
+            "Example": "The primary conclusion of this study is that it is hard to make a good dataset template."
+        },
+        "Study organ system": {
+            "Type": "string",
+            "Description": "The major organ systems related to this study.\nautonomic ganglion\nbrain\ncolon\nheart\nintestine\nkidney\nlarge intestine\nliver\nlower urinary tract\nlung\nnervous system\npancreas\nperipheral nervous system\nsmall intestine\nspinal cord\nspleen\nstomach\nsympathetic nervous system\nurinary bladder",
+            "Example": "spinal cord"
+        },
+        "Study approach": {
+            "Type": "string",
+            "Description": "The experimental approach or approaches taken in this study.",
+            "Example": "electrophysiology"
+        },
+        "Study technique": {
+            "Type": "string",
+            "Description": "The experimental techniques used in this study.",
+            "Example": "patch clamp"
+        },
+        "Study collection title": {
+            "Type": "string",
+            "Description": "Title of the larger collection of to which this dataset belongs.",
+            "Example": "My SPARC research study"
+        },
+        "Contributor name": {
+            "Type": "string",
+            "Description": "Name of any contributors to the dataset.  These individuals need not have been authors on any publications describing the data, but should be acknowledged for their role in producing and publishing the data set.  If more than one, add each contributor in a new column.",
+            "Example": "Last, First Middle"
+        },
+        "Contributor ORCiD": {
+            "Type": "string",
+            "Description": "ORCiD ID. If you don't have an ORCiD, we suggest you sign up for one.",
+            "Example": "https://orcid.org/0000-0002-5497-0243"
+        },
+        "Contributor affiliation": {
+            "Type": "string",
+            "Description": "Institutional affiliation for contributors",
+            "Example": "https://ror.org/0168r3w48"
+        },
+        "Contributor role": {
+            "Type": "string",
+            "Description": "Contributor role. At most one PrincipalInvestigator and at least one CorrespondingAuthor are required. These roles are provided by the Data Cite schema. Options are:\nPrincipalInvestigator\nCreator\nCoInvestigator\nCorrespondingAuthor\nDataCollector\nDataCurator\nDataManager\nDistributor\nEditor\nProducer\nProjectLeader\nProjectManager\nProjectMember\nRelatedPerson\nResearcher\nResearchGroup\nSponsor\nSupervisor\nWorkPackageLeader\nOther.",
+            "Example": "DataCollector"
+        },
+        "Identifier description": {
+            "Type": "string",
+            "Description": "A description of the referent of the related identifier.",
+            "Example": "The protocol use to generate this dataset."
+        },
+        "Relation type": {
+            "Type": "string",
+            "Description": "The relationship that this dataset has to the related identifier. For example the originating article would be this dataset IsDescribedBy originating article.\nThe SPARC specific list is:\nIsProtocolFor\nHasProtocol\nIsSoftwareFor\nHasSoftware\nThe DataCite list is:\nIsCitedBy,\nCites,\nIsSupplementTo,\nIsSupplementedBy,\nIsContinuedByContinues,\nIsDescribedBy,\nDescribes,\nHasMetadata,\nIsMetadataFor,\nHasVersion,\nIsVersionOf,\nIsNewVersionOf,\nIsPreviousVersionOf,\nIsPartOf,\nHasPart,\nIsPublishedIn,\nIsReferencedBy,\nReferences,\nIsDocumentedBy,\nDocuments,\nIsCompiledBy,\nCompiles,\nIsVariantFormOf,\nIsOriginalFormOf,\nIsIdenticalTo,\nIsReviewedBy,\nReviews,\nIsDerivedFrom,\nIsSourceOf,\nIsRequiredBy,\nRequires,\nIsObsoletedBy,\nObsoletes.",
+            "Example": "HasProtocol"
+        },
+        "Identifier": {
+            "Type": "string",
+            "Description": "The identifier for something related to this dataset.",
+            "Example": "https://doi.org/10.13003/5jchdy"
+        },
+        "Identifier type": {
+            "Type": "string",
+            "Description": "The type of the identifier.",
+            "Example": "DOI"
+        },
+        "Number of subjects": {
+            "Type": "integer",
+            "Description": "Number of unique subjects in this dataset, should match subjects metadata file. Only required for experimental datasets.",
+            "Example": 1
+        },
+        "Number of samples": {
+            "Type": "integer",
+            "Description": "Number of unique samples in this dataset, should match samples metadata file. Set to zero if there are no samples. Only required for experimental datasets.",
+            "Example": 0
+        }
+    },
+    "subjects": {
+        "subject id": {
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each subject, should match folder names",
+            "Example": "sub-1"
+        },
+        "pool id": {
+            "Type": "string",
+            "Description": "If data is collected on multiple subjects at the same time include the identifier of the pool where the data file will be found. If this is included it should be the name of the top level folder inside primary.",
+            "Example": "pool-1"
+        },
+        "subject experimental group": {
+            "Type": "string",
+            "Description": "Experimental group subject is assigned to in research project",
+            "Example": "Control"
+        },
+        "age": {
+            "Type": "string",
+            "Description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
+            "Example": "4 weeks"
+        },
+        "sex": {
+            "Type": "string",
+            "Description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
+            "Example": "Female"
+        },
+        "species": {
+            "Type": "string",
+            "Description": "Subject species",
+            "Example": "Rattus norvegicus"
+        },
+        "strain": {
+            "Type": "string",
+            "Description": "Organism strain of the subject",
+            "Example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "Type": "string",
+            "Description": "Research Resource Identifier Identification (RRID) for the strain For this field",
+            "Example": "RRID:RGD_10395233"
+        },
+        "age category": {
+            "Type": "string",
+            "Description": "description of age category from derived from UBERON life cycle stage",
+            "Example": "prime adult stage"
+        },
+        "also in dataset": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "member of": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "laboratory internal id": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "date of birth": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "age range (min)": {
+            "Type": "string",
+            "Description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "10 days"
+        },
+        "age range (max)": {
+            "Type": "string",
+            "Description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "20 days"
+        },
+        "body mass": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "genotype": {
+            "Type": "string",
+            "Description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
+            "Example": "MGI:3851780"
+        },
+        "phenotype": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "handedness": {
+            "Type": "string",
+            "Description": "Preference of the subject to use the right or left hand, if applicable",
+            "Example": "right"
+        },
+        "reference atlas": {
+            "Type": "string",
+            "Description": "The reference atlas and organ",
+            "Example": "Paxinos and Watson, The Rat Brain In Stereotaxic Coordinates, 7th Ed, 2013"
+        },
+        "experimental log file path": {
+            "Type": "string",
+            "Description": "A file containing experimental records for each sample.",
+            "Example": null
+        },
+        "experiment date": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "disease or disorder": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "intervention": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "disease model": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "protocol title": {
+            "Type": "string",
+            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "Example": "Spinal Cord extraction"
+        },
+        "protocol url or doi": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        }
+    },
+    "samples": {
+        "subject id": {
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each subject",
+            "Example": "sub-1"
+        },
+        "sample id": {
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each sample, must be unique",
+            "Example": "sub-1_sam-2"
+        },
+        "wasDerivedFromSample": {
+            "Type": "string",
+            "Description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.)",
+            "Example": "sub-1_sam-1"
+        },
+        "pool id": {
+            "Type": "string",
+            "Description": "If data is collected on multiple samples at the same time include the identifier of the pool where the data file will be found.",
+            "Example": "pool-1"
+        },
+        "sample experimental group": {
+            "Type": "string",
+            "Description": "Experimental group subject is assigned to in research project. If you have experimental groups for samples please add another column.",
+            "Example": "Control"
+        },
+        "sample type": {
+            "Type": "string",
+            "Description": "Physical type of the specimen from which the data were extracted",
+            "Example": "tissue"
+        },
+        "sample anatomical location": {
+            "Type": "string",
+            "Description": "The organ, or subregion of organ from which the data were extracted",
+            "Example": "dentate gyrus"
+        },
+        "also in dataset": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "member of": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "laboratory internal id": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "date of derivation": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "experimental log file path": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "reference atlas": {
+            "Type": "string",
+            "Description": "The reference atlas and organ",
+            "Example": "Paxinos Rat V3"
+        },
+        "pathology": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "laterality": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "cell type": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "plane of section": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "protocol title": {
+            "Type": "string",
+            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "Example": "Spinal Cord extraction"
+        },
+        "protocol url or doi": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        }
+    },
+    "manifest": {
+        "filename": {
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "timestamp": {
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "description": {
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "file type": {
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "Additional Metadata": {
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        }
+    },
     "code_description": {
         "RRID Term": {
             "Type": "string",
@@ -238,155 +621,6 @@
             "Example": "Default value for the input field, if applicable (doi or value)"
         }
     },
-    "dataset_description": {
-        "Metadata Version": {
-            "Type": "string",
-            "Description": "2.0.0",
-            "Example": "2.0.0"
-        },
-        "Type": {
-            "Type": "string",
-            "Description": "The type of this dataset, specifically whether it is experimental or computation. The only valid values are experimental or computational. If experimental subjects are required, if computational, subjects are not required. Set to experimental by default, if you are submitting a computational study be sure to change it.",
-            "Example": "experimental"
-        },
-        "Title": {
-            "Type": "string",
-            "Description": "Descriptive title for the data set. Equivalent to the title of a scientific paper. The metadata associated with the published version of this dataset does not currently make use of this field.",
-            "Example": "My SPARC dataset"
-        },
-        "Subtitle": {
-            "Type": "string",
-            "Description": "NOTE This field is not currently used when publishing a SPARC dataset. Brief description of the study and the data set. Equivalent to the abstract of a scientific paper. Include the rationale for the approach, the types of data collected, the techniques used, formats and number of files and an approximate size. The metadata associated with the published version of this dataset does not currently make use of this field.",
-            "Example": "A really cool dataset that I collected to answer some question."
-        },
-        "Keywords": {
-            "Type": "string",
-            "Description": "A set of keywords to assist in search.",
-            "Example": "spinal cord, electrophysiology, RNA-seq, mouse"
-        },
-        "Funding": {
-            "Type": "string",
-            "Description": "Funding sources",
-            "Example": "OT2OD025349"
-        },
-        "Acknowledgments": {
-            "Type": "string",
-            "Description": "Acknowledgments beyond funding and contributors",
-            "Example": "Thank you everyone!"
-        },
-        "Study purpose": {
-            "Type": "string",
-            "Description": "A description of the study purpose for the structured abstract.",
-            "Example": "This study was conducted to demonstrate data wranglers how to fill out dataset templates."
-        },
-        "Study data collection": {
-            "Type": "string",
-            "Description": "A description of the study data collection process for this dataset. Used to generate the structured abstract.",
-            "Example": "Using an earlier version of this template we measured how much it confused data wranglers by counting the number of emails we had to exchange with them in order to fill it out."
-        },
-        "Study primary conclusion": {
-            "Type": "string",
-            "Description": "A description of the primary conclusion drawn from the study for the structured abstract.",
-            "Example": "The primary conclusion of this study is that it is hard to make a good dataset template."
-        },
-        "Study organ system": {
-            "Type": "string",
-            "Description": "The major organ systems related to this study.\nautonomic ganglion\nbrain\ncolon\nheart\nintestine\nkidney\nlarge intestine\nliver\nlower urinary tract\nlung\nnervous system\npancreas\nperipheral nervous system\nsmall intestine\nspinal cord\nspleen\nstomach\nsympathetic nervous system\nurinary bladder",
-            "Example": "spinal cord"
-        },
-        "Study approach": {
-            "Type": "string",
-            "Description": "The experimental approach or approaches taken in this study.",
-            "Example": "electrophysiology"
-        },
-        "Study technique": {
-            "Type": "string",
-            "Description": "The experimental techniques used in this study.",
-            "Example": "patch clamp"
-        },
-        "Study collection title": {
-            "Type": "string",
-            "Description": "Title of the larger collection of to which this dataset belongs.",
-            "Example": "My SPARC research study"
-        },
-        "Contributor name": {
-            "Type": "string",
-            "Description": "Name of any contributors to the dataset.  These individuals need not have been authors on any publications describing the data, but should be acknowledged for their role in producing and publishing the data set.  If more than one, add each contributor in a new column.",
-            "Example": "Last, First Middle"
-        },
-        "Contributor ORCiD": {
-            "Type": "string",
-            "Description": "ORCiD ID. If you don't have an ORCiD, we suggest you sign up for one.",
-            "Example": "https://orcid.org/0000-0002-5497-0243"
-        },
-        "Contributor affiliation": {
-            "Type": "string",
-            "Description": "Institutional affiliation for contributors",
-            "Example": "https://ror.org/0168r3w48"
-        },
-        "Contributor role": {
-            "Type": "string",
-            "Description": "Contributor role. At most one PrincipalInvestigator and at least one CorrespondingAuthor are required. These roles are provided by the Data Cite schema. Options are:\nPrincipalInvestigator\nCreator\nCoInvestigator\nCorrespondingAuthor\nDataCollector\nDataCurator\nDataManager\nDistributor\nEditor\nProducer\nProjectLeader\nProjectManager\nProjectMember\nRelatedPerson\nResearcher\nResearchGroup\nSponsor\nSupervisor\nWorkPackageLeader\nOther.",
-            "Example": "DataCollector"
-        },
-        "Identifier description": {
-            "Type": "string",
-            "Description": "A description of the referent of the related identifier.",
-            "Example": "The protocol use to generate this dataset."
-        },
-        "Relation type": {
-            "Type": "string",
-            "Description": "The relationship that this dataset has to the related identifier. For example the originating article would be this dataset IsDescribedBy originating article.\nThe SPARC specific list is:\nIsProtocolFor\nHasProtocol\nIsSoftwareFor\nHasSoftware\nThe DataCite list is:\nIsCitedBy,\nCites,\nIsSupplementTo,\nIsSupplementedBy,\nIsContinuedByContinues,\nIsDescribedBy,\nDescribes,\nHasMetadata,\nIsMetadataFor,\nHasVersion,\nIsVersionOf,\nIsNewVersionOf,\nIsPreviousVersionOf,\nIsPartOf,\nHasPart,\nIsPublishedIn,\nIsReferencedBy,\nReferences,\nIsDocumentedBy,\nDocuments,\nIsCompiledBy,\nCompiles,\nIsVariantFormOf,\nIsOriginalFormOf,\nIsIdenticalTo,\nIsReviewedBy,\nReviews,\nIsDerivedFrom,\nIsSourceOf,\nIsRequiredBy,\nRequires,\nIsObsoletedBy,\nObsoletes.",
-            "Example": "HasProtocol"
-        },
-        "Identifier": {
-            "Type": "string",
-            "Description": "The identifier for something related to this dataset.",
-            "Example": "https://doi.org/10.13003/5jchdy"
-        },
-        "Identifier type": {
-            "Type": "string",
-            "Description": "The type of the identifier.",
-            "Example": "DOI"
-        },
-        "Number of subjects": {
-            "Type": "integer",
-            "Description": "Number of unique subjects in this dataset, should match subjects metadata file. Only required for experimental datasets.",
-            "Example": 1
-        },
-        "Number of samples": {
-            "Type": "integer",
-            "Description": "Number of unique samples in this dataset, should match samples metadata file. Set to zero if there are no samples. Only required for experimental datasets.",
-            "Example": 0
-        }
-    },
-    "manifest": {
-        "filename": {
-            "Type": "string",
-            "Description": NaN,
-            "Example": NaN
-        },
-        "timestamp": {
-            "Type": "string",
-            "Description": NaN,
-            "Example": NaN
-        },
-        "description": {
-            "Type": "string",
-            "Description": NaN,
-            "Example": NaN
-        },
-        "file type": {
-            "Type": "string",
-            "Description": NaN,
-            "Example": NaN
-        },
-        "Additional Metadata": {
-            "Type": "string",
-            "Description": NaN,
-            "Example": NaN
-        }
-    },
     "performances": {},
     "resources": {
         "RRID": {
@@ -413,240 +647,6 @@
             "Type": NaN,
             "Description": NaN,
             "Example": NaN
-        }
-    },
-    "samples": {
-        "subject_id": {
-            "Type": "string",
-            "Description": "Lab-based schema for identifying each subject",
-            "Example": "sub-1"
-        },
-        "sample_id": {
-            "Type": "string",
-            "Description": "Lab-based schema for identifying each sample, must be unique",
-            "Example": "sub-1_sam-2"
-        },
-        "wasDerivedFromSample": {
-            "Type": "string",
-            "Description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.)",
-            "Example": "sub-1_sam-1"
-        },
-        "pool_id": {
-            "Type": "string",
-            "Description": "If data is collected on multiple samples at the same time include the identifier of the pool where the data file will be found.",
-            "Example": "pool-1"
-        },
-        "sample experimental group": {
-            "Type": "string",
-            "Description": "Experimental group subject is assigned to in research project. If you have experimental groups for samples please add another column.",
-            "Example": "Control"
-        },
-        "sample type": {
-            "Type": "string",
-            "Description": "Physical type of the specimen from which the data were extracted",
-            "Example": "tissue"
-        },
-        "sample anatomical location": {
-            "Type": "string",
-            "Description": "The organ, or subregion of organ from which the data were extracted",
-            "Example": "dentate gyrus"
-        },
-        "also in dataset": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "member of": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "laboratory internal id": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "date of derivation": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "experimental log file path": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "reference atlas": {
-            "Type": "string",
-            "Description": "The reference atlas and organ",
-            "Example": "Paxinos Rat V3"
-        },
-        "pathology": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "laterality": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "cell type": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "plane of section": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        },
-        "protocol title": {
-            "Type": "string",
-            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
-            "Example": "Spinal Cord extraction"
-        },
-        "protocol url or doi": {
-            "Type": null,
-            "Description": null,
-            "Example": null
-        }
-    },
-    "subjects": {
-        "subject_id": {
-            "Type": NaN,
-            "Description": "Lab-based schema for identifying each subject, should match folder names",
-            "Example": "sub-1"
-        },
-        "pool_id": {
-            "Type": NaN,
-            "Description": "If data is collected on multiple subjects at the same time include the identifier of the pool where the data file will be found. If this is included it should be the name of the top level folder inside primary.",
-            "Example": "pool-1"
-        },
-        "subject experimental group": {
-            "Type": NaN,
-            "Description": "Experimental group subject is assigned to in research project",
-            "Example": "Control"
-        },
-        "age": {
-            "Type": NaN,
-            "Description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
-            "Example": "4 weeks"
-        },
-        "sex": {
-            "Type": NaN,
-            "Description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
-            "Example": "Female"
-        },
-        "species": {
-            "Type": NaN,
-            "Description": "Subject species",
-            "Example": "Rattus norvegicus"
-        },
-        "strain": {
-            "Type": NaN,
-            "Description": "Organism strain of the subject",
-            "Example": "Sprague-Dawley"
-        },
-        "RRID for strain": {
-            "Type": NaN,
-            "Description": "Research Resource Identifier Identification (RRID) for the strain For this field",
-            "Example": "RRID:RGD_10395233"
-        },
-        "age category": {
-            "Type": NaN,
-            "Description": "description of age category from derived from UBERON life cycle stage",
-            "Example": "prime adult stage"
-        },
-        "also in dataset": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "member of": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "laboratory internal id": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "date of birth": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "age range (min)": {
-            "Type": NaN,
-            "Description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
-            "Example": "10 days"
-        },
-        "age range (max)": {
-            "Type": NaN,
-            "Description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
-            "Example": "20 days"
-        },
-        "body mass": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "genotype": {
-            "Type": NaN,
-            "Description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
-            "Example": "MGI:3851780"
-        },
-        "phenotype": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "handedness": {
-            "Type": NaN,
-            "Description": "Preference of the subject to use the right or left hand, if applicable",
-            "Example": "right"
-        },
-        "reference atlas": {
-            "Type": NaN,
-            "Description": "The reference atlas and organ",
-            "Example": "Paxinos and Watson, The Rat Brain In Stereotaxic Coordinates, 7th Ed, 2013"
-        },
-        "experimental log file path": {
-            "Type": NaN,
-            "Description": "A file containing experimental records for each sample.",
-            "Example": null
-        },
-        "experiment date": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "disease or disorder": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "intervention": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "disease model": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
-        },
-        "protocol title": {
-            "Type": NaN,
-            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
-            "Example": "Spinal Cord extraction"
-        },
-        "protocol url or doi": {
-            "Type": NaN,
-            "Description": null,
-            "Example": null
         }
     },
     "submission": {
