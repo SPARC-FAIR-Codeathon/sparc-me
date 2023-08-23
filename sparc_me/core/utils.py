@@ -137,6 +137,7 @@ def convert_schema_excel_to_json(source_path, dest_path):
         for index, row in element_description.iterrows():
             element = row["Element"]
             schema[sheet][element] = dict()
+            schema[sheet][element]["Required"] = row["Required"]
             schema[sheet][element]["Type"] = row["Type"]
             schema[sheet][element]["Description"] = row["Description"]
             schema[sheet][element]["Example"] = row["Example"]
