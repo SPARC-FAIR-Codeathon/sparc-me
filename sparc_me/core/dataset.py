@@ -239,8 +239,7 @@ class Dataset(object):
             raise ValueError(msg)
 
         save_dir = Path(save_dir)
-        if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
+        save_dir.mkdir(parents=True, exist_ok=True)
 
         for key, value in self._dataset.items():
             if isinstance(value, dict):
