@@ -9,18 +9,17 @@ if __name__ == '__main__':
     dataset = Dataset()
 
     # List metadata categories/files. 
-    categories = dataset.list_categories(version="1.2.3")
+    categories = dataset.list_categories(version="2.0.0")
     print(categories)
 
     # List elements/fields
-    elements = dataset.list_elements(category="dataset_description", version="1.2.3")
-    # elements = dataset.list_elements(category="subjects", version="2.0.0")
+    elements = dataset.list_elements(category="dataset_description", version="2.0.0")
 
     # Creating/loading dataset. 
 
     # Load dataset from template. 
     # Dataset templates are stored here: https://github.com/SciCrunch/sparc-curation/releases
-    dataset.load_from_template(version="1.2.3")
+    dataset.load_from_template(version="2.0.0")
 
     # Save the template dataset. 
     dataset.save(save_dir=save_dir)
@@ -33,7 +32,7 @@ if __name__ == '__main__':
     dataset.set_field(category="dataset_description", row_index=2, header="Value 2", value="testValue")
 
     # # Append a row to the "subjects" metadata file. "subject id" will be set to "test_id"
-    dataset.append(category="subjects", row={"subject_id": "test_id"})
+    dataset.append(category="subjects", row={"subject id": "test_id"})
     dataset.set_field_using_row_name(category="subjects", row_name="test_id", header="sex", value="male")
 
     dataset.save(save_dir)
