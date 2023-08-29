@@ -239,8 +239,7 @@ class Dataset(object):
             raise ValueError(msg)
 
         save_dir = Path(save_dir)
-        if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
+        save_dir.mkdir(parents=True, exist_ok=True)
 
         for key, value in self._dataset.items():
             if isinstance(value, dict):
@@ -364,7 +363,7 @@ class Dataset(object):
             version = self._convert_version_format(version)
             template_dir = self._get_template_dir(version)
 
-            element_description_file = template_dir / "../element_descriptions.xlsx"
+            element_description_file = template_dir / "../schema.xlsx"
 
             try:
                 element_description = pd.read_excel(element_description_file, sheet_name=category)
@@ -374,6 +373,7 @@ class Dataset(object):
             print("Category: " + str(category))
             for index, row in element_description.iterrows():
                 print(str(row["Element"]))
+                print("    Required: " + str(row["Required"]))
                 print("    Type: " + str(row["Type"]))
                 print("    Description: " + str(row["Description"]))
                 print("    Example: " + str(row["Example"]))

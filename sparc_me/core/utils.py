@@ -1,7 +1,11 @@
 import os
+import json
 import shutil
+import openpyxl
 import pandas as pd
 from datetime import datetime, timezone
+from xlrd import XLRDError
+
 
 def add_data(source_path, destination_path, copy=True, overwrite=False):
     """Copy or move data from source folder to destination folder
@@ -115,3 +119,29 @@ def check_row_exist(dataframe, unique_column, unique_value):
     else:
         row_index = row_index[0]
     return row_index
+
+def convert_schema_excel_to_json(source_path, dest_path):
+    wb = openpyxl.load_workbook(source_path)
+    sheets = wb.sheetnames
+
+    schema = dict()
+    for sheet in sheets:
+        schema[sheet] = dict()
+        try:
+            element_description = pd.read_excel(source_path, sheet_name=sheet)
+        except XLRDError:
+            element_description = pd.read_excel(source_path, sheet_name=sheet, engine='openpyxl')
+
+        element_description = element_description.where(pd.notnull(element_description), None)
+
+        for index, row in element_description.iterrows():
+            element = row["Element"]
+            schema[sheet][element] = dict()
+            schema[sheet][element]["Required"] = row["Required"]
+            schema[sheet][element]["Type"] = row["Type"]
+            schema[sheet][element]["Description"] = row["Description"]
+            schema[sheet][element]["Example"] = row["Example"]
+
+    with open(dest_path, 'w') as f:
+        json.dump(schema, f, indent=4)
+

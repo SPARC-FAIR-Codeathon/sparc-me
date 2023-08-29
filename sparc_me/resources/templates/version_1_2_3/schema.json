@@ -1,0 +1,308 @@
+{
+    "dataset_description": {
+        "Name": {
+            "Type": "string",
+            "Description": "Descriptive title for the data set. Equivalent to the title of a scientific paper. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "Example": "My SPARC dataset"
+        },
+        "Description": {
+            "Type": "string",
+            "Description": "NOTE This field is not currently used when publishing a SPARC dataset. Brief description of the study and the data set. Equivalent to the abstract of a scientific paper. Include the rationale for the approach, the types of data collected, the techniques used, formats and number of files and an approximate size. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "Example": "A really cool dataset that I collected to answer some question."
+        },
+        "Keywords": {
+            "Type": "string",
+            "Description": "A set of 3-5 keywords other than the above that will aid in search",
+            "Example": "spinal cord, electrophysiology, RNA-seq, mouse"
+        },
+        "Contributors": {
+            "Type": "string",
+            "Description": "Name of any contributors to the dataset.  These individuals need not have been authors on any publications describing the data, but should be acknowledged for their role in producing and publishing the data set.  If more than one, add each contributor in a new column.",
+            "Example": "Last, First Middle"
+        },
+        "Contributor ORCID ID": {
+            "Type": "string",
+            "Description": "ORCID ID. If you don't have an ORCID, we suggest you sign up for one.",
+            "Example": "https://orcid.org/0000-0002-5497-0243"
+        },
+        "Contributor Affiliation": {
+            "Type": "string",
+            "Description": "Institutional affiliation for contributors",
+            "Example": "https://ror.org/0168r3w48"
+        },
+        "Contributor Role": {
+            "Type": "string",
+            "Description": "Contributor role, e.g., PrincipleInvestigator, Creator, CoInvestigator, ContactPerson, DataCollector, DataCurator, DataManager, Distributor, Editor, Producer, ProjectLeader, ProjectManager, ProjectMember, RelatedPerson, Researcher, ResearchGroup, Sponsor, Supervisor, WorkPackageLeader, Other.  These roles are provided by the Data Cite schema.  If more than one, add additional columns",
+            "Example": "Data Collector"
+        },
+        "Is Contact Person": {
+            "Type": "string",
+            "Description": "Yes or No if the contributor is a contact person for the dataset",
+            "Example": "Yes"
+        },
+        "Acknowledgements": {
+            "Type": "string",
+            "Description": "Acknowledgements beyond funding and contributors",
+            "Example": "Thank you everyone!"
+        },
+        "Funding": {
+            "Type": "string",
+            "Description": "Funding sources",
+            "Example": "OT2OD025349"
+        },
+        "Originating Article DOI": {
+            "Type": "string",
+            "Description": "DOIs of published articles that were generated from this dataset",
+            "Example": "https://doi.org/10.13003/5jchdy"
+        },
+        "Protocol URL or DOI": {
+            "Type": "string",
+            "Description": "URLs (if still private) / DOIs (if public) of protocols from protocols.io related to this dataset",
+            "Example": null
+        },
+        "Additional Links": {
+            "Type": "string",
+            "Description": "URLs of additional resources used by this dataset (e.g., a link to a code repository)",
+            "Example": "https://github.com/myuser/code-for-really-cool-data"
+        },
+        "Link Description": {
+            "Type": "string",
+            "Description": "Short description of URL content, you do not need to fill this in for Originating Article DOI or Protocol URL or DOI ",
+            "Example": "link to GitHub repository for code used in this study"
+        },
+        "Number of subjects": {
+            "Type": "integer",
+            "Description": "Number of unique subjects in this dataset, should match subjects metadata file.",
+            "Example": 1
+        },
+        "Number of samples": {
+            "Type": "integer",
+            "Description": "Number of unique samples in this dataset, should match samples metadata file. Set to zero if there are no samples.",
+            "Example": 0
+        },
+        "Completeness of data set": {
+            "Type": "string",
+            "Description": "Is the data set as uploaded complete or is it part of an ongoing study.  Use \"hasNext\" to indicate that you expect more data on different subjects as a continuation of this study. Use \u201chasChildren\u201d to indicate that you expect more data on the same subjects or samples derived from those subjects.",
+            "Example": "hasNext, hasChildren"
+        },
+        "Parent dataset ID": {
+            "Type": "string",
+            "Description": "If this is a part of a larger data set, or refereces subjects or samples from a parent dataset, what was the accession number of the prior batch.  You need only give us the number of the last batch, not all batches. If samples and subjects are from multiple parent datasets please create a comma separated list of all parent ids.",
+            "Example": "N:dataset:c5c2f40f-76be-4979-bfc4-b9f9947231cf"
+        },
+        "Title for complete data set": {
+            "Type": "string",
+            "Description": "Please give us a provisional title for the entire data set.",
+            "Example": null
+        },
+        "Metadata Version DO NOT CHANGE": {
+            "Type": "string",
+            "Description": "1.2.3",
+            "Example": "1.2.3"
+        }
+    },
+    "samples": {
+        "subject_id": {
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each subject",
+            "Example": "sub-1"
+        },
+        "sample_id": {
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each sample, must be unique",
+            "Example": "sub-1_sam-2"
+        },
+        "wasDerivedFromSample": {
+            "Type": "string",
+            "Description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.)",
+            "Example": "sub-1_sam-1"
+        },
+        "pool_id": {
+            "Type": "string",
+            "Description": "If data is collected on multiple samples at the same time include the identifier of the pool where the data file will be found.",
+            "Example": "pool-1"
+        },
+        "experimental group": {
+            "Type": "string",
+            "Description": "Experimental group subject is assigned to in research project. If you have experimental groups for samples please add another column.",
+            "Example": "Control"
+        },
+        "specimen type": {
+            "Type": "string",
+            "Description": "Physical type of the specimen from which the data were extracted",
+            "Example": "tissue"
+        },
+        "specimen anatomica location": {
+            "Type": "string",
+            "Description": "The organ, or subregion of organ from which the data were extracted",
+            "Example": "dentate gyrus"
+        },
+        "Additional Fields (e.g. MINDS)": {
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "species": {
+            "Type": "string",
+            "Description": "Subject species",
+            "Example": "Rattus norvegicus"
+        },
+        "sex": {
+            "Type": "string",
+            "Description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
+            "Example": "Female"
+        },
+        "age": {
+            "Type": "string",
+            "Description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
+            "Example": "4 weeks"
+        },
+        "age category": {
+            "Type": "string",
+            "Description": "Qualitative description of age category derived from UBERON life cycle stage",
+            "Example": "prime adult stage"
+        },
+        "age range (min)": {
+            "Type": "string",
+            "Description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "10 days"
+        },
+        "age range (max)": {
+            "Type": "string",
+            "Description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "20 days"
+        },
+        "handedness": {
+            "Type": "string",
+            "Description": "Preference of the subject to use the right or left hand, if applicable",
+            "Example": "right"
+        },
+        "strain": {
+            "Type": "string",
+            "Description": "Organism strain of the subject",
+            "Example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "Type": "string",
+            "Description": "RRID for the strain For this field",
+            "Example": "RRID:RGD_10395233"
+        },
+        "genotype": {
+            "Type": "string",
+            "Description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
+            "Example": "MGI:3851780"
+        },
+        "reference atlas": {
+            "Type": "string",
+            "Description": "The reference atlas and organ",
+            "Example": "Paxinos Rat V3"
+        },
+        "protocol title": {
+            "Type": "string",
+            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "Example": "Spinal Cord extraction"
+        },
+        "protocol.io location": {
+            "Type": "string",
+            "Description": "The Protocol.io URL for the protocol. Once the protocol is uploaded to Protocols.io, the protocol must be shared with the SPARC group and the Protocol.io URL is noted in this field. Please share with the SPARC group.",
+            "Example": "https://www.protocols.io/view/corcheapaper-based-microfluidic-device-vtwe6pe"
+        },
+        "experimental log file name": {
+            "Type": "string",
+            "Description": "A file containing experimental records for each sample.",
+            "Example": null
+        }
+    },
+    "subjects": {
+        "subject_id": {
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each subject, should match folder names",
+            "Example": "sub-1"
+        },
+        "pool_id": {
+            "Type": "string",
+            "Description": "If data is collected on multiple subjects at the same time include the identifier of the pool where the data file will be found. If this is included it should be the name of the top level folder inside primary.",
+            "Example": "pool-1"
+        },
+        "experimental group": {
+            "Type": "string",
+            "Description": "Experimental group subject is assigned to in research project",
+            "Example": "Control"
+        },
+        "age": {
+            "Type": "string",
+            "Description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
+            "Example": "4 weeks"
+        },
+        "sex": {
+            "Type": "string",
+            "Description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
+            "Example": "Female"
+        },
+        "species": {
+            "Type": "string",
+            "Description": "Subject species",
+            "Example": "Rattus norvegicus"
+        },
+        "strain": {
+            "Type": "string",
+            "Description": "Organism strain of the subject",
+            "Example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "Type": "string",
+            "Description": "Research Resource Identifier Identification (RRID) for the strain For this field",
+            "Example": "RRID:RGD_10395233"
+        },
+        "Additional Fields (e.g.MINDS)": {
+            "Type": "string",
+            "Description": "MINDS = minimal information about a neuroscience dataset",
+            "Example": null
+        },
+        "age category": {
+            "Type": "string",
+            "Description": "description of age category from derived from UBERON life cycle stage",
+            "Example": "prime adult stage"
+        },
+        "age range (min)": {
+            "Type": "string",
+            "Description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "10 days"
+        },
+        "age range (max)": {
+            "Type": "string",
+            "Description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "20 days"
+        },
+        "handedness": {
+            "Type": "string",
+            "Description": "Preference of the subject to use the right or left hand, if applicable",
+            "Example": "right"
+        },
+        "genotype": {
+            "Type": "string",
+            "Description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
+            "Example": "MGI:3851780"
+        },
+        "reference atlas": {
+            "Type": "string",
+            "Description": "The reference atlas and organ",
+            "Example": "Paxinos and Watson, The Rat Brain In Stereotaxic Coordinates, 7th Ed, 2013"
+        },
+        "protocol title": {
+            "Type": "string",
+            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "Example": "Spinal Cord extraction"
+        },
+        "protocol.io location": {
+            "Type": "string",
+            "Description": "The Protocol.io URL for the protocol. Once the protocol is uploaded to Protocols.io, the protocol must be shared with the SPARC group and the Protocol.io URL is noted in this field. Please share with the SPARC group.",
+            "Example": "https://www.protocols.io/view/corchea-paper-based-microfluidic-device-vtwe6pe"
+        },
+        "experimental log file name": {
+            "Type": "string",
+            "Description": "A file containing experimental records for each sample.",
+            "Example": null
+        }
+    }
+}
