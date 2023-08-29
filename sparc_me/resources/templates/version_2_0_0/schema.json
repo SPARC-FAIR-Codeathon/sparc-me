@@ -1,0 +1,799 @@
+{
+    "dataset_description": {
+        "Metadata Version": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "2.0.0",
+            "Example": "2.0.0"
+        },
+        "Type": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The type of this dataset, specifically whether it is experimental or computation. The only valid values are experimental or computational. If experimental subjects are required, if computational, subjects are not required. Set to experimental by default, if you are submitting a computational study be sure to change it.",
+            "Example": "experimental"
+        },
+        "Title": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Descriptive title for the data set. Equivalent to the title of a scientific paper. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "Example": "My SPARC dataset"
+        },
+        "Subtitle": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "NOTE This field is not currently used when publishing a SPARC dataset. Brief description of the study and the data set. Equivalent to the abstract of a scientific paper. Include the rationale for the approach, the types of data collected, the techniques used, formats and number of files and an approximate size. The metadata associated with the published version of this dataset does not currently make use of this field.",
+            "Example": "A really cool dataset that I collected to answer some question."
+        },
+        "Keywords": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "A set of keywords to assist in search.",
+            "Example": "spinal cord, electrophysiology, RNA-seq, mouse"
+        },
+        "Funding": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Funding sources",
+            "Example": "OT2OD025349"
+        },
+        "Acknowledgments": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Acknowledgments beyond funding and contributors",
+            "Example": "Thank you everyone!"
+        },
+        "Study purpose": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "A description of the study purpose for the structured abstract.",
+            "Example": "This study was conducted to demonstrate data wranglers how to fill out dataset templates."
+        },
+        "Study data collection": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "A description of the study data collection process for this dataset. Used to generate the structured abstract.",
+            "Example": "Using an earlier version of this template we measured how much it confused data wranglers by counting the number of emails we had to exchange with them in order to fill it out."
+        },
+        "Study primary conclusion": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "A description of the primary conclusion drawn from the study for the structured abstract.",
+            "Example": "The primary conclusion of this study is that it is hard to make a good dataset template."
+        },
+        "Study organ system": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The major organ systems related to this study.\nautonomic ganglion\nbrain\ncolon\nheart\nintestine\nkidney\nlarge intestine\nliver\nlower urinary tract\nlung\nnervous system\npancreas\nperipheral nervous system\nsmall intestine\nspinal cord\nspleen\nstomach\nsympathetic nervous system\nurinary bladder",
+            "Example": "spinal cord"
+        },
+        "Study approach": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The experimental approach or approaches taken in this study.",
+            "Example": "electrophysiology"
+        },
+        "Study technique": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The experimental techniques used in this study.",
+            "Example": "patch clamp"
+        },
+        "Study collection title": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Title of the larger collection of to which this dataset belongs.",
+            "Example": "My SPARC research study"
+        },
+        "Contributor name": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Name of any contributors to the dataset.  These individuals need not have been authors on any publications describing the data, but should be acknowledged for their role in producing and publishing the data set.  If more than one, add each contributor in a new column.",
+            "Example": "Last, First Middle"
+        },
+        "Contributor ORCiD": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "ORCiD ID. If you don't have an ORCiD, we suggest you sign up for one.",
+            "Example": "https://orcid.org/0000-0002-5497-0243"
+        },
+        "Contributor affiliation": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Institutional affiliation for contributors",
+            "Example": "https://ror.org/0168r3w48"
+        },
+        "Contributor role": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Contributor role. At most one PrincipalInvestigator and at least one CorrespondingAuthor are required. These roles are provided by the Data Cite schema. Options are:\nPrincipalInvestigator\nCreator\nCoInvestigator\nCorrespondingAuthor\nDataCollector\nDataCurator\nDataManager\nDistributor\nEditor\nProducer\nProjectLeader\nProjectManager\nProjectMember\nRelatedPerson\nResearcher\nResearchGroup\nSponsor\nSupervisor\nWorkPackageLeader\nOther.",
+            "Example": "DataCollector"
+        },
+        "Identifier description": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "A description of the referent of the related identifier.",
+            "Example": "The protocol use to generate this dataset."
+        },
+        "Relation type": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The relationship that this dataset has to the related identifier. For example the originating article would be this dataset IsDescribedBy originating article.\nThe SPARC specific list is:\nIsProtocolFor\nHasProtocol\nIsSoftwareFor\nHasSoftware\nThe DataCite list is:\nIsCitedBy,\nCites,\nIsSupplementTo,\nIsSupplementedBy,\nIsContinuedByContinues,\nIsDescribedBy,\nDescribes,\nHasMetadata,\nIsMetadataFor,\nHasVersion,\nIsVersionOf,\nIsNewVersionOf,\nIsPreviousVersionOf,\nIsPartOf,\nHasPart,\nIsPublishedIn,\nIsReferencedBy,\nReferences,\nIsDocumentedBy,\nDocuments,\nIsCompiledBy,\nCompiles,\nIsVariantFormOf,\nIsOriginalFormOf,\nIsIdenticalTo,\nIsReviewedBy,\nReviews,\nIsDerivedFrom,\nIsSourceOf,\nIsRequiredBy,\nRequires,\nIsObsoletedBy,\nObsoletes.",
+            "Example": "HasProtocol"
+        },
+        "Identifier": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The identifier for something related to this dataset.",
+            "Example": "https://doi.org/10.13003/5jchdy"
+        },
+        "Identifier type": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The type of the identifier.",
+            "Example": "DOI"
+        },
+        "Number of subjects": {
+            "Required": "Y",
+            "Type": "integer",
+            "Description": "Number of unique subjects in this dataset, should match subjects metadata file. Only required for experimental datasets.",
+            "Example": 1
+        },
+        "Number of samples": {
+            "Required": "Y",
+            "Type": "integer",
+            "Description": "Number of unique samples in this dataset, should match samples metadata file. Set to zero if there are no samples. Only required for experimental datasets.",
+            "Example": 0
+        }
+    },
+    "subjects": {
+        "subject id": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each subject, should match folder names",
+            "Example": "sub-1"
+        },
+        "pool id": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "If data is collected on multiple subjects at the same time include the identifier of the pool where the data file will be found. If this is included it should be the name of the top level folder inside primary.",
+            "Example": "pool-1"
+        },
+        "subject experimental group": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Experimental group subject is assigned to in research project",
+            "Example": "Control"
+        },
+        "age": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d",
+            "Example": "4 weeks"
+        },
+        "sex": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d",
+            "Example": "Female"
+        },
+        "species": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Subject species",
+            "Example": "Rattus norvegicus"
+        },
+        "strain": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Organism strain of the subject",
+            "Example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Research Resource Identifier Identification (RRID) for the strain For this field",
+            "Example": "RRID:RGD_10395233"
+        },
+        "age category": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "description of age category from derived from UBERON life cycle stage",
+            "Example": "prime adult stage"
+        },
+        "also in dataset": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "member of": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "laboratory internal id": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "date of birth": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "age range (min)": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "10 days"
+        },
+        "age range (max)": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out)",
+            "Example": "20 days"
+        },
+        "body mass": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "genotype": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group",
+            "Example": "MGI:3851780"
+        },
+        "phenotype": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "handedness": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Preference of the subject to use the right or left hand, if applicable",
+            "Example": "right"
+        },
+        "reference atlas": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The reference atlas and organ",
+            "Example": "Paxinos and Watson, The Rat Brain In Stereotaxic Coordinates, 7th Ed, 2013"
+        },
+        "experimental log file path": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "A file containing experimental records for each sample.",
+            "Example": null
+        },
+        "experiment date": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "disease or disorder": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "intervention": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "disease model": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "protocol title": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "Example": "Spinal Cord extraction"
+        },
+        "protocol url or doi": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        }
+    },
+    "samples": {
+        "subject id": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each subject",
+            "Example": "sub-1"
+        },
+        "sample id": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Lab-based schema for identifying each sample, must be unique",
+            "Example": "sub-1_sam-2"
+        },
+        "wasDerivedFromSample": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.)",
+            "Example": "sub-1_sam-1"
+        },
+        "pool id": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "If data is collected on multiple samples at the same time include the identifier of the pool where the data file will be found.",
+            "Example": "pool-1"
+        },
+        "sample experimental group": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Experimental group subject is assigned to in research project. If you have experimental groups for samples please add another column.",
+            "Example": "Control"
+        },
+        "sample type": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Physical type of the specimen from which the data were extracted",
+            "Example": "tissue"
+        },
+        "sample anatomical location": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "The organ, or subregion of organ from which the data were extracted",
+            "Example": "dentate gyrus"
+        },
+        "also in dataset": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "member of": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "laboratory internal id": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "date of derivation": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "experimental log file path": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "reference atlas": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The reference atlas and organ",
+            "Example": "Paxinos Rat V3"
+        },
+        "pathology": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "laterality": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "cell type": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "plane of section": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        },
+        "protocol title": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "Example": "Spinal Cord extraction"
+        },
+        "protocol url or doi": {
+            "Required": "N",
+            "Type": "string",
+            "Description": null,
+            "Example": null
+        }
+    },
+    "manifest": {
+        "filename": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "timestamp": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "description": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "file type": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        },
+        "Additional Metadata": {
+            "Required": "N",
+            "Type": "string",
+            "Description": NaN,
+            "Example": NaN
+        }
+    },
+    "code_description": {
+        "RRID Term": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Associated tools or resources used",
+            "Example": "ImageJ"
+        },
+        "RRID Identifier": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Associated tools or resources identifier (with 'RRID:')",
+            "Example": "RRID:SCR_003070"
+        },
+        "Ontological term": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Associated ontological term (human-readable)",
+            "Example": "Heart"
+        },
+        "Ontological Identifier": {
+            "Required": "Y",
+            "Type": "string",
+            "Description": "Associated ontological identifier from SciCrunch",
+            "Example": "UBERON:0000948"
+        },
+        "TSR1: Define Context Clearly Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Develop and document the subject, purpose and intended use(s) of model, simulation or data processing (MSoP) submission",
+            "Example": 3
+        },
+        "TSR1: Define Context Clearly Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to context of use",
+            "Example": "https://journals.plos.org/plosone/doi?id=10.1371/journal.pone.0180194"
+        },
+        "TSR2: Use Appropriate Data Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Employ relevant and traceable information in the development or operation of the MSoP submission",
+            "Example": 2
+        },
+        "TSR2: Use Appropriate Data Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to relevant and traceable information employed in the development or operation",
+            "Example": "https://github.com/example_user/example_project/README"
+        },
+        "TSR3: Evaluate Within Context Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Verification, validation, uncertainty quantification and sensitivity analysis of the submission are accomplished with respect ot the reality of interest and intended use(s) of MSoP",
+            "Example": 3
+        },
+        "TSR3: Evaluate Within Context Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to verification, validation, uncertainty quantification and sensitivity analysis",
+            "Example": "https://doi.org/10.0000/0000"
+        },
+        "TSR4: List Limitations Explicitly Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Restrictions, constraints or qualifications for, or on, the use of the submission are available for consideration by the users",
+            "Example": 0
+        },
+        "TSR4: List Limitations Explicitly Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to restrictions, constraints or qualifcations for use",
+            "Example": "https://doi.org/10.0000/0000"
+        },
+        "TSR5: Use Version Control Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Implement a system to trace the time history of MSoP activities, including delineation of contributors' efforts",
+            "Example": 4
+        },
+        "TSR5: Use Version Control Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to version control system",
+            "Example": "https://github.com/example_user/example_project"
+        },
+        "TSR6: Document Adequately Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Maintain up-to-date informative records of all MSoP activities, including simulation code, model mark-up, scope and intended use of the MSoP activities, as well as users' and developers' guides",
+            "Example": 4
+        },
+        "TSR6: Document Adequately Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to documentation described above",
+            "Example": "https://github.com/example_user/example_project/README"
+        },
+        "TSR7: Disseminate Broadly Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Publish all components of MSoP including simulation software, models, simulation scenarios and results",
+            "Example": 4
+        },
+        "TSR7: Disseminate Broadly Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to publications",
+            "Example": "https://doi.org/10.0000/0000"
+        },
+        "TSR8: Get Independent Reviews Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Have the MSoP submission reviewed by nonpartisan third-party users and developers",
+            "Example": 2
+        },
+        "TSR8: Get Independent Reviews Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to independent reviews",
+            "Example": "https://github.com/example_user/example_repository/pull/1"
+        },
+        "TSR9: Test Competing Implementations Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Use contrasting MSoP execution strategies to compare the conclusions of the different execution strategies against each other",
+            "Example": 0
+        },
+        "TSR9: Test Competing Implementations Reference": {
+            "Required": "N",
+            "Type": "number",
+            "Description": "Reference to implementations tested",
+            "Example": null
+        },
+        "TSR10a: Conform to Standards Rating (0-4)": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Adopt and promote generally applicable and discipline-specific operating procedures, guidelines and regulation accepted as best practices",
+            "Example": 4
+        },
+        "TSR10a: Conform to Standards Reference": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to conformance to standards",
+            "Example": "https://models.physiomeproject.org/workspace/author_2021/@@rawfile/xx/my_model.cellml"
+        },
+        "TSR10b: Relevant standards": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to relevant standards",
+            "Example": "https://www.cellml.org"
+        },
+        "Ann1: Code Verification Status": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Provide assurance that the MSoP submissions is free of bugs in the source code and numerical algorithms (yes/no)",
+            "Example": "yes"
+        },
+        "Ann1: Reference to Code Verification": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Link to the verification documentation",
+            "Example": "https://github.com/example_user/example_repository/tests.py"
+        },
+        "Ann2: Code Validation Status": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Assess the degree to which a computer model and simulation framework is able to simulate a reality of interest",
+            "Example": "yes"
+        },
+        "Ann2: Reference to Code Validation": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to assessment",
+            "Example": "https://doi.org/10.0000/0000"
+        },
+        "Ann3: Certification Status": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The code has been certified externally (yes/no)",
+            "Example": "yes"
+        },
+        "Ann3: Reference to Certification": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Reference to the certification, if it has been certified",
+            "Example": "https://github.com/exampleuser/certifier.md"
+        },
+        "Ann4: Onboarded to o\u00b2S\u00b2PARC Status": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The MSoP submission has been integrated into the o\u00b2S\u00b2PARC platform and is publicly available",
+            "Example": "yes"
+        },
+        "Ann4: Reference to onboarded MSoP submission on o\u00b2S\u00b2PARC": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The name of the onboarded service or template on the o\u00b2S\u00b2PARC platform",
+            "Example": "My Wonderful Model Service"
+        },
+        "Ann5: Testing on o\u00b2S\u00b2PARC Status": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "The MSoP submission includes unit and integration testing on the o\u00b2S\u00b2PARC platform",
+            "Example": "no"
+        },
+        "Ann5: Testing on o\u00b2S\u00b2PARC Reference": {
+            "Required": "N",
+            "Type": "number",
+            "Description": "Reference to the tests run on the onboarded MSoP submission",
+            "Example": null
+        },
+        "Number of Inputs": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Model/Simulation/Data Processing Inputs (if any)",
+            "Example": 10
+        },
+        "Number of Outputs": {
+            "Required": "N",
+            "Type": "integer",
+            "Description": "Model/Simulation/Data Processing Outputs (if any)",
+            "Example": 5
+        },
+        "Representation in CellML": {
+            "Required": "N",
+            "Type": "string",
+            "Description": "Analogous CellML/SED-ML model representation, if any",
+            "Example": "https://models.physiomeproject.org/workspace/author_2021/@@rawfile/xx/my_model.cellml"
+        }
+    },
+    "code_parameters": {
+        "Type": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Input or Output",
+            "Example": "Input or Output"
+        },
+        "Service Alias (User-given name)": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Name of the service containing this input, given by the user",
+            "Example": "Name of the service containing this input, given by the user"
+        },
+        "Service name": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Name of the service containing this input",
+            "Example": "Name of the service containing this input"
+        },
+        "Service version": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Version of the service containing this input",
+            "Example": "Version of the service containing this input"
+        },
+        "Name": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "An input field to the MSoP submission",
+            "Example": "An input field to the MSoP submission"
+        },
+        "Data Ontology Identifier": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Ontology identifier for the input field, if applicable",
+            "Example": "Ontology identifier for the input field, if applicable"
+        },
+        "Data Type": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Data type for the input field (in plain text)",
+            "Example": "Data type for the input field (in plain text)"
+        },
+        "Data Units": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Units of data for the input field, if applicable",
+            "Example": "Units of data for the input field, if applicable"
+        },
+        "Data Default Value": {
+            "Required": "Y",
+            "Type": "String",
+            "Description": "Default value for the input field, if applicable (doi or value)",
+            "Example": "Default value for the input field, if applicable (doi or value)"
+        }
+    },
+    "performances": {},
+    "resources": {
+        "RRID": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": NaN,
+            "Example": NaN
+        },
+        "URL": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": NaN,
+            "Example": NaN
+        },
+        "Vendor": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": NaN,
+            "Example": NaN
+        },
+        "Version": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": NaN,
+            "Example": NaN
+        },
+        "Additional Metadata": {
+            "Required": "N",
+            "Type": NaN,
+            "Description": NaN,
+            "Example": NaN
+        }
+    },
+    "submission": {
+        "SPARC Award number": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": "Grant number supporting the milestone",
+            "Example": NaN
+        },
+        "Milestone achieved": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": "From milestones supplied to NIH",
+            "Example": NaN
+        },
+        "Milestone completion date": {
+            "Required": "Y",
+            "Type": NaN,
+            "Description": "Date of milestone completion. This date starts the countdown for submission (30 days after completion), length of embargo and publication date (12 months from completion of milestone)",
+            "Example": NaN
+        }
+    }
+}

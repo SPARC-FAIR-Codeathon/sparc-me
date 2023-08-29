@@ -276,7 +276,7 @@ class Schema(object):
 
 
 if __name__ == '__main__':
-    schema_xlsm = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/element_descriptions.xlsx")
+    schema_xlsm = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/schema.xlsx")
     save_dir = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/schema")
 
     schema = Schema()
