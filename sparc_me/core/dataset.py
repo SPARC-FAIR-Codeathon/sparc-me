@@ -582,7 +582,7 @@ class Dataset(object):
         sf.to_excel(writer)
         writer.save()
 
-    def add_data(self, source_path, data_type, subject, sample, sds_parent_dir=None, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
+    def add_data(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
         if data_type == "primary":
             self.add_primary_data(source_path, subject, sample, sds_parent_dir, copy, overwrite, sample_metadata, subject_metadata)
         elif data_type == 'derivative':
