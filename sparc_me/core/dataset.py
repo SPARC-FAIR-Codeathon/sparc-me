@@ -583,14 +583,18 @@ class Dataset(object):
         writer.save()
 
     def add_data(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
+
+        if sds_parent_dir:
+            self._dataset_path = Path(sds_parent_dir)
+
         if data_type == "primary":
-            self.add_primary_data(source_path, subject, sample, sds_parent_dir, copy, overwrite, sample_metadata, subject_metadata)
+            self.add_primary_data(source_path, subject, sample, copy, overwrite, sample_metadata, subject_metadata)
         elif data_type == 'derivative':
-            self.add_derivative_data(source_path, subject, sample, sds_parent_dir, copy, overwrite)
+            self.add_derivative_data(source_path, subject, sample, copy, overwrite)
         else:
             msg = f"The data_type should be 'primary' or 'derivative'"
             raise ValueError(msg)
-    def add_primary_data(self, source_path, subject, sample, sds_parent_dir=None, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
+    def add_primary_data(self, source_path, subject, sample, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
         """Add raw data of a sample to correct SDS location and update relavent metadata files
 
         :param source_path: original location of raw data
@@ -599,8 +603,8 @@ class Dataset(object):
         :type subject: string
         :param sample: sample id
         :type sample: string
-        :param sds_parent_dir: path to existing sds dataset or desired save location for new sds dataset, defaults to None
-        :type sds_parent_dir: string, optional
+        :param self._dataset_path: path to existing sds dataset or desired save location for new sds dataset, defaults to None
+        :type self._dataset_path: string, optional
         :param copy: if True, source directory data will not be deleted after copying, defaults to True
         :type copy: bool, optional
         :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
@@ -611,35 +615,33 @@ class Dataset(object):
         :type subject_metadata: dict, optional
         :raises NotADirectoryError: if the primary in sds_parent_dir is not a folder, this wil be raised.
         """
-        if sds_parent_dir is None:
+        if self._dataset_path is None:
             if not os.path.exists('tmp'):
                 os.mkdir('tmp')
-            sds_parent_dir = tempfile.mkdtemp(prefix="sds_dataset_", dir='tmp')
+            self._dataset_path = tempfile.mkdtemp(prefix="sds_dataset_", dir='tmp')
         
-        primary_folder = os.path.join(sds_parent_dir, 'primary')
+        primary_folder = os.path.join(str(self._dataset_path), 'primary')
 
         if os.path.exists(primary_folder):
             if os.path.isdir(primary_folder):
-                self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
+                self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
             else:
                 raise NotADirectoryError(f'{primary_folder} is not a directory')
         else:
-            self.load_dataset(dataset_path=sds_parent_dir, from_template=True, version=self._version)
-            self.save(save_dir=sds_parent_dir)
+            self.load_dataset(dataset_path=self._dataset_path, from_template=True, version=self._version)
+            self.save(save_dir=self._dataset_path)
 
-        # destination_folder = os.path.join(primary_folder, subject, sample)
-        destination_folder_list = [sds_parent_dir, "primary", subject, sample]
-        add_data(source_path, destination_folder_list, copy=copy, overwrite=overwrite)
+        add_data(source_path, self._dataset_path, subject, sample, data_type="primary", copy=copy, overwrite=overwrite)
 
-        samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
-        subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
+        samples_file_path = os.path.join(self._dataset_path, 'samples.xlsx')
+        subjects_file_path = os.path.join(self._dataset_path, 'subjects.xlsx')
 
         if not os.path.exists(samples_file_path):
             self.generate_file_from_template(samples_file_path, 'samples')
         if not os.path.exists(subjects_file_path):
             self.generate_file_from_template(subjects_file_path, 'subjects')
 
-        self.load_dataset(dataset_path=sds_parent_dir, from_template=False, version=self._version)
+        self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
         
         if not sample_metadata:
             self.append(
@@ -693,7 +695,7 @@ class Dataset(object):
         :raises NotADirectoryError: if the derivative in sds_parent_dir is not a folder, this wil be raised.
         """
 
-        derivative_folder = os.path.join(sds_parent_dir, 'derivative')
+        derivative_folder = os.path.join(str(self._dataset_path), 'derivative')
         
         # Check if sds_parent_directory contains the derivative folder. If not create it.
         if os.path.exists(derivative_folder):
@@ -702,9 +704,8 @@ class Dataset(object):
         else:
             os.mkdir(derivative_folder)
 
-        destination_folder_list = [sds_parent_dir, 'derivative', subject, sample]
 
-        add_data(source_path, destination_folder_list, copy=copy, overwrite=overwrite)
+        add_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy, overwrite=overwrite)
 
     def add_element(self, category, element):
         metadata = self._dataset.get(category).get("metadata")

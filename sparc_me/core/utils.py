@@ -7,7 +7,8 @@ from datetime import datetime, timezone
 from xlrd import XLRDError
 
 
-def add_data(source_path, destination_path_list, copy=True, overwrite=False):
+# def add_data(source_path, destination_path_list, copy=True, overwrite=False):
+def add_data(source_path, dataset_path, subject, sample, data_type="primary", copy=True, overwrite=False):
     """Copy or move data from source folder to destination folder
 
     :param source_path: path to the original data
@@ -20,7 +21,7 @@ def add_data(source_path, destination_path_list, copy=True, overwrite=False):
     :type overwrite: bool, optional
     :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
     """
-    destination_path = os.path.join(*destination_path_list)
+    destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
     # If overwrite is True, remove existing sample
     if os.path.exists(destination_path):
         if overwrite: 
@@ -44,12 +45,10 @@ def add_data(source_path, destination_path_list, copy=True, overwrite=False):
                 # Move data
                 shutil.move(file_path, os.path.join(destination_path, fname))
             # Modify the manifest file
-            modify_manifest(fname, destination_path_list)
+            modify_manifest(fname, dataset_path, destination_path)
 
 
-def modify_manifest(fname, destination_path_list):
-    manifest_path = os.path.join(destination_path_list[0])
-    destination_path = os.path.join(*destination_path_list)
+def modify_manifest(fname, manifest_path, destination_path):
     # Check if manifest exist
     # If can be "xlsx", "csv" or "json"
     files = os.listdir(manifest_path)
