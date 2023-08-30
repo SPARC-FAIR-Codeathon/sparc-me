@@ -627,9 +627,9 @@ class Dataset(object):
             self.load_dataset(dataset_path=sds_parent_dir, from_template=True, version=self._version)
             self.save(save_dir=sds_parent_dir)
 
-        destination_folder = os.path.join(primary_folder, subject, sample)
-
-        add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
+        # destination_folder = os.path.join(primary_folder, subject, sample)
+        destination_folder_list = [sds_parent_dir, "primary", subject, sample]
+        add_data(source_path, destination_folder_list, copy=copy, overwrite=overwrite)
 
         samples_file_path = os.path.join(sds_parent_dir, 'samples.xlsx')
         subjects_file_path = os.path.join(sds_parent_dir, 'subjects.xlsx')
@@ -702,9 +702,9 @@ class Dataset(object):
         else:
             os.mkdir(derivative_folder)
 
-        destination_folder = os.path.join(derivative_folder, subject, sample)
+        destination_folder_list = [sds_parent_dir, 'derivative', subject, sample]
 
-        add_data(source_path, destination_folder, copy=copy, overwrite=overwrite)
+        add_data(source_path, destination_folder_list, copy=copy, overwrite=overwrite)
 
     def add_element(self, category, element):
         metadata = self._dataset.get(category).get("metadata")
