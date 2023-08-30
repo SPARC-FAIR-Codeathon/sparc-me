@@ -3,6 +3,7 @@ import json
 import shutil
 import openpyxl
 import pandas as pd
+from pathlib import Path
 from datetime import datetime, timezone
 from xlrd import XLRDError
 
@@ -81,8 +82,11 @@ def modify_manifest(fname, manifest_path, destination_path):
     sample = destination_path.split(os.path.sep)[-1]
     subject = destination_path.split(os.path.sep)[-2]
 
+
+    file_path = Path(str(os.path.join(destination_path,fname)).replace(str(manifest_path), '')[1:]).as_posix()
+
     row = {
-        'filename': os.path.splitext(fname)[0],
+        'filename': file_path,
         'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
         'description': f"File of subject {subject} sample {sample}",
         'file type': os.path.splitext(fname)[-1].lower()[1:]

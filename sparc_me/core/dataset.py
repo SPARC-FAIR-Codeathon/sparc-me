@@ -676,7 +676,7 @@ class Dataset(object):
         self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
 
 
-    def add_derivative_data(self, source_path, subject, sample, sds_parent_dir, copy=True, overwrite=False):
+    def add_derivative_data(self, source_path, subject, sample, copy=True, overwrite=False):
         """Add raw data of a sample to correct SDS location and update relavent metadata files. 
         Requires you to already have the folder structure inplace.
 
@@ -703,7 +703,6 @@ class Dataset(object):
                 raise NotADirectoryError(f'{derivative_folder} is not a directory')
         else:
             os.mkdir(derivative_folder)
-
 
         add_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy, overwrite=overwrite)
 

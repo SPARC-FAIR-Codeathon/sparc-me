@@ -44,6 +44,6 @@ if __name__ == '__main__':
     dataset.add_data(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2", data_type="primary", sds_parent_dir=save_dir)
     # dataset.add_primary_data(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2", sds_parent_dir=save_dir)
 
-    # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework. 
+    # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_data(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc", data_type="derivative", sds_parent_dir=save_dir)
     # dataset.add_derivative_data(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc", sds_parent_dir=save_dir)
