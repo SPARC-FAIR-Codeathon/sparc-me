@@ -3,24 +3,26 @@ import json
 import shutil
 import openpyxl
 import pandas as pd
+from pathlib import Path
 from datetime import datetime, timezone
 from xlrd import XLRDError
 
 
-def add_data(source_path, destination_path, copy=True, overwrite=False):
+# def add_data(source_path, destination_path_list, copy=True, overwrite=False):
+def add_data(source_path, dataset_path, subject, sample, data_type="primary", copy=True, overwrite=False):
     """Copy or move data from source folder to destination folder
 
     :param source_path: path to the original data
     :type source_path: string
-    :param destination_path: folder path to be copied into
-    :type destination_path: string
+    :param destination_path_list: folder path in a list[root, data_pype, subject, sample] to be copied into
+    :type destination_path_list: list
     :param copy: if True, source directory data will not be deleted after copying, defaults to True
     :type copy: bool, optional
     :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
     :type overwrite: bool, optional
     :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
     """
-
+    destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
     # If overwrite is True, remove existing sample
     if os.path.exists(destination_path):
         if overwrite: 
@@ -44,21 +46,21 @@ def add_data(source_path, destination_path, copy=True, overwrite=False):
                 # Move data
                 shutil.move(file_path, os.path.join(destination_path, fname))
             # Modify the manifest file
-            modify_manifest(fname, destination_path)
+            modify_manifest(fname, dataset_path, destination_path)
 
 
-def modify_manifest(fname, destination_path):
+def modify_manifest(fname, manifest_path, destination_path):
     # Check if manifest exist
     # If can be "xlsx", "csv" or "json"
-    files = os.listdir(destination_path)
+    files = os.listdir(manifest_path)
     manifest_file_path = [f for f in files if "manifest" in f]
     # Case 1: manifest file exists
     if len(manifest_file_path)!=0:
-        manifest_file_path = os.path.join(destination_path, manifest_file_path[0])
+        manifest_file_path = os.path.join(manifest_path, manifest_file_path[0])
         # Check the extension and read file accordingly
         extension = os.path.splitext(manifest_file_path)[-1].lower()
         if extension == ".xlsx":
-            df = pd.read_excel(manifest_file_path, index_col=0)
+            df = pd.read_excel(manifest_file_path)
         elif extension == ".csv":
             df = pd.read_csv(manifest_file_path)
         elif extension == ".json":
@@ -73,15 +75,18 @@ def modify_manifest(fname, destination_path):
         # Default extension to xlsx
         extension = ".xlsx"
         # Creat manifest file path
-        manifest_file_path = os.path.join(destination_path, "manifest.xlsx")
+        manifest_file_path = os.path.join(manifest_path, "manifest.xlsx")
         df = pd.DataFrame(columns = ['filename', 'description', 'timestamp', 'file type'])
 
     # Edit manifest
     sample = destination_path.split(os.path.sep)[-1]
     subject = destination_path.split(os.path.sep)[-2]
 
+
+    file_path = Path(str(os.path.join(destination_path,fname)).replace(str(manifest_path), '')[1:]).as_posix()
+
     row = {
-        'filename': os.path.splitext(fname)[0],
+        'filename': file_path,
         'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
         'description': f"File of subject {subject} sample {sample}",
         'file type': os.path.splitext(fname)[-1].lower()[1:]
@@ -91,9 +96,9 @@ def modify_manifest(fname, destination_path):
     
     # Save editted manifest file
     if extension == ".xlsx":
-        df.to_excel(manifest_file_path)
+        df.to_excel(manifest_file_path, index=False)
     elif extension == ".csv":
-        df = pd.to_csv(manifest_file_path)
+        df = pd.to_csv(manifest_file_path, index=False)
     elif extension == ".json":
         df = pd.read_json(manifest_file_path, orient="index")
     return

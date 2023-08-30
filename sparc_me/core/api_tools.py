@@ -243,13 +243,17 @@ class Dataset_Api:
                 "version": versionId
             }}
             headers = {"Content-Type": "application/json"}
-            response = requests.request("POST", url, json=payload, headers=headers)
-            if response.status_code == 200:
-                contentObj = {
-                    "content": response.content,
-                    "filepath": filepath,
-                }
-                html_queue.put(contentObj)
+            try:
+                response = requests.request("POST", url, json=payload, headers=headers, stream=True)
+                if response.status_code == 200:
+                    contentObj = {
+                        "content": response.content,
+                        "filepath": filepath,
+                    }
+                    html_queue.put(contentObj)
+            except Exception as e:
+                print(f"The file: {filepath} download failed! The error is {e}")
+
 
     def parse(self, html_queue: queue.Queue):
         while True:
