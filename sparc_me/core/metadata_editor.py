@@ -5,7 +5,7 @@ class MetadataEditor:
         self.category = category
         self.metadata = metadata
 
-    def add_values(self, row_name, header, values, append=False):
+    def add_values(self, *values, row_name, header='Value', append=False):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
 
@@ -32,7 +32,6 @@ class MetadataEditor:
 
         matching_indices = [index for index, value in enumerate(elements) if self._remove_spaces_and_lower(value) == row_name_cleaned]
 
-        # matching_indices = self.metadata.index[self.metadata[self.metadata.columns[0]]==row_name].tolist()
 
         if not matching_indices:
             msg = f"No row with given unique name, {row_name}, was found in the unique column {self.metadata.columns[0]}"
@@ -42,9 +41,9 @@ class MetadataEditor:
             raise ValueError(msg)
         else:
             excel_row_index = matching_indices[0] + 2
-            return self.set_row_fields( row_index=excel_row_index, header=header, values=values)
+            return self.set_row_fields(*values, row_index=excel_row_index, header=header, append=append)
 
-    def set_row_fields(self, row_index, header, values):
+    def set_row_fields(self, *values, row_index, header, append=False):
         """
         Set single field by row idx/name and column name (the header)
 
@@ -59,24 +58,44 @@ class MetadataEditor:
         :return: updated dataset
         :rtype: dict
         """
-
+        insert_header = header
         if not isinstance(row_index, int):
             msg = "row_index should be 'int'."
             raise ValueError(msg)
 
         try:
-            #find out column index
-            start_column_index = self.metadata.columns.get_loc(header)
             row_index = row_index - 2
-            if isinstance(values, str):
-                self.metadata.loc[row_index, header] = values
-            elif isinstance(values, list):
-                self._edit_colume( header, 6)
-                print(self.metadata.columns)
-                self.metadata.iloc[row_index, start_column_index:start_column_index + len(values)] = values
+            #find out column index
+            row_has_null = self.metadata.iloc[row_index].isnull().any()
+            if append:
+                if row_has_null:
+                    start_header = (self.metadata.isnull().idxmax(axis=1))[row_index]
+                    insert_header = start_header
+                    start_column_index = self.metadata.columns.get_loc(start_header)
+                else:
+                    last_value_col_index = len(self.metadata.iloc[row_index].values) - 1
+                    last_value_col_name =self.metadata.columns[last_value_col_index]
+                    value_header_order = last_value_col_name.replace('Value', '')
+                    if value_header_order == '':
+                        self.metadata.insert(last_value_col_index + 1, f"Value{1}", None)
+                    else:
+                        try:
+                            self.metadata.insert(last_value_col_index + 1, f"Value{int(value_header_order) + 1}", None)
+                        except ValueError:
+                            msg = "Please private a correct header, e.g, Value, Value1, Value2..."
+                            raise ValueError(msg)
 
+                    insert_header = self.metadata.columns[-1]
+                    print("ddd", insert_header)
+                    start_column_index = last_value_col_index + 1
             else:
-                msg = f"Values type {type(values)} is not supported, only support str or str[]"
+                start_column_index = self.metadata.columns.get_loc(header)
+
+            if len(values) > 0:
+                self._edit_colume( insert_header, len(values)-1)
+                self.metadata.iloc[row_index, start_column_index:start_column_index + len(values)] = values
+            else:
+                msg = f"please provide values"
                 raise ValueError(msg)
             # Convert Excel row index to dataframe index: index - 2
 
@@ -99,6 +118,7 @@ class MetadataEditor:
         :type operator: "+" | "-"
         :return:
         """
+        value_header_order = insert_header.replace('Value', '')
         column_index = self.metadata.columns.get_loc(insert_header)
         if self.category == 'dataset_description':
             columns_to_remove = self.metadata.columns[column_index + 1:]
@@ -107,4 +127,11 @@ class MetadataEditor:
         if operator == "+":
             for i in range(nums):
                 idx = i + 1
-                self.metadata.insert(column_index + idx, f"Value{idx}", None)
+                if value_header_order == '':
+                    self.metadata.insert(column_index + idx, f"Value{idx}", None)
+                else:
+                    try:
+                        self.metadata.insert(column_index + idx, f"Value{int(value_header_order) + idx}", None)
+                    except ValueError:
+                        msg = "Please private a correct header, e.g, Value, Value1, Value2..."
+                        raise ValueError(msg)
