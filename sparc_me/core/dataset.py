@@ -10,6 +10,7 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from sparc_me.core.utils import add_data, check_row_exist
+from .metadata_editor import MetadataEditor
 
 class Dataset(object):
     def __init__(self):
@@ -399,6 +400,21 @@ class Dataset(object):
 
         return fields
 
+    def get_metadata_editor(self, category):
+        """
+        :param category: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
+        :type  category: string
+        :return: give a metadata editor for a specific metadata
+        """
+        if not self._dataset:
+            msg = "Dataset not defined. Please load the dataset in advance."
+            raise ValueError(msg)
+
+        metadata = self._dataset.get(category).get("metadata")
+
+        return MetadataEditor(category, metadata)
+
+
     def set_field(self, category, row_index, header, value):
         """
         Set single field by row idx/name and column name (the header)
@@ -715,3 +731,4 @@ class Dataset(object):
             metadata[element] = None
 
         self._dataset[category]["metadata"] = metadata
+
