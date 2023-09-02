@@ -56,7 +56,8 @@ class MetadataEditor:
             header_name = 'Value'
             if field_name == '':
                 self.metadata.fillna('None', inplace=True)
-                self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):], inplace=True)
+                self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):],
+                                   inplace=True)
             else:
                 excel_row_index = self._find_row_index(field_name)
                 df_row_index = excel_row_index - 2
@@ -123,13 +124,14 @@ class MetadataEditor:
     def remove_row_fields(self, *values, field_index):
         # get all values from this row
         current_values = self._get_values(field_index)
-        row_index = field_index-2
+        row_index = field_index - 2
         for value in values:
             if value in current_values.tolist():
                 self.metadata.fillna('None', inplace=True)
-                column_with_value = self.metadata.loc[field_index-2].eq(value)
-                self.metadata.loc[field_index-2, column_with_value] = 'None'
+                column_with_value = self.metadata.loc[field_index - 2].eq(value)
+                self.metadata.loc[field_index - 2, column_with_value] = 'None'
         self.metadata[self.metadata == 'None'] = pd.NA
+
     def _remove_spaces_and_lower(self, s):
 
         return re.sub(r'\s', '', s).lower()
@@ -190,14 +192,14 @@ class MetadataEditor:
                 length = nums - len(remain_headers)
                 for i in range(length):
                     idx = i + 1
-                    (idx, unique_header) = self._get_unique_header(idx)
+                    (idx, unique_header) = self._create_unique_header(idx)
                     try:
                         self.metadata.insert(last_header_index + i + 1, unique_header, None)
                     except ValueError:
                         msg = "Please private a correct header, e.g, Value, Value 1, Value 2..."
                         raise ValueError(msg)
 
-    def _get_unique_header(self, idx):
+    def _create_unique_header(self, idx):
         while True:
             if f"Value {idx}" in self.metadata.columns:
                 idx += 1
