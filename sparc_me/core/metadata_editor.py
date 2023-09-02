@@ -7,26 +7,33 @@ class MetadataEditor:
         self.category = category
         self.metadata = metadata
 
-    def add_values(self, *values, row_name='', header='', append=False):
+    def add_values(self, *values, field_name='', header='', append=False):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
         :param values: field value
         :type values: *str
-        :param row_name: Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
-        :type row_name: str
+        :param field_name: Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
+        :type field_name: str
         :param header: column name. the header is the first row
         :type header: str
         :return: updated dataset
         :rtype: dict
         """
         if self.category == "dataset_description":
-            if row_name == '':
+            if field_name == '':
                 return
             else:
                 if header == '':
                     header = 'Value'
-            excel_row_index = self._find_row_index(row_name)
+            excel_row_index = self._find_row_index(field_name)
             self.set_row_fields(*values, row_index=excel_row_index, header=header, append=append)
+        else:
+            if header == '':
+                # add values by rows start at (0,0)
+                pass
+            else:
+                # add values by header (columns)
+                pass
 
     def remove_values(self, *values, field_name):
         """
@@ -38,6 +45,23 @@ class MetadataEditor:
         """
         excel_row_index = self._find_row_index(field_name)
         self.remove_row_fields(*values, field_index=excel_row_index)
+
+    def clear_values(self, field_name=''):
+        """
+        :param field_name:  Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
+        :type field_name: str
+        :return:
+        """
+        if self.category == 'dataset_description':
+            header_name = 'Value'
+            if field_name == '':
+                self.metadata.fillna('None', inplace=True)
+                self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):], inplace=True)
+            else:
+                excel_row_index = self._find_row_index(field_name)
+                df_row_index = excel_row_index - 2
+                header_index = self.metadata.columns.get_loc(header_name)
+                self.metadata.iloc[df_row_index, header_index:] = pd.NA
 
     def set_row_fields(self, *values, row_index, header, append=False):
         """
