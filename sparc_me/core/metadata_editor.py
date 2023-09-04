@@ -69,6 +69,7 @@ class MetadataEditor:
                 self.metadata.fillna('None', inplace=True)
                 self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):],
                                    inplace=True)
+                self.metadata['Value'] = pd.NA
             else:
                 excel_row_index = self._find_row_index(field_name)
                 df_row_index = excel_row_index - 2

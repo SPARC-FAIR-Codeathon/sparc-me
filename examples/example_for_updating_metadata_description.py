@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     # Step4, add values for dataset_description_editor need to specify field_name
     dataset_description_editor.add_values(*["developer", "tester"], field_name="contributor role", append=True)
-    dataset_description_editor.add_values(*["bob", "db"], field_name="Contributor name", append=True)
+    dataset_description_editor.add_values(*["bob", "db"], field_name="contributor name", append=True)
 
     # Step4, add values for code_description_editor need to specify field_name
     code_description_editor.add_values( *["test..1","test2","test3","test4", "test5...",], field_name="TSR1: Define Context Clearly Rating (0-4)", append=False)
