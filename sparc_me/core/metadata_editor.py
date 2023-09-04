@@ -1,5 +1,6 @@
 import re
 import pandas as pd
+import numpy as np
 
 
 class MetadataEditor:
@@ -19,7 +20,7 @@ class MetadataEditor:
         :return: updated dataset
         :rtype: dict
         """
-        if self.category == "dataset_description":
+        if self.category == "dataset_description" or self.category == "code_description":
             if field_name == '':
                 return
             else:
@@ -30,10 +31,16 @@ class MetadataEditor:
         else:
             if header == '':
                 # add values by rows start at (0,0)
-                pass
+                # get first header
+                header = self.metadata.columns[0]
+                self.set_row_fields(*values, row_index=2, header=header, append=append)
             else:
                 # add values by header (columns)
-                pass
+                # col_index = self.metadata.columns.get_loc(header)
+                col_index = self._find_col_index(header)
+                self.set_col_fields(*values, col_index=col_index, append=append)
+
+
 
     def remove_values(self, *values, field_name):
         """
@@ -43,8 +50,12 @@ class MetadataEditor:
         :type row_name: str
         :return:
         """
-        excel_row_index = self._find_row_index(field_name)
-        self.remove_row_fields(*values, field_index=excel_row_index)
+        if self.category == "dataset_description" or self.category == "code_description":
+            excel_row_index = self._find_row_index(field_name)
+            self.remove_fields(*values, field_index=excel_row_index - 2)
+        else:
+            col_index = self._find_col_index(field_name)
+            self.remove_fields(*values, field_index= col_index)
 
     def clear_values(self, field_name=''):
         """
@@ -52,7 +63,7 @@ class MetadataEditor:
         :type field_name: str
         :return:
         """
-        if self.category == 'dataset_description':
+        if self.category == "dataset_description" or self.category == "code_description":
             header_name = 'Value'
             if field_name == '':
                 self.metadata.fillna('None', inplace=True)
@@ -63,6 +74,12 @@ class MetadataEditor:
                 df_row_index = excel_row_index - 2
                 header_index = self.metadata.columns.get_loc(header_name)
                 self.metadata.iloc[df_row_index, header_index:] = pd.NA
+        else:
+            if field_name == '':
+                self.metadata.drop(self.metadata.index, inplace=True)
+            else:
+                col_index = self._find_col_index(field_name)
+                self.metadata.iloc[:, col_index] = pd.NA
 
     def set_row_fields(self, *values, row_index, header, append=False):
         """
@@ -81,55 +98,86 @@ class MetadataEditor:
         if not isinstance(row_index, int):
             msg = "row_index should be 'int'."
             raise ValueError(msg)
-
-        try:
-            row_index = row_index - 2
-            # find out column index
-            row_has_null = self.metadata.iloc[row_index].isnull().any()
-            if append:
-                if row_has_null:
-                    start_header = (self.metadata.isnull().idxmax(axis=1))[row_index]
-                    insert_header = start_header
-                    start_column_index = self.metadata.columns.get_loc(start_header)
-                else:
-                    last_value_col_index = len(self.metadata.iloc[row_index].values) - 1
-                    last_value_col_name = self.metadata.columns[last_value_col_index]
-                    value_header_order = last_value_col_name.replace('Value', '')
-                    if value_header_order == '':
-                        self.metadata.insert(last_value_col_index + 1, f"Value{1}", None)
+        if self.category == "dataset_description" or self.category == "code_description":
+            try:
+                row_index = row_index - 2
+                # find out column index
+                row_has_null = self.metadata.iloc[row_index].isnull().any()
+                if append:
+                    if row_has_null:
+                        start_header = (self.metadata.isnull().idxmax(axis=1))[row_index]
+                        insert_header = start_header
+                        start_column_index = self.metadata.columns.get_loc(start_header)
                     else:
-                        try:
-                            self.metadata.insert(last_value_col_index + 1, f"Value{int(value_header_order) + 1}", None)
-                        except ValueError:
-                            msg = "Please private a correct header, e.g, Value, Value1, Value2..."
-                            raise ValueError(msg)
+                        last_value_col_index = len(self.metadata.iloc[row_index].values) - 1
+                        last_value_col_name = self.metadata.columns[last_value_col_index]
+                        value_header_order = last_value_col_name.replace('Value', '')
+                        if value_header_order == '':
+                            self.metadata.insert(last_value_col_index + 1, f"Value{1}", None)
+                        else:
+                            try:
+                                self.metadata.insert(last_value_col_index + 1, f"Value{int(value_header_order) + 1}", None)
+                            except ValueError:
+                                msg = "Please private a correct header, e.g, Value, Value1, Value2..."
+                                raise ValueError(msg)
 
-                    insert_header = self.metadata.columns[-1]
-                    start_column_index = last_value_col_index + 1
-            else:
-                start_column_index = self.metadata.columns.get_loc(header)
+                        insert_header = self.metadata.columns[-1]
+                        start_column_index = last_value_col_index + 1
+                else:
+                    start_column_index = self.metadata.columns.get_loc(header)
 
-            if len(values) > 0:
-                self._edit_colume(insert_header, len(values))
-                self.metadata.iloc[row_index, start_column_index:start_column_index + len(values)] = values
-            else:
-                msg = f"please provide values"
+                if len(values) > 0:
+                    self._edit_colume(insert_header, len(values))
+                    self.metadata.iloc[row_index, start_column_index:start_column_index + len(values)] = values
+                else:
+                    msg = f"please provide values"
+                    raise ValueError(msg)
+                # Convert Excel row index to dataframe index: index - 2
+
+            except ValueError:
+                msg = "Value error. row does not exists."
                 raise ValueError(msg)
-            # Convert Excel row index to dataframe index: index - 2
+        else:
+            if append:
+                self.metadata.loc[len(self.metadata)] = values
+            else:
+                self.metadata.loc[-1] = values
+                self.metadata.index = self.metadata.index + 1
+                self.metadata.sort_index()
 
-        except ValueError:
-            msg = "Value error. row does not exists."
-            raise ValueError(msg)
+    def set_col_fields(self, *values, col_index, append=False):
 
-    def remove_row_fields(self, *values, field_index):
+        if append:
+            if self.metadata.iloc[:, col_index].isnull().any():
+                nan_row_index = self.metadata[self.metadata.iloc[:, col_index].isnull()].index[0]
+                self.metadata.iloc[nan_row_index:nan_row_index + len(values), col_index] = values
+            else:
+                # self.metadata.loc[len(self.metadata)] = [np.nan] * len(self.metadata.columns)
+                # self.metadata.iloc[-len(values):, col_index] = values
+                for value in values:
+                    new_row = [None] * len(self.metadata.columns)
+                    new_row[col_index] = value
+                    self.metadata.loc[len(self.metadata)] = new_row
+        else:
+            if len(self.metadata) < len(values):
+                diff = len(values) - len(self.metadata)
+                for _ in range(diff):
+                    self.metadata.loc[len(self.metadata)] = None
+
+            for i, value in enumerate(values):
+                self.metadata.iat[i, col_index] = value
+
+    def remove_fields(self, *values, field_index):
         # get all values from this row
         current_values = self._get_values(field_index)
-        row_index = field_index - 2
         for value in values:
             if value in current_values.tolist():
                 self.metadata.fillna('None', inplace=True)
-                column_with_value = self.metadata.loc[field_index - 2].eq(value)
-                self.metadata.loc[field_index - 2, column_with_value] = 'None'
+                if self.category == "dataset_description" or self.category == "code_description":
+                    column_with_value = self.metadata.loc[field_index].eq(value)
+                    self.metadata.loc[field_index, column_with_value] = 'None'
+                else:
+                    self.metadata.loc[self.metadata.iloc[:, field_index] == value, self.metadata.columns[field_index]] = 'None'
         self.metadata[self.metadata == 'None'] = pd.NA
 
     def _remove_spaces_and_lower(self, s):
@@ -137,19 +185,24 @@ class MetadataEditor:
         return re.sub(r'\s', '', s).lower()
 
     def _get_values(self, field_index):
-        values = ""
-        value_header_start = self.metadata.columns.get_loc('Value')
-        if self.category == "dataset_description":
+        if self.category == "dataset_description" or self.category == "code_description":
+            value_header_start = self.metadata.columns.get_loc('Value')
             values = self.metadata.iloc[field_index - 2, value_header_start:]
+        else:
+            values = self.metadata.iloc[:, field_index]
         return values
 
     def get_values(self, field_name):
-        if self.category == "dataset_description":
+        if self.category == "dataset_description" or self.category == "code_description":
             excel_row_index = self._find_row_index(field_name)
             return self._get_values(excel_row_index)
+        else:
+            col_index = self._find_col_index(field_name)
+            return self._get_values(col_index)
 
-    def _find_row_index(self, row_name):
-        if not isinstance(row_name, str):
+
+    def _validate_input(self, field_name, elements):
+        if not isinstance(field_name, str):
             msg = "row_name should be string."
             raise ValueError(msg)
 
@@ -157,11 +210,13 @@ class MetadataEditor:
         # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified.
         # This method need to be fixed to accomadate this
 
-        elements = self.metadata[self.metadata.columns[0]].tolist()
-        row_name_cleaned = self._remove_spaces_and_lower(row_name)
-
+        row_name_cleaned = self._remove_spaces_and_lower(field_name)
         matching_indices = [index for index, value in enumerate(elements) if
                             self._remove_spaces_and_lower(value) == row_name_cleaned]
+        return matching_indices
+    def _find_row_index(self, row_name):
+        elements = self.metadata[self.metadata.columns[0]].tolist()
+        matching_indices = self._validate_input(row_name, elements)
         if not matching_indices:
             msg = f"No row with given unique name, {row_name}, was found in the unique column {self.metadata.columns[0]}"
             raise ValueError(msg)
@@ -172,6 +227,14 @@ class MetadataEditor:
             excel_row_index = matching_indices[0] + 2
             return excel_row_index
 
+    def _find_col_index(self, header):
+        elements = self.metadata.columns.tolist()
+        matching_indices = self._validate_input(header, elements)
+        if len(matching_indices) == 1:
+            return matching_indices[0]
+        else:
+            msg = f"No valid field name is found!"
+            raise ValueError(msg)
     def _edit_colume(self, insert_header, nums, operator='+'):
         """
 
