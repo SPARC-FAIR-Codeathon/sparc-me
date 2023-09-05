@@ -50,7 +50,7 @@ class MetadataEditor:
         """
         if self.category == "dataset_description" or self.category == "code_description":
             excel_row_index = self._find_row_index(field_name)
-            self._remove_values(*values, field_index=excel_row_index - 2)
+            self._remove_values(*values, field_index=excel_row_index)
         else:
             col_index = self._find_col_index(field_name)
             self._remove_values(*values, field_index=col_index)
@@ -187,16 +187,18 @@ class MetadataEditor:
         :return:
         """
         # get all values from this row
-        current_values = self._get_values(field_index)
+        excel_field_index = field_index
+        current_values = self._get_values(excel_field_index)
+        df_field_index = field_index - 2
         for value in values:
             if value in current_values.tolist():
                 self.metadata.fillna('None', inplace=True)
                 if self.category == "dataset_description" or self.category == "code_description":
-                    column_with_value = self.metadata.loc[field_index].eq(value)
-                    self.metadata.loc[field_index, column_with_value] = 'None'
+                    column_with_value = self.metadata.loc[df_field_index].eq(value)
+                    self.metadata.loc[df_field_index, column_with_value] = 'None'
                 else:
                     self.metadata.loc[
-                        self.metadata.iloc[:, field_index] == value, self.metadata.columns[field_index]] = 'None'
+                        self.metadata.iloc[:, df_field_index] == value, self.metadata.columns[df_field_index]] = 'None'
         self.metadata[self.metadata == 'None'] = pd.NA
 
     def _remove_spaces_and_lower(self, s):
