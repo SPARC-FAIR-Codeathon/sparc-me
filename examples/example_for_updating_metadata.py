@@ -43,33 +43,35 @@ if __name__ == '__main__':
 
     dataset = Dataset()
 
-    # Step:1 list categories and dataset_description elements
+    # TODO: Step:1 list categories and dataset_description elements
     categories = dataset.list_categories(version="2.0.0")
     elements = dataset.list_elements(category="dataset_description", version="2.0.0")
     # list code_parameters elements
     # elements = dataset.list_elements(category="code_parameters", version="2.0.0")
 
-    # Step2, way1: load dataset from template
+    # TODO: Step2, way1: load dataset from template
     dataset.load_from_template(version="2.0.0")
     #
     # Save the template dataset.
     # dataset.save(save_dir=save_dir)
 
-    # Step2, way2： load dataset from existing dataset
+    # TODO: Step2, way2： load dataset from existing dataset
     # dataset.load_dataset(dataset_path=save_dir)
 
-    # Step3, get dataset_description, code_description, code_parameters metadataEditor
+    # TODO: Step3, get dataset_description, code_description, code_parameters metadataEditor
     dataset_description = dataset.get_metadata(category="dataset_description")
     # code_parameters = dataset.get_metadata(category="code_parameters")
     # code_description = dataset.get_metadata(category="code_description")
 
-    # Step4, add values for dataset_description_editor need to specify field_name
+    # TODO: Step3.1(optional), remove entire values in dataset_description_editor
+    dataset_description.clear_values()
+
+    # TODO: Step4, add values for dataset_description_editor need to specify field_name
     add_values_dataset_description(dataset_description)
 
     # Step4, add values for code_description_editor need to specify field_name
     # code_description_editor.add_values(*["test..1", "test2", "test3", "test4", "test5...", ],
     #                                    row_name="TSR1: Define Context Clearly Rating (0-4)", append=False)
-    #
     # # Step4, add values for code_parameters_editor to add values in a row, append = False
     # code_parameters_editor.add_values(
     #     *["breast ...", "test..1", "test2", "test3", "test4", "test5...", "test3", "test4", "test5..."], append=False)
@@ -81,16 +83,15 @@ if __name__ == '__main__':
     # code_parameters_editor.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
     #                                   append=True)
 
-    # Step5, get values for code_parameters_editor
-    # print(code_parameters.get_values(field_name="name"))
-    # Step5, get values for dataset_description_editor
+    # TODO: Step5: Get Values
+    # get values for dataset_description_editor
     print(dataset_description.get_values(field_name="contributorrole"))
-    # Step5, get values for code_parameters_editor
+    # get values for code_parameters_editor
+    # print(code_parameters.get_values(field_name="name")
     # print(code_description.get_values(field_name="TSR1: Define Context Clearly Rating (0-4)"))
 
-    # Step6, remove values in specific header/field_name, code_parameters_editor
+    # TODO: Step6, remove values in specific header/field_name, code_parameters_editor
     # code_parameters_editor.remove_values("test1_name", field_name="name")
-
     # Step6, remove entire values in code_parameters_editor
     # code_parameters_editor.clear_values()
     # Step6, remove entire values in dataset_description_editor
@@ -103,11 +104,11 @@ if __name__ == '__main__':
     # dataset_description_editor.clear_values(field_name="Contributor role")
     # code_description_editor.clear_values(field_name="TSR1: Define Context Clearly Rating (0-4)")
 
-    # Step7, save current dataset
+    # TODO: Step7, save current dataset
     dataset.save(save_dir=save_dir)
 
-    # Step8, move files to dataset primary and derivative folder
-    # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
+    # TODO: Step8, move files to dataset primary and derivative folder
+    # TODO: Step8.1, Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_samples(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1",
                      data_type="primary", sds_parent_dir=save_dir)
     # If you want to move the data to destination directory, set copy to 'False'.
@@ -117,6 +118,8 @@ if __name__ == '__main__':
     # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_samples(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc",
                      data_type="derivative", sds_parent_dir=save_dir)
+
+    #TODO: Step8.2, add subject with subject and sample metadata
 
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
     dataset.add_subject(source_path="./test_data/bids_data/sub-01", subject="subject-1", subject_metadata={
@@ -134,8 +137,9 @@ if __name__ == '__main__':
         "sample type": "tissue",
         "sample anatomical location": "breast tissue",
     })
-
-    # Copy single sample file data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
+    # TODO: Step8.3 Copy single sample file data to dataset
+    #
+    #  from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_samples(source_path="./test_data/sample1/raw/simple_test1.txt", subject="subject-xyz",
                         sample="sample-2",
                         data_type="primary", sds_parent_dir=save_dir)
