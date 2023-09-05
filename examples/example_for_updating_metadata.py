@@ -37,6 +37,7 @@ def add_values_dataset_description(dataset_description_editor):
     dataset_description_editor.add_values("12L digital twin UUID", row_name='Identifier type')
     dataset_description_editor.add_values("1", row_name='Number of subjects')
     dataset_description_editor.add_values("1", row_name='Number of samples')
+
 if __name__ == '__main__':
     save_dir = "./tmp/template/"
 
@@ -107,12 +108,20 @@ if __name__ == '__main__':
 
     # Step8, move files to dataset primary and derivative folder
     # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_data(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1",
-                     data_type="primary", sds_parent_dir=save_dir, overwrite=True)
+    dataset.add_simples(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1",
+                     data_type="primary", sds_parent_dir=save_dir)
     # If you want to move the data to destination directory, set copy to 'False'.
-    dataset.add_data(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2",
-                     data_type="primary", sds_parent_dir=save_dir, overwrite=True)
+    dataset.add_simples(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2",
+                     data_type="primary", sds_parent_dir=save_dir)
 
     # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_data(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc",
-                     data_type="derivative", sds_parent_dir=save_dir, overwrite=True)
+    dataset.add_simples(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc",
+                     data_type="derivative", sds_parent_dir=save_dir)
+
+    # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
+    dataset.add_subject(source_path="./test_data/bids_data/sub-01", subject="subject-1")
+
+    # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
+    dataset.add_simples(source_path="./test_data/sample1/raw/simple_test1.txt", subject="subject-xyz",
+                        sample="sample-1",
+                        data_type="primary", sds_parent_dir=save_dir)
