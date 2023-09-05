@@ -63,24 +63,24 @@ if __name__ == '__main__':
     # code_parameters = dataset.get_metadata(category="code_parameters")
     # code_description = dataset.get_metadata(category="code_description")
 
-    # TODO: Step3.1(optional), remove entire values in dataset_description_editor
+    # TODO: Step3.1(optional), remove entire values in dataset_description
     dataset_description.clear_values()
 
-    # TODO: Step4, add values for dataset_description_editor need to specify field_name
+    # TODO: Step4, add values for dataset_description need to specify row_name
     add_values_dataset_description(dataset_description)
 
     # Step4, add values for code_description_editor need to specify field_name
-    # code_description_editor.add_values(*["test..1", "test2", "test3", "test4", "test5...", ],
+    # code_description.add_values(*["test..1", "test2", "test3", "test4", "test5...", ],
     #                                    row_name="TSR1: Define Context Clearly Rating (0-4)", append=False)
     # # Step4, add values for code_parameters_editor to add values in a row, append = False
-    # code_parameters_editor.add_values(
+    # code_parameters.add_values(
     #     *["breast ...", "test..1", "test2", "test3", "test4", "test5...", "test3", "test4", "test5..."], append=False)
     # # Step4, add values for code_parameters_editor to add values in a row, append = True
-    # code_parameters_editor.add_values(
+    # code_parameters.add_values(
     #     *["breast_append", "test1_append", "test2_append", "test3_append", "test4_append", "test5..._append",
     #       "test3_append", "test4_append", "test5_append"], append=True)
     # # Step4, add values for code_parameters_editor to add values in a column need to specify field_name, append = True
-    # code_parameters_editor.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
+    # code_parameters.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
     #                                   append=True)
 
     # TODO: Step5: Get Values
@@ -90,19 +90,20 @@ if __name__ == '__main__':
     # print(code_parameters.get_values(field_name="name")
     # print(code_description.get_values(field_name="TSR1: Define Context Clearly Rating (0-4)"))
 
-    # TODO: Step6, remove values in specific header/field_name, code_parameters_editor
-    # code_parameters_editor.remove_values("test1_name", field_name="name")
+    # TODO: Step6, remove values in specific header/row_name, code_parameters
+    dataset_description.remove_values("tester", field_name="contributor role")
+    # code_parameters.remove_values("test1_name", field_name="name")
     # Step6, remove entire values in code_parameters_editor
-    # code_parameters_editor.clear_values()
+    # code_parameters.clear_values()
     # Step6, remove entire values in dataset_description_editor
-    # dataset_description_editor.clear_values()
+    # dataset_description.clear_values()
     # Step6, remove entire values in code_description_editor
-    # code_description_editor.clear_values()
+    # code_description.clear_values()
 
     # Step6, remove all values in one specific row/col
-    # code_parameters_editor.clear_values(field_name="name")
-    # dataset_description_editor.clear_values(field_name="Contributor role")
-    # code_description_editor.clear_values(field_name="TSR1: Define Context Clearly Rating (0-4)")
+    # code_parameters.clear_values(field_name="name")
+    # dataset_description.clear_values(field_name="Contributor role")
+    # code_description.clear_values(field_name="TSR1: Define Context Clearly Rating (0-4)")
 
     # TODO: Step7, save current dataset
     dataset.save(save_dir=save_dir)
