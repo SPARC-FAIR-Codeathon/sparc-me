@@ -10,7 +10,7 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from sparc_me.core.utils import add_data, check_row_exist
-from .metadata_editor import MetadataEditor
+from sparc_me.core.metadata_editor import MetadataEditor
 
 class Dataset(object):
     def __init__(self):
@@ -404,7 +404,7 @@ class Dataset(object):
 
         return fields
 
-    def get_metadata_editor(self, category):
+    def get_metadata(self, category):
         """
         :param category: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
         :type  category: string

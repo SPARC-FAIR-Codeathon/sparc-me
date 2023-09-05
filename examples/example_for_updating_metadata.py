@@ -1,31 +1,6 @@
 from sparc_me import Dataset
 
-if __name__ == '__main__':
-    save_dir = "./tmp/template/"
-
-    dataset = Dataset()
-
-    # Step:1 list categories and dataset_description elements
-    categories = dataset.list_categories(version="2.0.0")
-    elements = dataset.list_elements(category="dataset_description", version="2.0.0")
-    # list code_parameters elements
-    # elements = dataset.list_elements(category="code_parameters", version="2.0.0")
-
-    # Step2, way1: load dataset from template
-    dataset.load_from_template(version="2.0.0")
-    #
-    # Save the template dataset.
-    # dataset.save(save_dir=save_dir)
-
-    # Step2, way2： load dataset from existing dataset
-    # dataset.load_dataset(dataset_path=save_dir)
-
-    # Step3, get dataset_description, code_description, code_parameters metadataEditor
-    dataset_description_editor = dataset.get_metadata_editor(category="dataset_description")
-    code_parameters_editor = dataset.get_metadata_editor(category="code_parameters")
-    code_description_editor = dataset.get_metadata_editor(category="code_description")
-
-    # Step4, add values for dataset_description_editor need to specify field_name
+def add_values_dataset_description(dataset_description_editor):
     dataset_description_editor.add_values("2.0.0", row_name='metadataversion')
     dataset_description_editor.add_values("experimental", row_name='type')
     dataset_description_editor.add_values("Duke breast cancer MRI preprocessing", row_name='Title')
@@ -53,29 +28,57 @@ if __name__ == '__main__':
         "https://orcid.org/0000-0001-8176-199X",
         row_name='Contributor orcid')
 
-    dataset_description_editor.add_values(*["University of Auckland"]*6, row_name='Contributor affiliation')
-    dataset_description_editor.add_values(*["developer", "developer", "Researcher", "Researcher", "tester", "tester"], row_name="contributor role")
+    dataset_description_editor.add_values(*["University of Auckland"] * 6, row_name='Contributor affiliation')
+    dataset_description_editor.add_values(*["developer", "developer", "Researcher", "Researcher", "tester", "tester"],
+                                          row_name="contributor role")
     dataset_description_editor.add_values("source", row_name='Identifier description')
     dataset_description_editor.add_values("WasDerivedFrom", row_name='Relation type')
     dataset_description_editor.add_values("DTP-UUID", row_name='Identifier')
     dataset_description_editor.add_values("12L digital twin UUID", row_name='Identifier type')
     dataset_description_editor.add_values("1", row_name='Number of subjects')
     dataset_description_editor.add_values("1", row_name='Number of samples')
+if __name__ == '__main__':
+    save_dir = "./tmp/template/"
+
+    dataset = Dataset()
+
+    # Step:1 list categories and dataset_description elements
+    categories = dataset.list_categories(version="2.0.0")
+    elements = dataset.list_elements(category="dataset_description", version="2.0.0")
+    # list code_parameters elements
+    # elements = dataset.list_elements(category="code_parameters", version="2.0.0")
+
+    # Step2, way1: load dataset from template
+    dataset.load_from_template(version="2.0.0")
+    #
+    # Save the template dataset.
+    # dataset.save(save_dir=save_dir)
+
+    # Step2, way2： load dataset from existing dataset
+    # dataset.load_dataset(dataset_path=save_dir)
+
+    # Step3, get dataset_description, code_description, code_parameters metadataEditor
+    dataset_description_editor = dataset.get_metadata(category="dataset_description")
+    code_parameters_editor = dataset.get_metadata(category="code_parameters")
+    code_description_editor = dataset.get_metadata(category="code_description")
+
+    # Step4, add values for dataset_description_editor need to specify field_name
+    add_values_dataset_description(dataset_description_editor)
 
     # Step4, add values for code_description_editor need to specify field_name
-    code_description_editor.add_values(*["test..1", "test2", "test3", "test4", "test5...", ],
-                                       row_name="TSR1: Define Context Clearly Rating (0-4)", append=False)
-
-    # Step4, add values for code_parameters_editor to add values in a row, append = False
-    code_parameters_editor.add_values(
-        *["breast ...", "test..1", "test2", "test3", "test4", "test5...", "test3", "test4", "test5..."], append=False)
-    # Step4, add values for code_parameters_editor to add values in a row, append = True
-    code_parameters_editor.add_values(
-        *["breast_append", "test1_append", "test2_append", "test3_append", "test4_append", "test5..._append",
-          "test3_append", "test4_append", "test5_append"], append=True)
-    # Step4, add values for code_parameters_editor to add values in a column need to specify field_name, append = True
-    code_parameters_editor.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
-                                      append=True)
+    # code_description_editor.add_values(*["test..1", "test2", "test3", "test4", "test5...", ],
+    #                                    row_name="TSR1: Define Context Clearly Rating (0-4)", append=False)
+    #
+    # # Step4, add values for code_parameters_editor to add values in a row, append = False
+    # code_parameters_editor.add_values(
+    #     *["breast ...", "test..1", "test2", "test3", "test4", "test5...", "test3", "test4", "test5..."], append=False)
+    # # Step4, add values for code_parameters_editor to add values in a row, append = True
+    # code_parameters_editor.add_values(
+    #     *["breast_append", "test1_append", "test2_append", "test3_append", "test4_append", "test5..._append",
+    #       "test3_append", "test4_append", "test5_append"], append=True)
+    # # Step4, add values for code_parameters_editor to add values in a column need to specify field_name, append = True
+    # code_parameters_editor.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
+    #                                   append=True)
 
     # Step5, get values for code_parameters_editor
     print(code_parameters_editor.get_values(field_name="name"))
