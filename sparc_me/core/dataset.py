@@ -515,7 +515,6 @@ class Dataset(object):
             raise ValueError(msg)
 
         metadata = self._dataset.get(category).get("metadata")
-
         if check_exist:
             # In version 1, the unique column is not the column 0. Hence, unique column must be specified
             if unique_column is None:
@@ -601,19 +600,26 @@ class Dataset(object):
 
     def add_subject(self, source_path, subject, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
                      sample_metadata={}, subject_metadata={}):
+
         subject_source_folder = Path(source_path)
         if subject_source_folder.is_dir():
             for sample_folder in subject_source_folder.iterdir():
                 if sample_folder.is_dir():
-                    self.add_simples(source_path=sample_folder, subject=subject, sample=sample_folder.name,
+                    self.add_samples(source_path=sample_folder, subject=subject, sample=sample_folder.name,
                                       data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
                                       sample_metadata=sample_metadata, subject_metadata=subject_metadata)
         else:
             msg = f"The subject {source_path} must be a folder"
             raise ValueError(msg)
 
-    def add_simples(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
+    def add_samples(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
                     overwrite=True, sample_metadata={}, subject_metadata={}):
+
+        if subject_metadata != {}:
+            subject_metadata["subject id"] = subject
+        if sample_metadata !={}:
+            sample_metadata["sample id"] = sample
+            sample_metadata["subject id"] = subject
 
         if sds_parent_dir:
             self._dataset_path = Path(sds_parent_dir)
