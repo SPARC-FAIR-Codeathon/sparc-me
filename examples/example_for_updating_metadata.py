@@ -121,7 +121,7 @@ if __name__ == '__main__':
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
     dataset.add_subject(source_path="./test_data/bids_data/sub-01", subject="subject-1")
 
-    # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
+    # Copy single simple file data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_simples(source_path="./test_data/sample1/raw/simple_test1.txt", subject="subject-xyz",
                         sample="sample-1",
                         data_type="primary", sds_parent_dir=save_dir)
