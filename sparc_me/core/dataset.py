@@ -226,7 +226,7 @@ class Dataset(object):
 
         return self._dataset
 
-    def save(self, save_dir, remove_empty=False):
+    def save(self, save_dir, remove_empty=False, keep_style=False):
         """
         Save dataset
 
@@ -254,10 +254,14 @@ class Dataset(object):
                 if isinstance(data, pd.DataFrame):
                     self.set_version(self._version)
                     template_dir = self._get_template_dir(self._version)
-                    sf = StyleFrame.read_excel_as_template(str(template_dir / filename), data)
-                    writer = StyleFrame.ExcelWriter(Path.joinpath(save_dir, filename))
-                    sf.to_excel(writer)
-                    writer.save()
+
+                    if keep_style:
+                        sf = StyleFrame.read_excel_as_template(str(template_dir / filename), data)
+                        writer = StyleFrame.ExcelWriter(Path.joinpath(save_dir, filename))
+                        sf.to_excel(writer)
+                        writer.save()
+                    else:
+                        data.to_excel(Path.joinpath(save_dir, filename), index=False)
 
             elif Path(value).is_dir():
                 dir_name = Path(value).name
