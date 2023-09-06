@@ -10,6 +10,8 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from sparc_me.core.utils import add_data, check_row_exist
+from sparc_me.core.metadata_editor import MetadataEditor
+
 
 class Dataset(object):
     def __init__(self):
@@ -70,7 +72,6 @@ class Dataset(object):
         self._template_version = version
         self._set_version_specific_variables(version)
 
-    
     def _set_version_specific_variables(self, version):
         """Set version specific variables
 
@@ -87,7 +88,6 @@ class Dataset(object):
         else:
             error_msg = f"Unsupported version {version}"
             raise ValueError(error_msg)
-
 
     def _load(self, dir_path):
         """
@@ -225,7 +225,7 @@ class Dataset(object):
 
         return self._dataset
 
-    def save(self, save_dir, remove_empty=False):
+    def save(self, save_dir, remove_empty=False, keep_style=False):
         """
         Save dataset
 
@@ -253,10 +253,14 @@ class Dataset(object):
                 if isinstance(data, pd.DataFrame):
                     self.set_version(self._version)
                     template_dir = self._get_template_dir(self._version)
-                    sf = StyleFrame.read_excel_as_template(str(template_dir / filename), data)
-                    writer = StyleFrame.ExcelWriter(Path.joinpath(save_dir, filename))
-                    sf.to_excel(writer)
-                    writer.save()
+
+                    if keep_style:
+                        sf = StyleFrame.read_excel_as_template(str(template_dir / filename), data)
+                        writer = StyleFrame.ExcelWriter(Path.joinpath(save_dir, filename))
+                        sf.to_excel(writer)
+                        writer.save()
+                    else:
+                        data.to_excel(Path.joinpath(save_dir, filename), index=False)
 
             elif Path(value).is_dir():
                 dir_name = Path(value).name
@@ -399,6 +403,20 @@ class Dataset(object):
 
         return fields
 
+    def get_metadata(self, category):
+        """
+        :param category: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
+        :type  category: string
+        :return: give a metadata editor for a specific metadata
+        """
+        if not self._dataset:
+            msg = "Dataset not defined. Please load the dataset in advance."
+            raise ValueError(msg)
+
+        metadata = self._dataset.get(category).get("metadata")
+
+        return MetadataEditor(category, metadata)
+
     def set_field(self, category, row_index, header, value):
         """
         Set single field by row idx/name and column name (the header)
@@ -464,19 +482,18 @@ class Dataset(object):
         # Assumes that all excel files first column contains the unique value field
         # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified. 
         # This method need to be fixed to accomadate this 
-        matching_indices = metadata.index[metadata[metadata.columns[0]]==row_name].tolist()
+        matching_indices = metadata.index[metadata[metadata.columns[0]] == row_name].tolist()
 
         if not matching_indices:
             msg = f"No row with given unique name, {row_name}, was found in the unique column {metadata.columns[0]}"
             raise ValueError(msg)
-        elif len(matching_indices)>1:
+        elif len(matching_indices) > 1:
             msg = f"More than one row with given unique name, {row_name}, was found in the unique column {metadata.columns[0]}"
             raise ValueError(msg)
         else:
             excel_row_index = matching_indices[0] + 2
             return self.set_field(category=category, row_index=excel_row_index, header=header, value=value)
 
-        
     def append(self, category, row, check_exist=False, unique_column=None):
         """
         Append a row to a metadata file
@@ -498,13 +515,12 @@ class Dataset(object):
             raise ValueError(msg)
 
         metadata = self._dataset.get(category).get("metadata")
-
         if check_exist:
             # In version 1, the unique column is not the column 0. Hence, unique column must be specified
             if unique_column is None:
                 error_msg = "Provide which column in category is unique. Ex: subject_id"
                 raise ValueError(error_msg)
-            
+
             try:
                 row_index = check_row_exist(metadata, unique_column, unique_value=row[unique_column])
             except ValueError:
@@ -516,12 +532,13 @@ class Dataset(object):
         if row_index == -1:
             # Add row
             row_df = pd.DataFrame([row])
-            metadata = pd.concat([metadata, row_df], axis=0, ignore_index=True)     #If new header comes, it will be added as a new column with its value
+            metadata = pd.concat([metadata, row_df], axis=0,
+                                 ignore_index=True)  # If new header comes, it will be added as a new column with its value
         else:
             # Append row with additional values
             for key, value in row.items():
                 metadata.loc[row_index, key] = value
-            
+
         self._dataset[category]["metadata"] = metadata
         return self._dataset
 
@@ -543,15 +560,15 @@ class Dataset(object):
         for key, value in data.items():
             if isinstance(value, dict):
                 for key_1, value_1 in value.items():
-                   if isinstance(value, list):
-                       field = "    " + key_1
-                       value = str(value_1)
-                   else:
-                       field = "    " + key_1
-                       value = value_1
+                    if isinstance(value, list):
+                        field = "    " + key_1
+                        value = str(value_1)
+                    else:
+                        field = "    " + key_1
+                        value = value_1
 
-                   index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
-                   metadata.loc[index, "Value"] = value
+                    index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
+                    metadata.loc[index, "Value"] = value
 
             elif isinstance(value, list):
                 field = key
@@ -565,7 +582,6 @@ class Dataset(object):
 
         return metadata
 
-    
     def generate_file_from_template(self, save_path, category, data=pd.DataFrame()):
         """Generate file from a template and populate with data if givn
 
@@ -582,7 +598,28 @@ class Dataset(object):
         sf.to_excel(writer)
         writer.save()
 
-    def add_data(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
+    def add_subject(self, source_path, subject, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
+                     sample_metadata={}, subject_metadata={}):
+
+        subject_source_folder = Path(source_path)
+        if subject_source_folder.is_dir():
+            for sample_folder in subject_source_folder.iterdir():
+                if sample_folder.is_dir():
+                    self.add_samples(source_path=sample_folder, subject=subject, sample=sample_folder.name,
+                                      data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+                                      sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+        else:
+            msg = f"The subject {source_path} must be a folder"
+            raise ValueError(msg)
+
+    def add_samples(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
+                    overwrite=True, sample_metadata={}, subject_metadata={}):
+
+        if subject_metadata != {}:
+            subject_metadata["subject id"] = subject
+        if sample_metadata !={}:
+            sample_metadata["sample id"] = sample
+            sample_metadata["subject id"] = subject
 
         if sds_parent_dir:
             self._dataset_path = Path(sds_parent_dir)
@@ -594,7 +631,9 @@ class Dataset(object):
         else:
             msg = f"The data_type should be 'primary' or 'derivative'"
             raise ValueError(msg)
-    def add_primary_data(self, source_path, subject, sample, copy=True, overwrite=False, sample_metadata={}, subject_metadata={}):
+
+    def add_primary_data(self, source_path, subject, sample, copy=True, overwrite=True, sample_metadata={},
+                         subject_metadata={}):
         """Add raw data of a sample to correct SDS location and update relavent metadata files
 
         :param source_path: original location of raw data
@@ -619,7 +658,7 @@ class Dataset(object):
             if not os.path.exists('tmp'):
                 os.mkdir('tmp')
             self._dataset_path = tempfile.mkdtemp(prefix="sds_dataset_", dir='tmp')
-        
+
         primary_folder = os.path.join(str(self._dataset_path), 'primary')
 
         if os.path.exists(primary_folder):
@@ -642,41 +681,40 @@ class Dataset(object):
             self.generate_file_from_template(subjects_file_path, 'subjects')
 
         self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
-        
+
         if not sample_metadata:
             self.append(
-                category="samples", 
-                row={self._subject_id_field: subject, self._sample_id_field: sample}, 
-                check_exist=True, 
+                category="samples",
+                row={self._subject_id_field: subject, self._sample_id_field: sample},
+                check_exist=True,
                 unique_column=self._sample_id_field
-                )
+            )
         else:
             self.append(
-                category="samples", 
-                row=sample_metadata, 
-                check_exist=True, 
+                category="samples",
+                row=sample_metadata,
+                check_exist=True,
                 unique_column=self._sample_id_field
-                )
+            )
         self.generate_file_from_template(samples_file_path, 'samples', self._dataset['samples']['metadata'])
 
         if not subject_metadata:
             self.append(
-                category="subjects", 
-                row={self._subject_id_field: subject}, 
-                check_exist=True, 
+                category="subjects",
+                row={self._subject_id_field: subject},
+                check_exist=True,
                 unique_column=self._subject_id_field
-                )
+            )
         else:
             self.append(
-                category="subjects", 
-                row=subject_metadata, 
-                check_exist=True, 
+                category="subjects",
+                row=subject_metadata,
+                check_exist=True,
                 unique_column=self._subject_id_field
-                )
+            )
         self.generate_file_from_template(subjects_file_path, 'subjects', self._dataset['subjects']['metadata'])
 
-
-    def add_derivative_data(self, source_path, subject, sample, copy=True, overwrite=False):
+    def add_derivative_data(self, source_path, subject, sample, copy=True, overwrite=True):
         """Add raw data of a sample to correct SDS location and update relavent metadata files. 
         Requires you to already have the folder structure inplace.
 
@@ -696,7 +734,7 @@ class Dataset(object):
         """
 
         derivative_folder = os.path.join(str(self._dataset_path), 'derivative')
-        
+
         # Check if sds_parent_directory contains the derivative folder. If not create it.
         if os.path.exists(derivative_folder):
             if not os.path.isdir(derivative_folder):
@@ -704,7 +742,8 @@ class Dataset(object):
         else:
             os.mkdir(derivative_folder)
 
-        add_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy, overwrite=overwrite)
+        add_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
+                 overwrite=overwrite)
 
     def add_element(self, category, element):
         metadata = self._dataset.get(category).get("metadata")
