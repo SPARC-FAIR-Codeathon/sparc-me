@@ -198,7 +198,7 @@ class MetadataEditor:
                     self.metadata.loc[df_field_index, column_with_value] = 'None'
                 else:
                     self.metadata.loc[
-                        self.metadata.iloc[:, df_field_index] == value, self.metadata.columns[df_field_index]] = 'None'
+                        self.metadata.iloc[:, field_index] == value, self.metadata.columns[field_index]] = 'None'
         self.metadata[self.metadata == 'None'] = pd.NA
 
     def _remove_spaces_and_lower(self, s):
