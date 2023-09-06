@@ -7,7 +7,7 @@ class MetadataEditor:
         self.category = category
         self.metadata = metadata
 
-    def add_values(self, *values, row_name='', header='', append=False):
+    def add_values(self, *values, row_name='', header='', append=True):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
         :param values: field value
@@ -80,7 +80,7 @@ class MetadataEditor:
                 col_index = self._find_col_index(field_name)
                 self.metadata.iloc[:, col_index] = pd.NA
 
-    def set_row_values(self, *values, row_index, header='Value', append=False):
+    def set_row_values(self, *values, row_index, header='Value', append=True):
         """
         Set row fields/values by row idx/name and column name (the header)
 
@@ -149,7 +149,7 @@ class MetadataEditor:
                 self.metadata.index = self.metadata.index + 1
                 self.metadata.sort_index()
 
-    def set_col_values(self, *values, col_index, append=False):
+    def set_col_values(self, *values, col_index, append=True):
         """
         Set col fields/values by col index
         :param values: field values
