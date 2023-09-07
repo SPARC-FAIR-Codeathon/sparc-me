@@ -321,7 +321,7 @@ class MetadataEditor:
                     try:
                         self.metadata.insert(last_header_index + i + 1, unique_header, None)
                     except ValueError:
-                        msg = "Please private a correct header, e.g, Value, Value 1, Value 2..."
+                        msg = "Please provide a correct header, e.g, Value, Value 1, Value 2..."
                         raise ValueError(msg)
 
     def _create_unique_header(self, idx):
@@ -331,6 +331,12 @@ class MetadataEditor:
             else:
                 return (idx, f"Value {idx}")
 
-    def save(self):
-        print("path: ", self.category_path)
-        self.metadata.to_excel(self.category_path, index=False)
+    def save(self, path=""):
+        try:
+            if path == "":
+                path = self.category_path
+
+            self.metadata.to_excel(path, index=False)
+        except:
+            msg = f"Please provide a correct path for {self.category}"
+            raise ValueError(msg)

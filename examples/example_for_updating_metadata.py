@@ -42,7 +42,7 @@ if __name__ == '__main__':
     save_dir = "./tmp/template/"
 
     dataset = Dataset()
-
+    dataset.set_dataset_path(save_dir)
     # TODO: Step:1 list categories and dataset_description elements
     categories = dataset.list_categories(version="2.0.0")
     elements = dataset.list_elements(category="dataset_description", version="2.0.0")
@@ -59,7 +59,6 @@ if __name__ == '__main__':
     # TODO: Step2, way2： load dataset from existing dataset
     # dataset.load_dataset(dataset_path=save_dir)
 
-    dataset.set_dataset_path(save_dir)
     # TODO: Step3, get dataset_description, code_description, code_parameters metadataEditor
     dataset_description = dataset.get_metadata(category="dataset_description")
     # code_parameters = dataset.get_metadata(category="code_parameters")
