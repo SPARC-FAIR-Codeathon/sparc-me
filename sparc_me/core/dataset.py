@@ -5,6 +5,7 @@ import tempfile
 
 from pathlib import Path
 from distutils.dir_util import copy_tree
+from typing import Dict
 
 import pandas as pd
 from styleframe import StyleFrame
@@ -31,7 +32,7 @@ class Dataset(object):
         self._column_based = ["dataset_description", "code_description"]
         self._subject_id_field = None
         self._sample_id_field = None
-        self._metadata = {}
+        self._metadata: Dict[str, MetadataEditor] = {}
 
     def set_dataset_path(self, path):
         """
@@ -135,8 +136,9 @@ class Dataset(object):
         :rtype: dict
         """
         self.set_version(version)
-        self._dataset_path = self._get_template_dir(self._version)
-        self._dataset = self._load(str(self._dataset_path))
+        # self._dataset_path = self._get_template_dir(self._version)
+        template_dataset_path = self._get_template_dir(self._version)
+        self._dataset = self._load(str(template_dataset_path))
 
         self._generate_metadata()
 
@@ -226,9 +228,11 @@ class Dataset(object):
         else:
             self._dataset = self._load(dataset_path)
             self._generate_metadata()
+        if not self._dataset_path:
+            self._dataset_path = Path(dataset_path)
         return self._dataset
 
-    def save(self, save_dir, remove_empty=False, keep_style=False):
+    def save(self, save_dir="", remove_empty=False, keep_style=False):
         """
         Save dataset
 
@@ -240,7 +244,8 @@ class Dataset(object):
         if not self._dataset:
             msg = "Dataset not defined. Please load the dataset or the template dataset in advance."
             raise ValueError(msg)
-
+        if save_dir == "":
+            save_dir = self._dataset_path
         save_dir = Path(save_dir)
         save_dir.mkdir(parents=True, exist_ok=True)
 
@@ -334,6 +339,7 @@ class Dataset(object):
                 categories.append(category)
 
         return categories
+
     def list_categories(self, version):
         """
         list all categories based on the metadata files in the template dataset
@@ -409,13 +415,12 @@ class Dataset(object):
 
         return fields
 
-    def _generate_metadata(self, ):
+    def _generate_metadata(self):
         categories = self._list_categories(self._version)
-        print(self._version)
-        print(categories)
         for category in categories:
             metadata = self._dataset.get(category).get("metadata")
-            self._metadata[category] = MetadataEditor(category, metadata)
+            self._metadata[category] = MetadataEditor(category, metadata, self._dataset_path)
+
     def get_metadata(self, category):
         """
         :param category: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
@@ -427,9 +432,6 @@ class Dataset(object):
             raise ValueError(msg)
 
         return self._metadata[category]
-        # metadata = self._dataset.get(category).get("metadata")
-        #
-        # return MetadataEditor(category, metadata)
 
     def set_field(self, category, row_index, header, value):
         """
@@ -646,9 +648,6 @@ class Dataset(object):
             msg = f"The data_type should be 'primary' or 'derivative'"
             raise ValueError(msg)
 
-    def _edit_sub_sam_nums_in_dataset_description(self, primary_folder):
-        print(get_sub_folder_paths_in_folder(primary_folder))
-
     def add_primary_data(self, source_path, subject, sample, copy=True, overwrite=True, sample_metadata={},
                          subject_metadata={}):
         """Add raw data of a sample to correct SDS location and update relavent metadata files
@@ -693,7 +692,7 @@ class Dataset(object):
         samples_file_path = os.path.join(self._dataset_path, 'samples.xlsx')
         subjects_file_path = os.path.join(self._dataset_path, 'subjects.xlsx')
 
-        self._edit_sub_sam_nums_in_dataset_description(primary_folder)
+        self._update_sub_sam_nums_in_dataset_description(primary_folder)
 
         if not os.path.exists(samples_file_path):
             self.generate_file_from_template(samples_file_path, 'samples')
@@ -774,3 +773,40 @@ class Dataset(object):
             metadata[element] = None
 
         self._dataset[category]["metadata"] = metadata
+
+    def delete_subject(self, data_type="primary"):
+
+        self.delete_samples(data_type)
+
+
+    def delete_samples(self, data_type="primary"):
+
+        if data_type == "primary":
+            self.delete_primary_data()
+        else:
+            self.delete_derivative_data()
+
+    def delete_primary_data(self, ):
+        pass
+
+    def delete_derivative_data(self):
+        pass
+
+    def _update_sub_sam_nums_in_dataset_description(self, primary_folder):
+        """
+        :param primary_folder: the primary folder url
+        :type: Path|str
+        :return:
+        """
+        subject_folders = get_sub_folder_paths_in_folder(primary_folder)
+        sample_folders = []
+        for sub in subject_folders:
+            if sub.is_dir():
+                folders = get_sub_folder_paths_in_folder(sub)
+                sample_folders.extend(folders)
+        dataset_description_metadata = self._metadata["dataset_description"]
+        dataset_description_metadata.add_values(str(len(subject_folders)), row_name="Number of subjects",
+                                                header='Value', append=False)
+        dataset_description_metadata.add_values(str(len(sample_folders)), row_name="Number of samples",
+                                                header='Value', append=False)
+        dataset_description_metadata.save()

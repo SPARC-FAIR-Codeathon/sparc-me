@@ -1,11 +1,20 @@
 import re
 import pandas as pd
-
+from pathlib import Path
 
 class MetadataEditor:
-    def __init__(self, category, metadata):
+    def __init__(self, category, metadata, dataset_path):
+        """
+        :param category: metadata file name
+        :type category: str
+        :param metadata: metadata dataframe content
+        :type metadata: Dataframe
+        :param dataset_path: root dataset path
+        :type dataset_path: Path
+        """
         self.category = category
         self.metadata = metadata
+        self.category_path = Path(dataset_path).joinpath(f"{category}.xlsx")
 
     def add_values(self, *values, row_name='', header='', append=True):
         """
@@ -321,3 +330,7 @@ class MetadataEditor:
                 idx += 1
             else:
                 return (idx, f"Value {idx}")
+
+    def save(self):
+        print("path: ", self.category_path)
+        self.metadata.to_excel(self.category_path, index=False)

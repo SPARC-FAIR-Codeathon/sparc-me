@@ -59,6 +59,7 @@ if __name__ == '__main__':
     # TODO: Step2, way2： load dataset from existing dataset
     # dataset.load_dataset(dataset_path=save_dir)
 
+    dataset.set_dataset_path(save_dir)
     # TODO: Step3, get dataset_description, code_description, code_parameters metadataEditor
     dataset_description = dataset.get_metadata(category="dataset_description")
     # code_parameters = dataset.get_metadata(category="code_parameters")
@@ -107,7 +108,8 @@ if __name__ == '__main__':
     # code_description.clear_values(field_name="TSR1: Define Context Clearly Rating (0-4)")
 
     # TODO: Step7, save current dataset
-    dataset.save(save_dir=save_dir)
+    # dataset.save(save_dir=save_dir)
+    dataset.save()
 
     # TODO: Step8, move files to dataset primary and derivative folder
     # TODO: Step8.1, Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
