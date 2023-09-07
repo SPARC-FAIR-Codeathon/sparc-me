@@ -24,7 +24,6 @@ def add_data(source_path, dataset_path, subject, sample, data_type="primary", co
     """
     destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
     # If overwrite is True, remove existing sample
-    print(destination_path)
     if os.path.exists(destination_path):
         if overwrite:
             shutil.rmtree(destination_path)

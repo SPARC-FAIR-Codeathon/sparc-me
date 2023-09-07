@@ -145,4 +145,10 @@ if __name__ == '__main__':
     #  from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_samples(source_path="./test_data/sample1/raw/simple_test1.txt", subject="subject-xyz",
                         sample="sample-2",
-                        data_type="primary", sds_parent_dir=save_dir)
+                        data_type="primary", overwrite=False, sds_parent_dir=save_dir)
+
+    # TODO: Step9 Delete folder
+    # Step9.1 Delete subject folder
+    # dataset.delete_subject("./tmp/template/primary/subject-xyz")
+    # Step9.2 Delete sample folder
+    # dataset.delete_samples("./tmp/template/primary/subject-1/func")

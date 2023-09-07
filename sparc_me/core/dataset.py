@@ -774,23 +774,59 @@ class Dataset(object):
 
         self._dataset[category]["metadata"] = metadata
 
-    def delete_subject(self, data_type="primary"):
+    def delete_subject(self, destination_path, data_type="primary"):
+        """
+        :param destination_path: the subject folder path that you want to delete
+        :param data_type:
+        :return:
+        """
+        sub_folder = Path(destination_path)
+        primary_folder = self._dataset_path / "primary"
+        for sam_folder in sub_folder.iterdir():
+            if sam_folder.is_dir():
+                self.delete_samples(sam_folder, data_type)
 
-        self.delete_samples(data_type)
-
-
-    def delete_samples(self, data_type="primary"):
-
+        sub_folder.rmdir()
         if data_type == "primary":
-            self.delete_primary_data()
+            self._update_sub_sam_nums_in_dataset_description(primary_folder)
+            subjects_metadata = self._metadata["subjects"]
+            subjects_metadata.remove_row(sub_folder.name)
+            subjects_metadata.save()
+
+    def delete_samples(self, destination_path, data_type="primary"):
+        """
+        :param destination_path: the sample folder path that you want to delete
+        :param data_type:
+        :return:
+        """
+        sam_folder = Path(destination_path)
+        primary_folder = self._dataset_path / "primary"
+        for item in sam_folder.iterdir():
+            self.delete_data(item)
+
+        sam_folder.rmdir()
+        if data_type == "primary":
+            self._update_sub_sam_nums_in_dataset_description(primary_folder)
+            samples_metadata = self._metadata["samples"]
+            samples_metadata.remove_row(sam_folder.name)
+            samples_metadata.save()
+
+    def delete_data(self, destination_path):
+        delete_flag = self._delete_data(destination_path)
+        if delete_flag:
+            path = str(Path(str(destination_path).replace(str(self._dataset_path), "")[1:]).as_posix())
+            manifest = self._metadata["manifest"]
+            manifest.remove_row(path)
+            manifest.save()
+
+    def _delete_data(self, destination_path):
+        file_path = Path(destination_path)
+        if file_path.is_file():
+            file_path.unlink()
+            return True
         else:
-            self.delete_derivative_data()
-
-    def delete_primary_data(self, ):
-        pass
-
-    def delete_derivative_data(self):
-        pass
+            shutil.rmtree(file_path)
+            return False
 
     def _update_sub_sam_nums_in_dataset_description(self, primary_folder):
         """
