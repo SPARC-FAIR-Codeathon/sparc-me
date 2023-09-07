@@ -9,7 +9,7 @@ from distutils.dir_util import copy_tree
 import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
-from sparc_me.core.utils import add_data, check_row_exist
+from sparc_me.core.utils import add_data, check_row_exist, get_sub_folder_paths_in_folder
 from sparc_me.core.metadata_editor import MetadataEditor
 
 
@@ -31,6 +31,7 @@ class Dataset(object):
         self._column_based = ["dataset_description", "code_description"]
         self._subject_id_field = None
         self._sample_id_field = None
+        self._metadata = {}
 
     def set_dataset_path(self, path):
         """
@@ -137,6 +138,8 @@ class Dataset(object):
         self._dataset_path = self._get_template_dir(self._version)
         self._dataset = self._load(str(self._dataset_path))
 
+        self._generate_metadata()
+
         return self._dataset
 
     def _convert_version_format(self, version):
@@ -222,7 +225,7 @@ class Dataset(object):
             self._dataset = self.load_from_template(version=version)
         else:
             self._dataset = self._load(dataset_path)
-
+            self._generate_metadata()
         return self._dataset
 
     def save(self, save_dir, remove_empty=False, keep_style=False):
@@ -319,15 +322,7 @@ class Dataset(object):
 
         return metadata
 
-    def list_categories(self, version):
-        """
-        list all categories based on the metadata files in the template dataset
-
-        :param version: reference template version
-        :type version: string
-        :return: all metadata categories
-        :rtype: list
-        """
+    def _list_categories(self, version):
         categories = list()
 
         self.load_template(version=version)
@@ -338,6 +333,17 @@ class Dataset(object):
                 category = file_path.stem
                 categories.append(category)
 
+        return categories
+    def list_categories(self, version):
+        """
+        list all categories based on the metadata files in the template dataset
+
+        :param version: reference template version
+        :type version: string
+        :return: all metadata categories
+        :rtype: list
+        """
+        categories = self._list_categories(version)
         print("Categories:")
         for category in categories:
             print(category)
@@ -403,6 +409,13 @@ class Dataset(object):
 
         return fields
 
+    def _generate_metadata(self, ):
+        categories = self._list_categories(self._version)
+        print(self._version)
+        print(categories)
+        for category in categories:
+            metadata = self._dataset.get(category).get("metadata")
+            self._metadata[category] = MetadataEditor(category, metadata)
     def get_metadata(self, category):
         """
         :param category: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
@@ -413,9 +426,10 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        metadata = self._dataset.get(category).get("metadata")
-
-        return MetadataEditor(category, metadata)
+        return self._metadata[category]
+        # metadata = self._dataset.get(category).get("metadata")
+        #
+        # return MetadataEditor(category, metadata)
 
     def set_field(self, category, row_index, header, value):
         """
@@ -599,15 +613,15 @@ class Dataset(object):
         writer.save()
 
     def add_subject(self, source_path, subject, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
-                     sample_metadata={}, subject_metadata={}):
+                    sample_metadata={}, subject_metadata={}):
 
         subject_source_folder = Path(source_path)
         if subject_source_folder.is_dir():
             for sample_folder in subject_source_folder.iterdir():
                 if sample_folder.is_dir():
                     self.add_samples(source_path=sample_folder, subject=subject, sample=sample_folder.name,
-                                      data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
-                                      sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+                                     data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+                                     sample_metadata=sample_metadata, subject_metadata=subject_metadata)
         else:
             msg = f"The subject {source_path} must be a folder"
             raise ValueError(msg)
@@ -617,7 +631,7 @@ class Dataset(object):
 
         if subject_metadata != {}:
             subject_metadata["subject id"] = subject
-        if sample_metadata !={}:
+        if sample_metadata != {}:
             sample_metadata["sample id"] = sample
             sample_metadata["subject id"] = subject
 
@@ -631,6 +645,9 @@ class Dataset(object):
         else:
             msg = f"The data_type should be 'primary' or 'derivative'"
             raise ValueError(msg)
+
+    def _edit_sub_sam_nums_in_dataset_description(self, primary_folder):
+        print(get_sub_folder_paths_in_folder(primary_folder))
 
     def add_primary_data(self, source_path, subject, sample, copy=True, overwrite=True, sample_metadata={},
                          subject_metadata={}):
@@ -663,7 +680,8 @@ class Dataset(object):
 
         if os.path.exists(primary_folder):
             if os.path.isdir(primary_folder):
-                self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
+                if not self._dataset:
+                    self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
             else:
                 raise NotADirectoryError(f'{primary_folder} is not a directory')
         else:
@@ -674,6 +692,8 @@ class Dataset(object):
 
         samples_file_path = os.path.join(self._dataset_path, 'samples.xlsx')
         subjects_file_path = os.path.join(self._dataset_path, 'subjects.xlsx')
+
+        self._edit_sub_sam_nums_in_dataset_description(primary_folder)
 
         if not os.path.exists(samples_file_path):
             self.generate_file_from_template(samples_file_path, 'samples')
