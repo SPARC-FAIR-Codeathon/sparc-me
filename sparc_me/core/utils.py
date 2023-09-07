@@ -9,7 +9,7 @@ from xlrd import XLRDError
 
 
 # def add_data(source_path, destination_path_list, copy=True, overwrite=False):
-def add_data(source_path, dataset_path, subject, sample, data_type="primary", copy=True, overwrite=False):
+def add_data(source_path, dataset_path, subject, sample, data_type="primary", copy=True, overwrite=True):
     """Copy or move data from source folder to destination folder
 
     :param source_path: path to the original data
@@ -24,15 +24,25 @@ def add_data(source_path, dataset_path, subject, sample, data_type="primary", co
     """
     destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
     # If overwrite is True, remove existing sample
+    print(destination_path)
     if os.path.exists(destination_path):
         if overwrite:
             shutil.rmtree(destination_path)
+            os.makedirs(destination_path)
         else:
-            raise FileExistsError(
-                "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+            if os.path.isdir(source_path):
+                raise FileExistsError(
+                    "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+            else:
+                fname = os.path.basename(source_path)
+                exsiting_files = os.listdir(destination_path)
+                if fname in exsiting_files:
+                    raise FileExistsError(
+                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
 
-    # Create destination folder
-    os.makedirs(destination_path)
+    else:
+        # Create destination folder
+        os.makedirs(destination_path)
 
     if os.path.isdir(source_path):
         for fname in os.listdir(source_path):
