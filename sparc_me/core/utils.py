@@ -43,11 +43,12 @@ def add_data(source_path, dataset_path, subject, sample, data_type="primary", co
                     f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying")
             else:
                 move_single_file(file_path=file_path, destination_path=destination_path,
-                             dataset_path=dataset_path, fname=fname, copy=copy)
+                                 dataset_path=dataset_path, fname=fname, copy=copy)
     else:
         fname = os.path.basename(source_path)
         move_single_file(file_path=source_path, destination_path=destination_path,
                          dataset_path=dataset_path, fname=fname, copy=copy)
+
 
 def move_single_file(file_path, destination_path, dataset_path, fname, copy):
     if copy:
@@ -160,3 +161,19 @@ def convert_schema_excel_to_json(source_path, dest_path):
 
     with open(dest_path, 'w') as f:
         json.dump(schema, f, indent=4)
+
+
+def get_sub_folder_paths_in_folder(folder_path):
+    """
+    get sub folder paths in a folder
+    :param folder_path: the parent folder path
+    :type folder_path: str
+    :return: list
+    """
+    folder = Path(folder_path)
+    sub_folders = []
+    for item in folder.iterdir():
+        if item.is_dir():
+            sub_folders.append(item)
+
+    return sub_folders
