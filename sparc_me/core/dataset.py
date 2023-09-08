@@ -223,13 +223,15 @@ class Dataset(object):
         if version:
             self.set_version(version)
 
+        if not self._dataset_path:
+            self._dataset_path = Path(dataset_path)
+
         if from_template:
             self._dataset = self.load_from_template(version=version)
         else:
             self._dataset = self._load(dataset_path)
             self._generate_metadata()
-        if not self._dataset_path:
-            self._dataset_path = Path(dataset_path)
+
         return self._dataset
 
     def save(self, save_dir="", remove_empty=False, keep_style=False):
