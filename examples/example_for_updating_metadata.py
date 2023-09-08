@@ -140,21 +140,6 @@ if __name__ == '__main__':
         "sample type": "tissue",
         "sample anatomical location": "breast tissue",
     })
-    # dataset.add_subject(source_path="./test_data/bids_data/sub-01", subject="sub-1", subject_metadata={
-    #     "subject id": "",
-    #     "subject experimental group": "experimental",
-    #     "age": "041Y",
-    #     "sex": "F",
-    #     "species": "human",
-    #     "strain": "tissue",
-    #     "age category": "middle adulthood"
-    # }, sample_metadata={
-    #     "sample id": "",
-    #     "subject id": "",
-    #     "sample experimental group": "experimental",
-    #     "sample type": "tissue",
-    #     "sample anatomical location": "breast tissue",
-    # })
     # TODO: Step8.3 Copy single sample file data to dataset
     #
     #  from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.

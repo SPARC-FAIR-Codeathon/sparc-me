@@ -925,7 +925,7 @@ class Dataset(object):
                 sample_folders.extend(folders)
         dataset_description_metadata = self._metadata["dataset_description"]
         dataset_description_metadata.add_values(str(len(subject_folders)), row_name="Number of subjects",
-                                                header='Value', append=False)
+                                                col_name='Value', append=False)
         dataset_description_metadata.add_values(str(len(sample_folders)), row_name="Number of samples",
-                                                header='Value', append=False)
+                                                col_name='Value', append=False)
         dataset_description_metadata.save()
