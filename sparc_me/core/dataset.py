@@ -655,11 +655,9 @@ class Dataset(object):
     def add_sample(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
                    overwrite=True, sample_metadata={}, subject_metadata={}):
 
-        if subject_metadata != {}:
-            subject_metadata["subject id"] = subject
-        if sample_metadata != {}:
-            sample_metadata["sample id"] = sample
-            sample_metadata["subject id"] = subject
+        subject_metadata["subject id"] = subject
+        sample_metadata["sample id"] = sample
+        sample_metadata["subject id"] = subject
 
         if sds_parent_dir:
             self._dataset_path = Path(sds_parent_dir)
