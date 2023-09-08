@@ -1,21 +1,30 @@
 import re
 import pandas as pd
-
+from pathlib import Path
 
 class MetadataEditor:
-    def __init__(self, category, metadata):
+    def __init__(self, category, metadata, dataset_path):
+        """
+        :param category: metadata file name
+        :type category: str
+        :param metadata: metadata dataframe content
+        :type metadata: Dataframe
+        :param dataset_path: root dataset path
+        :type dataset_path: Path
+        """
         self.category = category
         self.metadata = metadata
+        self.category_path = Path(dataset_path).joinpath(f"{category}.xlsx")
 
-    def add_values(self, *values, row_name='', header='', append=True):
+    def add_values(self, *values, row_name='', col_name='', append=True):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
         :param values: field value
         :type values: *str
         :param row_name: Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
         :type row_name: str
-        :param header: column name. the header is the first row
-        :type header: str
+        :param col_name: column name. the header is the first row
+        :type col_name: str
         :param append: insert values into last col or row
         :type append: bool
         :return: updated dataset
@@ -25,19 +34,19 @@ class MetadataEditor:
             if row_name == '':
                 return
             else:
-                if header == '':
-                    header = 'Value'
+                if col_name == '':
+                    col_name = 'Value'
             excel_row_index = self._find_row_index(row_name)
-            self.set_row_values(*values, row_index=excel_row_index, header=header, append=append)
+            self.set_row_values(*values, row_index=excel_row_index, col_name=col_name, append=append)
         else:
-            if header == '':
+            if col_name == '':
                 # add values by rows start at (0,0)
                 # get first header
                 header = self.metadata.columns[0]
-                self.set_row_values(*values, row_index=2, header=header, append=append)
+                self.set_row_values(*values, row_index=2, col_name=col_name, append=append)
             else:
                 # add values by header (columns)
-                col_index = self._find_col_index(header)
+                col_index = self._find_col_index(col_name)
                 self.set_col_values(*values, col_index=col_index, append=append)
 
     def remove_values(self, *values, field_name):
@@ -80,7 +89,7 @@ class MetadataEditor:
                 col_index = self._find_col_index(field_name)
                 self.metadata.iloc[:, col_index] = pd.NA
 
-    def set_row_values(self, *values, row_index, header='Value', append=True):
+    def set_row_values(self, *values, row_index, col_name='Value', append=True):
         """
         Set row fields/values by row idx/name and column name (the header)
 
@@ -95,7 +104,7 @@ class MetadataEditor:
         :return: updated dataset
         :rtype: dict
         """
-        insert_header = header
+        insert_header = col_name
         if not isinstance(row_index, int):
             msg = "row_index should be 'int'."
             raise ValueError(msg)
@@ -128,10 +137,10 @@ class MetadataEditor:
                         insert_header = self.metadata.columns[-1]
                         start_column_index = last_value_col_index + 1
                 else:
-                    start_column_index = self.metadata.columns.get_loc(header)
+                    start_column_index = self.metadata.columns.get_loc(col_name)
 
                 if len(values) > 0:
-                    self._edit_colume(insert_header, len(values))
+                    self._edit_column(insert_header, len(values))
                     self.metadata.iloc[row_index, start_column_index:start_column_index + len(values)] = values
                 else:
                     msg = f"please provide values"
@@ -177,6 +186,9 @@ class MetadataEditor:
 
             for i, value in enumerate(values):
                 self.metadata.iat[i, col_index] = value
+    def remove_row(self, value):
+        rows_to_delete = self.metadata[self.metadata.eq(value).any(axis=1)]
+        self.metadata.drop(rows_to_delete.index, inplace=True)
 
     def _remove_values(self, *values, field_index):
         """
@@ -274,21 +286,21 @@ class MetadataEditor:
             excel_row_index = matching_indices[0] + 2
             return excel_row_index
 
-    def _find_col_index(self, header):
+    def _find_col_index(self, col_name):
         """
-        :param header: a str col/header name in Excel
-        :type header: str
+        :param col_name: a str col/header name in Excel
+        :type col_name: str
         :return:
         """
         elements = self.metadata.columns.tolist()
-        matching_indices = self._validate_input(header, elements)
+        matching_indices = self._validate_input(col_name, elements)
         if len(matching_indices) == 1:
             return matching_indices[0]
         else:
             msg = f"No valid field name is found!"
             raise ValueError(msg)
 
-    def _edit_colume(self, insert_header, nums, operator='+'):
+    def _edit_column(self, insert_header, nums, operator='+'):
         """
 
         :param insert_header: the start header name
@@ -312,7 +324,7 @@ class MetadataEditor:
                     try:
                         self.metadata.insert(last_header_index + i + 1, unique_header, None)
                     except ValueError:
-                        msg = "Please private a correct header, e.g, Value, Value 1, Value 2..."
+                        msg = "Please provide a correct header, e.g, Value, Value 1, Value 2..."
                         raise ValueError(msg)
 
     def _create_unique_header(self, idx):
@@ -321,3 +333,13 @@ class MetadataEditor:
                 idx += 1
             else:
                 return (idx, f"Value {idx}")
+
+    def save(self, path=""):
+        try:
+            if path == "":
+                path = self.category_path
+
+            self.metadata.to_excel(path, index=False)
+        except:
+            msg = f"Please provide a correct path for {self.category}"
+            raise ValueError(msg)
