@@ -9,7 +9,7 @@ from xlrd import XLRDError
 
 
 # def add_data(source_path, destination_path_list, copy=True, overwrite=False):
-def add_data(source_path, dataset_path, subject, sample, data_type="primary", copy=True, overwrite=False):
+def add_data(source_path, dataset_path, subject, sample, data_type="primary", copy=True, overwrite=True):
     """Copy or move data from source folder to destination folder
 
     :param source_path: path to the original data
@@ -25,14 +25,27 @@ def add_data(source_path, dataset_path, subject, sample, data_type="primary", co
     destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
     # If overwrite is True, remove existing sample
     if os.path.exists(destination_path):
-        if overwrite:
-            shutil.rmtree(destination_path)
+        if os.path.isdir(source_path):
+            if overwrite:
+                shutil.rmtree(destination_path)
+                os.makedirs(destination_path)
+            else:
+                raise FileExistsError(
+                    "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
         else:
-            raise FileExistsError(
-                "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
-
-    # Create destination folder
-    os.makedirs(destination_path)
+            fname = os.path.basename(source_path)
+            exsiting_files = os.listdir(destination_path)
+            if fname in exsiting_files:
+                if overwrite:
+                    file_path = os.path.join(destination_path, fname)
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                    else:
+                        raise FileExistsError(
+                            "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+    else:
+        # Create destination folder
+        os.makedirs(destination_path)
 
     if os.path.isdir(source_path):
         for fname in os.listdir(source_path):
@@ -43,11 +56,12 @@ def add_data(source_path, dataset_path, subject, sample, data_type="primary", co
                     f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying")
             else:
                 move_single_file(file_path=file_path, destination_path=destination_path,
-                             dataset_path=dataset_path, fname=fname, copy=copy)
+                                 dataset_path=dataset_path, fname=fname, copy=copy)
     else:
         fname = os.path.basename(source_path)
         move_single_file(file_path=source_path, destination_path=destination_path,
                          dataset_path=dataset_path, fname=fname, copy=copy)
+
 
 def move_single_file(file_path, destination_path, dataset_path, fname, copy):
     if copy:
@@ -160,3 +174,19 @@ def convert_schema_excel_to_json(source_path, dest_path):
 
     with open(dest_path, 'w') as f:
         json.dump(schema, f, indent=4)
+
+
+def get_sub_folder_paths_in_folder(folder_path):
+    """
+    get sub folder paths in a folder
+    :param folder_path: the parent folder path
+    :type folder_path: str
+    :return: list
+    """
+    folder = Path(folder_path)
+    sub_folders = []
+    for item in folder.iterdir():
+        if item.is_dir():
+            sub_folders.append(item)
+
+    return sub_folders
