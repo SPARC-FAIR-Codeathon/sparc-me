@@ -1,16 +1,17 @@
 from sparc_me import Dataset
 
+
 def add_values_dataset_description(dataset_description):
     dataset_description.add_values("2.0.0", row_name='metadataversion')
     dataset_description.add_values("experimental", row_name='type')
     dataset_description.add_values("Duke breast cancer MRI preprocessing", row_name='Title')
     dataset_description.add_values("""Preprocessing the breast cancer MRI images and saving in Nifti format""",
-                                          row_name='subtitle')
+                                   row_name='subtitle')
     dataset_description.add_values("Breast cancer", "image processing", row_name='Keywords')
     dataset_description.add_values("""Preprocessing the breast cancer MRI images and saving in Nifti format""",
-                                          row_name="Study purpose")
+                                   row_name="Study purpose")
     dataset_description.add_values("derived from Duke Breast Cancer MRI dataset",
-                                          row_name='Study data Collection')
+                                   row_name='Study data Collection')
     dataset_description.add_values("NA", row_name='Study primary conclusion')
     dataset_description.add_values("NA", row_name='Study primary conclusion', append=True)
     dataset_description.add_values("breast", row_name='Study organ system')
@@ -30,13 +31,14 @@ def add_values_dataset_description(dataset_description):
 
     dataset_description.add_values(*["University of Auckland"] * 6, row_name='Contributor affiliation')
     dataset_description.add_values(*["developer", "developer", "Researcher", "Researcher", "tester", "tester"],
-                                          row_name="contributor role")
+                                   row_name="contributor role")
     dataset_description.add_values("source", row_name='Identifier description')
     dataset_description.add_values("WasDerivedFrom", row_name='Relation type')
     dataset_description.add_values("DTP-UUID", row_name='Identifier')
     dataset_description.add_values("12L digital twin UUID", row_name='Identifier type')
     dataset_description.add_values("1", row_name='Number of subjects')
     dataset_description.add_values("1", row_name='Number of samples')
+
 
 if __name__ == '__main__':
     save_dir = "./tmp/template/"
@@ -54,7 +56,6 @@ if __name__ == '__main__':
     #
     # Save the template dataset.
     # dataset.save(save_dir=save_dir)
-
 
     # TODO: Step2, way2： load dataset from existing dataset
     # dataset.load_dataset(dataset_path=save_dir)
@@ -108,24 +109,23 @@ if __name__ == '__main__':
 
     # TODO: Step7, save current dataset
     # dataset.save(save_dir=save_dir)
-    dataset.save()
+    # dataset.save()
 
     # TODO: Step8, move files to dataset primary and derivative folder
     # TODO: Step8.1, Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_samples(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1",
-                     data_type="primary", sds_parent_dir=save_dir)
-    # If you want to move the data to destination directory, set copy to 'False'.
-    dataset.add_samples(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2",
-                     data_type="primary", sds_parent_dir=save_dir)
+    dataset.add_samples(source_paths=["./test_data/sample1/raw", "./test_data/sample2/raw"], subject="sub-xyz",
+                        samples=["sam-1", "sam-2"],
+                        data_type="primary", sds_parent_dir=save_dir)
 
     # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_samples(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc",
-                     data_type="derivative", sds_parent_dir=save_dir)
+    dataset.add_sample(source_path="./test_data/sample1/derived", subject="sub-xyz", sample="sam-abc",
+                       data_type="derivative", sds_parent_dir=save_dir, sample_metadata={})
 
-    #TODO: Step8.2, add subject with subject and sample metadata
+
+    # TODO: Step8.2, add subject with subject and sample metadata
 
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
-    dataset.add_subject(source_path="./test_data/bids_data/sub-01", subject="subject-1", subject_metadata={
+    dataset.add_subjects(source_paths=["./test_data/bids_data/sub-01","./test_data/bids_data/sub-02"], subjects=["sub-1","sub-2"],subject_metadata={
         "subject id": "",
         "subject experimental group": "experimental",
         "age": "041Y",
@@ -140,15 +140,32 @@ if __name__ == '__main__':
         "sample type": "tissue",
         "sample anatomical location": "breast tissue",
     })
+    # dataset.add_subject(source_path="./test_data/bids_data/sub-01", subject="sub-1", subject_metadata={
+    #     "subject id": "",
+    #     "subject experimental group": "experimental",
+    #     "age": "041Y",
+    #     "sex": "F",
+    #     "species": "human",
+    #     "strain": "tissue",
+    #     "age category": "middle adulthood"
+    # }, sample_metadata={
+    #     "sample id": "",
+    #     "subject id": "",
+    #     "sample experimental group": "experimental",
+    #     "sample type": "tissue",
+    #     "sample anatomical location": "breast tissue",
+    # })
     # TODO: Step8.3 Copy single sample file data to dataset
     #
     #  from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_samples(source_path="./test_data/sample1/raw/simple_test1.txt", subject="subject-xyz",
-                        sample="sample-2",
-                        data_type="primary", overwrite=False, sds_parent_dir=save_dir)
+    dataset.add_sample(source_path="./test_data/sample1/raw/simple_test1.txt", subject="sub-xyz",
+                       sample="sam-2",
+                       data_type="primary", sds_parent_dir=save_dir)
 
     # TODO: Step9 Delete folder
     # Step9.1 Delete subject folder
     # dataset.delete_subject("./tmp/template/primary/subject-xyz")
     # Step9.2 Delete sample folder
-    # dataset.delete_samples("./tmp/template/primary/subject-1/func")
+    # dataset.delete_samples(["./tmp/template/primary/subject-1/func"])
+
+    dataset.save()

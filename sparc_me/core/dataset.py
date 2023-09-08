@@ -614,6 +614,17 @@ class Dataset(object):
         sf.to_excel(writer)
         writer.save()
 
+    def add_subjects(self, source_paths, subjects, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
+                     sample_metadata={}, subject_metadata={}):
+        if len(source_paths) != len(subjects):
+            msg = f"The number of source_paths {len(source_paths)} not match subjects number {len(subjects)}"
+            raise ValueError(msg)
+        else:
+            for idx, subject_name in enumerate(subjects):
+                self.add_subject(source_path=source_paths[idx], subject=subject_name, data_type=data_type,
+                                 sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+                                 sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+
     def add_subject(self, source_path, subject, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
                     sample_metadata={}, subject_metadata={}):
 
@@ -621,15 +632,26 @@ class Dataset(object):
         if subject_source_folder.is_dir():
             for sample_folder in subject_source_folder.iterdir():
                 if sample_folder.is_dir():
-                    self.add_samples(source_path=sample_folder, subject=subject, sample=sample_folder.name,
-                                     data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
-                                     sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+                    self.add_sample(source_path=sample_folder, subject=subject, sample=sample_folder.name,
+                                    data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+                                    sample_metadata=sample_metadata, subject_metadata=subject_metadata)
         else:
             msg = f"The subject {source_path} must be a folder"
             raise ValueError(msg)
 
-    def add_samples(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
+    def add_samples(self, source_paths, subject, samples, data_type="primary", sds_parent_dir=None, copy=True,
                     overwrite=True, sample_metadata={}, subject_metadata={}):
+        if len(source_paths) != len(samples):
+            msg = f"The number of source_paths {len(source_paths)} not match samples number {len(samples)}"
+            raise ValueError(msg)
+        else:
+            for idx, sample_name in enumerate(samples):
+                self.add_sample(source_path=source_paths[idx], subject=subject, sample=sample_name,
+                                data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+                                sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+
+    def add_sample(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
+                   overwrite=True, sample_metadata={}, subject_metadata={}):
 
         if subject_metadata != {}:
             subject_metadata["subject id"] = subject
@@ -639,7 +661,6 @@ class Dataset(object):
 
         if sds_parent_dir:
             self._dataset_path = Path(sds_parent_dir)
-
         if data_type == "primary":
             self.add_primary_data(source_path, subject, sample, copy, overwrite, sample_metadata, subject_metadata)
         elif data_type == 'derivative':
@@ -684,8 +705,13 @@ class Dataset(object):
             else:
                 raise NotADirectoryError(f'{primary_folder} is not a directory')
         else:
-            self.load_dataset(dataset_path=self._dataset_path, from_template=True, version=self._version)
-            self.save(save_dir=self._dataset_path)
+            if not self._dataset:
+                self.load_dataset(dataset_path=self._dataset_path, from_template=True, version=self._version)
+                self.save(save_dir=self._dataset_path)
+            else:
+                self.save(save_dir=self._dataset_path)
+
+
 
         add_data(source_path, self._dataset_path, subject, sample, data_type="primary", copy=copy, overwrite=overwrite)
 
@@ -774,50 +800,107 @@ class Dataset(object):
 
         self._dataset[category]["metadata"] = metadata
 
+    def delete_subjects(self, destination_paths, data_type="primary"):
+        """
+        :param destination_paths: the subject folder paths that you want to delete
+        :type destination_paths: str[]
+        :param data_type: "primary" | "derivative"
+        :type: str
+        :return:
+        """
+        if isinstance(destination_paths, list):
+            for sub_folder in destination_paths:
+                self.delete_subject(destination_path=sub_folder, data_type=data_type)
+        else:
+            msg = f"Please provide a list, and put all your deleting sample paths in a list"
+            raise ValueError(msg)
+
     def delete_subject(self, destination_path, data_type="primary"):
         """
         :param destination_path: the subject folder path that you want to delete
-        :param data_type:
+        :type destination_path: str
+        :param data_type: "primary" | "derivative"
+        :type: str
         :return:
         """
+        if isinstance(destination_path, list):
+            msg = f"Please provide a path string!"
+            raise ValueError(msg)
+
         sub_folder = Path(destination_path)
-        primary_folder = self._dataset_path / "primary"
-        for sam_folder in sub_folder.iterdir():
-            if sam_folder.is_dir():
-                self.delete_samples(sam_folder, data_type)
+        if not sub_folder.exists():
+            msg = f"The folder {sub_folder} is not existing"
+            raise ValueError(msg)
+        elif not sub_folder.is_dir():
+            msg = f"The {sub_folder} is not a folder"
+            raise ValueError(msg)
+        else:
+            primary_folder = self._dataset_path / "primary"
+            for sam_folder in sub_folder.iterdir():
+                if sam_folder.is_dir():
+                    self.delete_sample(sam_folder, data_type)
 
-        sub_folder.rmdir()
-        if data_type == "primary":
-            self._update_sub_sam_nums_in_dataset_description(primary_folder)
-            subjects_metadata = self._metadata["subjects"]
-            subjects_metadata.remove_row(sub_folder.name)
-            subjects_metadata.save()
+            sub_folder.rmdir()
+            if data_type == "primary":
+                self._update_sub_sam_nums_in_dataset_description(primary_folder)
+                subjects_metadata = self._metadata["subjects"]
+                subjects_metadata.remove_row(sub_folder.name)
+                subjects_metadata.save()
 
-    def delete_samples(self, destination_path, data_type="primary"):
+    def delete_samples(self, destination_paths, data_type="primary"):
+        """
+        :param destination_paths: a list of deleting sample folders
+        :type destination_paths: list
+        :param data_type: "primary" | "derivative"
+        :type data_type: str
+        :return:
+        """
+        if isinstance(destination_paths, list):
+            for sam_folder in destination_paths:
+                self.delete_sample(destination_path=sam_folder, data_type=data_type)
+        else:
+            msg = f"Please provide a list, and put all your deleting sample paths in a list"
+            raise ValueError(msg)
+
+    def delete_sample(self, destination_path, data_type="primary"):
         """
         :param destination_path: the sample folder path that you want to delete
         :param data_type:
         :return:
         """
-        sam_folder = Path(destination_path)
-        primary_folder = self._dataset_path / "primary"
-        for item in sam_folder.iterdir():
-            self.delete_data(item)
+        if isinstance(destination_path, list):
+            msg = f"Please provide a path string!"
+            raise ValueError(msg)
 
-        sam_folder.rmdir()
-        if data_type == "primary":
-            self._update_sub_sam_nums_in_dataset_description(primary_folder)
-            samples_metadata = self._metadata["samples"]
-            samples_metadata.remove_row(sam_folder.name)
-            samples_metadata.save()
+        sam_folder = Path(destination_path)
+        if not sam_folder.exists():
+            msg = f"The folder {sam_folder} is not existing"
+            raise ValueError(msg)
+        elif not sam_folder.is_dir():
+            msg = f"The {sam_folder} is not a folder"
+            raise ValueError(msg)
+        else:
+            primary_folder = self._dataset_path / "primary"
+            for item in sam_folder.iterdir():
+                self.delete_data(item)
+            sam_folder.rmdir()
+            if data_type == "primary":
+                self._update_sub_sam_nums_in_dataset_description(primary_folder)
+                samples_metadata = self._metadata["samples"]
+                samples_metadata.remove_row(sam_folder.name)
+                samples_metadata.save()
 
     def delete_data(self, destination_path):
-        delete_flag = self._delete_data(destination_path)
-        if delete_flag:
-            path = str(Path(str(destination_path).replace(str(self._dataset_path), "")[1:]).as_posix())
-            manifest = self._metadata["manifest"]
-            manifest.remove_row(path)
-            manifest.save()
+        if not Path(destination_path).exists():
+            msg = f"The file {str(destination_path)} is not existing"
+            raise ValueError(msg)
+        else:
+            delete_flag = self._delete_data(destination_path)
+            if delete_flag:
+                path = str(Path(str(destination_path).replace(str(self._dataset_path), "")[1:]).as_posix())
+                manifest = self._metadata["manifest"]
+                manifest.remove_row(path)
+                manifest.save()
 
     def _delete_data(self, destination_path):
         file_path = Path(destination_path)
