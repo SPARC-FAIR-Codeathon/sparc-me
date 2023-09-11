@@ -40,6 +40,31 @@ def add_values_dataset_description(dataset_description):
     dataset_description.add_values("1", row_name='Number of samples')
 
 
+def add_values_for_sample_metadata(sample_metadata):
+    sample_metadata.add_values(*["test"] * 6, col_name="was derived from", append=False)
+    sample_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3", "pool id 4", "pool id 5", "pool id 6"],
+                               col_name="pool id", append=False)
+    sample_metadata.add_values(*["Yes"] * 5, "No", col_name="also in dataset", append=False)
+    sample_metadata.add_values(*["Global"] * 6, col_name="member of", append=False)
+    sample_metadata.add_values(
+        *["laboratory 1", "laboratory 2", "laboratory 3", "laboratory 4", "laboratory 5", "laboratory 6"],
+        col_name="laboratory internal id", append=False)
+    sample_metadata.add_values(*["1991-05-25"] * 3, *["1991-06-10"] * 3, col_name="date of derivation", append=False)
+
+    sample_metadata.save()
+
+def add_values_for_subject_metadata(subject_metadata):
+    subject_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3"],
+                               col_name="pool id", append=False)
+    subject_metadata.add_values(*["Yes"] * 3, col_name="also in dataset", append=False)
+    subject_metadata.add_values(*["515dsd1515","da515daa69", "515dsa62a"], col_name="RRID for strain", append=False)
+    subject_metadata.add_values(*["Global"] * 3, col_name="member of", append=False)
+    subject_metadata.add_values(
+        *["laboratory 1", "laboratory 2", "laboratory 3"],
+        col_name="laboratory internal id", append=False)
+    subject_metadata.add_values(*["1996-03-25","1995-09-05", "1996-04-11"], col_name="date of birth", append=False)
+    subject_metadata.save()
+
 if __name__ == '__main__':
     save_dir = "./tmp/template/"
 
@@ -125,8 +150,7 @@ if __name__ == '__main__':
 
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
     dataset.add_subjects(source_paths=["./test_data/bids_data/sub-01", "./test_data/bids_data/sub-02"],
-                         subjects=["sub-1", "sub-2"], subject_metadata={
-            "subject id": "",
+                         subjects=["1", "sub-2"], subject_metadata={
             "subject experimental group": "experimental",
             "age": "041Y",
             "sex": "F",
@@ -134,8 +158,6 @@ if __name__ == '__main__':
             "strain": "tissue",
             "age category": "middle adulthood"
         }, sample_metadata={
-            "sample id": "",
-            "subject id": "",
             "sample experimental group": "experimental",
             "sample type": "tissue",
             "sample anatomical location": "breast tissue",
@@ -146,6 +168,11 @@ if __name__ == '__main__':
     dataset.add_sample(source_path="./test_data/sample1/raw/simple_test1.txt", subject="sub-xyz",
                        sample="sam-2",
                        data_type="primary", sds_parent_dir=save_dir)
+
+    sample_metadata = dataset.get_metadata("samples")
+    subject_metadata = dataset.get_metadata("subjects")
+    add_values_for_sample_metadata(sample_metadata)
+    add_values_for_subject_metadata(subject_metadata)
 
     dataset.add_thumbnail("./test_data/thumbnail_0.jpg")
     dataset.add_thumbnail("./test_data/thumbnail_1.jpg")
