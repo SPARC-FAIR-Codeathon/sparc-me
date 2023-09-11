@@ -45,30 +45,30 @@ if __name__ == '__main__':
 
     dataset = Dataset()
     dataset.set_dataset_path(save_dir)
-    # TODO: Step:1 list categories and dataset_description elements
+    # NOTE: Step:1 list categories and dataset_description elements
     categories = dataset.list_categories(version="2.0.0")
     elements = dataset.list_elements(category="dataset_description", version="2.0.0")
     # list code_parameters elements
     # elements = dataset.list_elements(category="code_parameters", version="2.0.0")
 
-    # TODO: Step2, way1: load dataset from template
+    # NOTE: Step2, way1: load dataset from template
     dataset.load_from_template(version="2.0.0")
     #
     # Save the template dataset.
     # dataset.save(save_dir=save_dir)
 
-    # TODO: Step2, way2： load dataset from existing dataset
+    # NOTE: Step2, way2： load dataset from existing dataset
     # dataset.load_dataset(dataset_path=save_dir)
 
-    # TODO: Step3, get dataset_description, code_description, code_parameters metadataEditor
+    # NOTE: Step3, get dataset_description, code_description, code_parameters metadataEditor
     dataset_description = dataset.get_metadata(category="dataset_description")
     # code_parameters = dataset.get_metadata(category="code_parameters")
     # code_description = dataset.get_metadata(category="code_description")
 
-    # TODO: Step3.1(optional), remove entire values in dataset_description
+    # NOTE: Step3.1(optional), remove entire values in dataset_description
     dataset_description.clear_values()
 
-    # TODO: Step4, add values for dataset_description need to specify row_name
+    # NOTE: Step4, add values for dataset_description need to specify row_name
     add_values_dataset_description(dataset_description)
 
     # Step4, add values for code_description_editor need to specify field_name
@@ -85,14 +85,14 @@ if __name__ == '__main__':
     # code_parameters.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
     #                                   append=True)
 
-    # TODO: Step5: Get Values
+    # NOTE: Step5: Get Values
     # get values for dataset_description_editor
     print(dataset_description.get_values(field_name="contributorrole"))
     # get values for code_parameters_editor
     # print(code_parameters.get_values(field_name="name")
     # print(code_description.get_values(field_name="TSR1: Define Context Clearly Rating (0-4)"))
 
-    # TODO: Step6, remove values in specific header/row_name, code_parameters
+    # NOTE: Step6, remove values in specific header/row_name, code_parameters
     dataset_description.remove_values("tester", field_name="contributor role")
     # code_parameters.remove_values("test1_name", field_name="name")
     # Step6, remove entire values in code_parameters_editor
@@ -107,12 +107,12 @@ if __name__ == '__main__':
     # dataset_description.clear_values(field_name="Contributor role")
     # code_description.clear_values(field_name="TSR1: Define Context Clearly Rating (0-4)")
 
-    # TODO: Step7, save current dataset
+    # NOTE: Step7, save current dataset
     # dataset.save(save_dir=save_dir)
     # dataset.save()
 
-    # TODO: Step8, move files to dataset primary and derivative folder
-    # TODO: Step8.1, Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
+    # NOTE: Step8, move files to dataset primary and derivative folder
+    # NOTE: Step8.1, Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_samples(source_paths=["./test_data/sample1/raw", "./test_data/sample2/raw"], subject="sub-xyz",
                         samples=["sam-1", "sam-2"],
                         data_type="primary", sds_parent_dir=save_dir)
@@ -121,33 +121,36 @@ if __name__ == '__main__':
     dataset.add_sample(source_path="./test_data/sample1/derived", subject="sub-xyz", sample="sam-abc",
                        data_type="derivative", sds_parent_dir=save_dir, sample_metadata={})
 
-
-    # TODO: Step8.2, add subject with subject and sample metadata
+    # NOTE: Step8.2, add subject with subject and sample metadata
 
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
-    dataset.add_subjects(source_paths=["./test_data/bids_data/sub-01","./test_data/bids_data/sub-02"], subjects=["sub-1","sub-2"],subject_metadata={
-        "subject id": "",
-        "subject experimental group": "experimental",
-        "age": "041Y",
-        "sex": "F",
-        "species": "human",
-        "strain": "tissue",
-        "age category": "middle adulthood"
-    }, sample_metadata={
-        "sample id": "",
-        "subject id": "",
-        "sample experimental group": "experimental",
-        "sample type": "tissue",
-        "sample anatomical location": "breast tissue",
-    })
-    # TODO: Step8.3 Copy single sample file data to dataset
+    dataset.add_subjects(source_paths=["./test_data/bids_data/sub-01", "./test_data/bids_data/sub-02"],
+                         subjects=["sub-1", "sub-2"], subject_metadata={
+            "subject id": "",
+            "subject experimental group": "experimental",
+            "age": "041Y",
+            "sex": "F",
+            "species": "human",
+            "strain": "tissue",
+            "age category": "middle adulthood"
+        }, sample_metadata={
+            "sample id": "",
+            "subject id": "",
+            "sample experimental group": "experimental",
+            "sample type": "tissue",
+            "sample anatomical location": "breast tissue",
+        })
+    # NOTE: Step8.3 Copy single sample file data to dataset
     #
     #  from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
     dataset.add_sample(source_path="./test_data/sample1/raw/simple_test1.txt", subject="sub-xyz",
                        sample="sam-2",
                        data_type="primary", sds_parent_dir=save_dir)
 
-    # TODO: Step9 Delete folder
+    dataset.add_thumbnail("./test_data/thumbnail_0.jpg")
+    dataset.add_thumbnail("./test_data/thumbnail_1.jpg")
+    dataset.delete_data("./tmp/template/primary/thumbnail_0.jpg")
+    # NOTE: Step9 Delete folder
     # Step9.1 Delete subject folder
     # dataset.delete_subject("./tmp/template/primary/subject-xyz")
     # Step9.2 Delete sample folder

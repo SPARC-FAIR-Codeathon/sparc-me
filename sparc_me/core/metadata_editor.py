@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from pathlib import Path
 
+
 class MetadataEditor:
     def __init__(self, category, metadata, dataset_path):
         """
@@ -186,6 +187,7 @@ class MetadataEditor:
 
             for i, value in enumerate(values):
                 self.metadata.iat[i, col_index] = value
+
     def remove_row(self, value):
         rows_to_delete = self.metadata[self.metadata.eq(value).any(axis=1)]
         self.metadata.drop(rows_to_delete.index, inplace=True)
@@ -298,7 +300,7 @@ class MetadataEditor:
             return matching_indices[0]
         else:
             msg = f"No valid field name is found!"
-            raise ValueError(msg)
+            raise KeyError(msg)
 
     def _edit_column(self, insert_header, nums, operator='+'):
         """
