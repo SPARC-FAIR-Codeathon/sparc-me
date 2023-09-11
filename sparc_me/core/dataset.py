@@ -11,7 +11,7 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from datetime import datetime, timezone
-from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder
+from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_sub_sam_name
 from sparc_me.core.metadata import Metadata
 
 
@@ -822,6 +822,7 @@ class Dataset(object):
             self._modify_manifest(fname=filename, manifest_folder_path=str(self._dataset_path),
                                   destination_path=str(destination_path.parent), description=description)
 
+
     def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
                          overwrite=True):
         """Copy or move data from source folder to destination folder
@@ -836,6 +837,8 @@ class Dataset(object):
         :type overwrite: bool, optional
         :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
         """
+        subject = validate_sub_sam_name(subject, "sub")
+        sample = validate_sub_sam_name(sample, "sam")
         destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
         # If overwrite is True, remove existing sample
         if os.path.exists(destination_path):
