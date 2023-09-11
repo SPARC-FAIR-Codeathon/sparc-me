@@ -186,6 +186,7 @@ class MetadataEditor:
 
             for i, value in enumerate(values):
                 self.metadata.iat[i, col_index] = value
+
     def remove_row(self, value):
         rows_to_delete = self.metadata[self.metadata.eq(value).any(axis=1)]
         self.metadata.drop(rows_to_delete.index, inplace=True)

@@ -10,7 +10,8 @@ from typing import Dict
 import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
-from sparc_me.core.utils import add_data, check_row_exist, get_sub_folder_paths_in_folder
+from datetime import datetime, timezone
+from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder
 from sparc_me.core.metadata_editor import MetadataEditor
 
 
@@ -600,7 +601,7 @@ class Dataset(object):
 
         return metadata
 
-    def generate_file_from_template(self, save_path, category, data=pd.DataFrame()):
+    def generate_file_from_template(self, save_path, category, data=pd.DataFrame(), keep_style=False):
         """Generate file from a template and populate with data if givn
 
         :param save_path: destination to save the generated file
@@ -610,11 +611,15 @@ class Dataset(object):
         :param data: pandas dataframe containing data, defaults to pd.DataFrame()
         :type data: pd.DataFrame, optional
         """
-        self._template_dir = self._get_template_dir(version=self._version)
-        sf = StyleFrame.read_excel_as_template(os.path.join(self._template_dir, f'{category}.xlsx'), data)
-        writer = StyleFrame.ExcelWriter(save_path)
-        sf.to_excel(writer)
-        writer.save()
+
+        if keep_style:
+            self._template_dir = self._get_template_dir(version=self._version)
+            sf = StyleFrame.read_excel_as_template(os.path.join(self._template_dir, f'{category}.xlsx'), data)
+            writer = StyleFrame.ExcelWriter(save_path)
+            sf.to_excel(writer)
+            writer.save()
+        else:
+            data.to_excel(save_path, index=False)
 
     def add_subjects(self, source_paths, subjects, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
                      sample_metadata={}, subject_metadata={}):
@@ -711,9 +716,8 @@ class Dataset(object):
             else:
                 self.save(save_dir=self._dataset_path)
 
-
-
-        add_data(source_path, self._dataset_path, subject, sample, data_type="primary", copy=copy, overwrite=overwrite)
+        self._add_sample_data(source_path, self._dataset_path, subject, sample, data_type="primary", copy=copy,
+                              overwrite=overwrite)
 
         samples_file_path = os.path.join(self._dataset_path, 'samples.xlsx')
         subjects_file_path = os.path.join(self._dataset_path, 'subjects.xlsx')
@@ -787,8 +791,8 @@ class Dataset(object):
         else:
             os.mkdir(derivative_folder)
 
-        add_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
-                 overwrite=overwrite)
+        self._add_sample_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
+                              overwrite=overwrite)
 
     def add_element(self, category, element):
         metadata = self._dataset.get(category).get("metadata")
@@ -799,6 +803,157 @@ class Dataset(object):
             metadata[element] = None
 
         self._dataset[category]["metadata"] = metadata
+
+    def add_thumbnail(self, source_path, copy=True, overwrite=True):
+
+        file_source_path = Path(source_path)
+        if not file_source_path.is_file():
+            msg = f"source_path should be the thumbnail file's path"
+            raise ValueError(msg)
+        else:
+            filename = file_source_path.name
+            destination_path = self._dataset_path.joinpath('primary', filename)
+            if destination_path.exists():
+                if overwrite:
+                    self._delete_data(destination_path)
+                else:
+                    msg = f"The thumbnail file has already in primary folder"
+                    raise FileExistsError(msg)
+
+            self._move_single_file(file_path=source_path, destination_path=destination_path, fname=filename, copy=copy)
+            description = f"This is a thumbnail file"
+            self._modify_manifest(fname=filename, manifest_folder_path=str(self._dataset_path),
+                                  destination_path=str(destination_path.parent), description=description)
+
+    def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
+                         overwrite=True):
+        """Copy or move data from source folder to destination folder
+
+        :param source_path: path to the original data
+        :type source_path: string
+        :param destination_path_list: folder path in a list[root, data_pype, subject, sample] to be copied into
+        :type destination_path_list: list
+        :param copy: if True, source directory data will not be deleted after copying, defaults to True
+        :type copy: bool, optional
+        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
+        :type overwrite: bool, optional
+        :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
+        """
+        destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
+        # If overwrite is True, remove existing sample
+        if os.path.exists(destination_path):
+            if os.path.isdir(source_path):
+                if overwrite:
+                    shutil.rmtree(destination_path)
+                    os.makedirs(destination_path)
+                else:
+                    raise FileExistsError(
+                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+            else:
+                if overwrite:
+                    file_path = Path(destination_path).joinpath(Path(source_path).name)
+                    self._delete_data(file_path)
+                else:
+                    raise FileExistsError(
+                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+        else:
+            # Create destination folder
+            os.makedirs(destination_path)
+
+        description = f"File of subject {subject} sample {sample}"
+        if os.path.isdir(source_path):
+            for fname in os.listdir(source_path):
+                file_path = os.path.join(source_path, fname)
+                if os.path.isdir(file_path):
+                    # Warn user if a subdirectory exist in the input_path
+                    print(
+                        f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying")
+                    return
+                else:
+                    self._move_single_file(file_path=file_path, destination_path=destination_path,
+                                           fname=fname, copy=copy)
+                    self._modify_manifest(fname=fname, manifest_folder_path=dataset_path,
+                                          destination_path=destination_path,
+                                          description=description)
+        else:
+            fname = os.path.basename(source_path)
+            self._move_single_file(file_path=source_path, destination_path=destination_path,
+                                   fname=fname, copy=copy)
+            self._modify_manifest(fname=fname, manifest_folder_path=dataset_path, destination_path=destination_path,
+                                  description=description)
+
+    def _move_single_file(self, file_path, destination_path, fname, copy):
+        if copy:
+            # Copy data
+            shutil.copy2(file_path, destination_path)
+        else:
+            # Move data
+            shutil.move(file_path, os.path.join(destination_path, fname))
+
+    def _modify_manifest(self, fname, manifest_folder_path, destination_path, description=""):
+        # Check if manifest exist
+        # If can be "xlsx", "csv" or "json"
+        files = os.listdir(manifest_folder_path)
+        manifest_file_path = [f for f in files if "manifest" in f]
+        # Case 1: manifest file exists
+        if len(manifest_file_path) != 0:
+            manifest_file_path = os.path.join(manifest_folder_path, manifest_file_path[0])
+            # Check the extension and read file accordingly
+            extension = os.path.splitext(manifest_file_path)[-1].lower()
+            if extension == ".xlsx":
+                df = pd.read_excel(manifest_file_path)
+            elif extension == ".csv":
+                df = pd.read_csv(manifest_file_path)
+            elif extension == ".json":
+                # TODO: Check what structure a manifest json is in
+                # Below code assumes json structure is like
+                # '{"row 1":{"col 1":"a","col 2":"b"},"row 2":{"col 1":"c","col 2":"d"}}'
+                df = pd.read_json(manifest_file_path, orient="index")
+            else:
+                raise ValueError(f"Unauthorized manifest file extension: {extension}")
+        # Case 2: create manifest file
+        else:
+            # Default extension to xlsx
+            extension = ".xlsx"
+            # Creat manifest file path
+            manifest_file_path = os.path.join(manifest_folder_path, "manifest.xlsx")
+            df = pd.DataFrame(columns=['filename', 'description', 'timestamp', 'file type'])
+
+        file_path = Path(
+            str(os.path.join(destination_path, fname)).replace(str(manifest_folder_path), '')[1:]).as_posix()
+
+        row = {
+            'filename': file_path,
+            'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            'description': description,
+            'file type': os.path.splitext(fname)[-1].lower()[1:]
+        }
+
+        exsiting_row = df['filename'] == row['filename']
+        if exsiting_row.any():
+            df.loc[exsiting_row, 'timestamp'] = row['timestamp']
+        else:
+            row_pd = pd.DataFrame([row])
+            df = pd.concat([df, row_pd], axis=0, ignore_index=True)
+
+        # update dataset metadata
+        self._update_dataset_by_df(df, "manifest")
+
+        # Save editted manifest file
+        if extension == ".xlsx":
+            df.to_excel(manifest_file_path, index=False)
+        elif extension == ".csv":
+            df = pd.to_csv(manifest_file_path, index=False)
+        elif extension == ".json":
+            df = pd.read_json(manifest_file_path, orient="index")
+        return
+
+    def _update_dataset_by_df(self, df, category):
+        manifest_metadata = self._metadata[category]
+        manifest_metadata.metadata = df
+        self._dataset[category]["metadata"] = manifest_metadata.metadata
+
+    """************************************ Delete Data Functions ************************************"""
 
     def delete_subjects(self, destination_paths, data_type="primary"):
         """
@@ -897,18 +1052,22 @@ class Dataset(object):
         else:
             delete_flag = self._delete_data(destination_path)
             if delete_flag:
-                path = str(Path(str(destination_path).replace(str(self._dataset_path), "")[1:]).as_posix())
+                path = str(Path(str(Path(destination_path).as_posix()).replace(str(self._dataset_path.as_posix()), "")[
+                                1:]).as_posix())
                 manifest = self._metadata["manifest"]
                 manifest.remove_row(path)
                 manifest.save()
 
     def _delete_data(self, destination_path):
         file_path = Path(destination_path)
-        if file_path.is_file():
-            file_path.unlink()
-            return True
+        if file_path.exists():
+            if file_path.is_file():
+                file_path.unlink()
+                return True
+            else:
+                shutil.rmtree(file_path)
+                return False
         else:
-            shutil.rmtree(file_path)
             return False
 
     def _update_sub_sam_nums_in_dataset_description(self, primary_folder):
