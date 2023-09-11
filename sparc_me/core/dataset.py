@@ -12,7 +12,7 @@ from styleframe import StyleFrame
 from xlrd import XLRDError
 from datetime import datetime, timezone
 from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder
-from sparc_me.core.metadata_editor import MetadataEditor
+from sparc_me.core.metadata import Metadata
 
 
 class Dataset(object):
@@ -33,7 +33,7 @@ class Dataset(object):
         self._column_based = ["dataset_description", "code_description"]
         self._subject_id_field = None
         self._sample_id_field = None
-        self._metadata: Dict[str, MetadataEditor] = {}
+        self._metadata: Dict[str, Metadata] = {}
 
     def set_dataset_path(self, path):
         """
@@ -330,7 +330,15 @@ class Dataset(object):
 
         return metadata
 
-    def _list_categories(self, version):
+    def list_categories(self, version, print_list=True):
+        """
+        list all categories based on the metadata files in the template dataset
+
+        :param version: reference template version
+        :type version: string
+        :return: all metadata categories
+        :rtype: list
+        """
         categories = list()
 
         self.load_template(version=version)
@@ -341,21 +349,10 @@ class Dataset(object):
                 category = file_path.stem
                 categories.append(category)
 
-        return categories
-
-    def list_categories(self, version):
-        """
-        list all categories based on the metadata files in the template dataset
-
-        :param version: reference template version
-        :type version: string
-        :return: all metadata categories
-        :rtype: list
-        """
-        categories = self._list_categories(version)
-        print("Categories:")
-        for category in categories:
-            print(category)
+        if print_list:
+            print("Categories:")
+            for category in categories:
+                print(category)
 
         return categories
 
@@ -419,10 +416,10 @@ class Dataset(object):
         return fields
 
     def _generate_metadata(self):
-        categories = self._list_categories(self._version)
+        categories = self.list_categories(self._version, print_list=False)
         for category in categories:
             metadata = self._dataset.get(category).get("metadata")
-            self._metadata[category] = MetadataEditor(category, metadata, self._dataset_path)
+            self._metadata[category] = Metadata(category, metadata, self._dataset_path)
 
     def get_metadata(self, category):
         """
