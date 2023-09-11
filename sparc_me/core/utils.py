@@ -8,7 +8,6 @@ from pathlib import Path
 from xlrd import XLRDError
 
 
-
 def check_row_exist(dataframe, unique_column, unique_value):
     """Check if a row exist with given unique value
 
@@ -71,3 +70,18 @@ def get_sub_folder_paths_in_folder(folder_path):
             sub_folders.append(item)
 
     return sub_folders
+
+
+def validate_sub_sam_name(validate_str, validate_type):
+    v_4 = validate_str[:4]
+    if validate_type == "sub":
+        v_str = "sub-"
+    elif validate_type == "sam":
+        v_str = "sam-"
+    else:
+        error_msg = f"The validate_type should be 'sub' or 'sam', you provide validate_type is {validate_type}"
+        raise ValueError(error_msg)
+    if v_4 == v_str:
+        return validate_str
+    else:
+        return f"{v_str}{validate_str}"
