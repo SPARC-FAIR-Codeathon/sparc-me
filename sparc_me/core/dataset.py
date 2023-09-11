@@ -1014,8 +1014,8 @@ class Dataset(object):
             for sam_folder in destination_paths:
                 self.delete_sample(destination_path=sam_folder, data_type=data_type)
         else:
-            msg = f"Please provide a list, and put all your deleting sample paths in a list"
-            raise ValueError(msg)
+            msg = f"The {destination_paths} type is {type(destination_paths)}. Please provide a list, and put all your deleting sample paths in a list"
+            raise TypeError(msg)
 
     def delete_sample(self, destination_path, data_type="primary"):
         """
@@ -1025,14 +1025,14 @@ class Dataset(object):
         """
         if isinstance(destination_path, list):
             msg = f"Please provide a path string!"
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         sam_folder = Path(destination_path)
         if not sam_folder.exists():
             msg = f"The folder {sam_folder} is not existing"
-            raise ValueError(msg)
+            raise FileExistsError(msg)
         elif not sam_folder.is_dir():
-            msg = f"The {sam_folder} is not a folder"
+            msg = f"The {sam_folder} path is not a folder, please provide the sample files folder."
             raise ValueError(msg)
         else:
             primary_folder = self._dataset_path / "primary"
@@ -1048,7 +1048,7 @@ class Dataset(object):
     def delete_data(self, destination_path):
         if not Path(destination_path).exists():
             msg = f"The file {str(destination_path)} is not existing"
-            raise ValueError(msg)
+            raise FileNotFoundError(msg)
         else:
             delete_flag = self._delete_data(destination_path)
             if delete_flag:
