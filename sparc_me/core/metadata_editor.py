@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from pathlib import Path
 
+
 class MetadataEditor:
     def __init__(self, category, metadata, dataset_path):
         """
@@ -299,7 +300,7 @@ class MetadataEditor:
             return matching_indices[0]
         else:
             msg = f"No valid field name is found!"
-            raise ValueError(msg)
+            raise KeyError(msg)
 
     def _edit_column(self, insert_header, nums, operator='+'):
         """
