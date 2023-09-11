@@ -52,13 +52,13 @@ if __name__ == '__main__':
     # elements = dataset.list_elements(category="code_parameters", version="2.0.0")
 
     # NOTE: Step2, way1: load dataset from template
-    # dataset.load_from_template(version="2.0.0")
+    dataset.load_from_template(version="2.0.0")
     #
     # Save the template dataset.
     # dataset.save(save_dir=save_dir)
 
     # NOTE: Step2, way2： load dataset from existing dataset
-    dataset.load_dataset(dataset_path=save_dir)
+    # dataset.load_dataset(dataset_path=save_dir)
 
     # NOTE: Step3, get dataset_description, code_description, code_parameters metadataEditor
     dataset_description = dataset.get_metadata(category="dataset_description")
@@ -147,6 +147,9 @@ if __name__ == '__main__':
                        sample="sam-2",
                        data_type="primary", sds_parent_dir=save_dir)
 
+    dataset.add_thumbnail("./test_data/thumbnail_0.jpg")
+    dataset.add_thumbnail("./test_data/thumbnail_1.jpg")
+    dataset.delete_data("./tmp/template/primary/thumbnail_0.jpg")
     # NOTE: Step9 Delete folder
     # Step9.1 Delete subject folder
     # dataset.delete_subject("./tmp/template/primary/subject-xyz")

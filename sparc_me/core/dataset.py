@@ -804,17 +804,26 @@ class Dataset(object):
 
         self._dataset[category]["metadata"] = metadata
 
-    def add_thumbnail(self, source_path, overwrite=True):
+    def add_thumbnail(self, source_path, copy=True, overwrite=True):
 
         file_source_path = Path(source_path)
         if not file_source_path.is_file():
-            msg = f"source_path should be the thumbnail file's path'"
+            msg = f"source_path should be the thumbnail file's path"
             raise ValueError(msg)
         else:
             filename = file_source_path.name
             destination_path = self._dataset_path.joinpath('primary', filename)
+            if destination_path.exists():
+                if overwrite:
+                    self._delete_data(destination_path)
+                else:
+                    msg = f"The thumbnail file has already in primary folder"
+                    raise FileExistsError(msg)
 
-
+            self._move_single_file(file_path=source_path, destination_path=destination_path, fname=filename, copy=copy)
+            description = f"This is a thumbnail file"
+            self._modify_manifest(fname=filename, manifest_folder_path=str(self._dataset_path),
+                                  destination_path=str(destination_path.parent), description=description)
 
     def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
                          overwrite=True):
@@ -863,14 +872,15 @@ class Dataset(object):
                 else:
                     self._move_single_file(file_path=file_path, destination_path=destination_path,
                                            fname=fname, copy=copy)
+                    self._modify_manifest(fname=fname, manifest_folder_path=dataset_path,
+                                          destination_path=destination_path,
+                                          description=description)
         else:
             fname = os.path.basename(source_path)
             self._move_single_file(file_path=source_path, destination_path=destination_path,
                                    fname=fname, copy=copy)
-
-        # Modify the manifest file
-        self._modify_manifest(fname=fname, manifest_folder_path=dataset_path, destination_path=destination_path,
-                              description=description)
+            self._modify_manifest(fname=fname, manifest_folder_path=dataset_path, destination_path=destination_path,
+                                  description=description)
 
     def _move_single_file(self, file_path, destination_path, fname, copy):
         if copy:
@@ -925,6 +935,10 @@ class Dataset(object):
         else:
             row_pd = pd.DataFrame([row])
             df = pd.concat([df, row_pd], axis=0, ignore_index=True)
+
+        # update dataset metadata
+        self._update_dataset_by_df(df, "manifest")
+
         # Save editted manifest file
         if extension == ".xlsx":
             df.to_excel(manifest_file_path, index=False)
@@ -933,6 +947,11 @@ class Dataset(object):
         elif extension == ".json":
             df = pd.read_json(manifest_file_path, orient="index")
         return
+
+    def _update_dataset_by_df(self, df, category):
+        manifest_metadata = self._metadata[category]
+        manifest_metadata.metadata = df
+        self._dataset[category]["metadata"] = manifest_metadata.metadata
 
     """************************************ Delete Data Functions ************************************"""
 
@@ -1033,7 +1052,8 @@ class Dataset(object):
         else:
             delete_flag = self._delete_data(destination_path)
             if delete_flag:
-                path = str(Path(str(destination_path).replace(str(self._dataset_path), "")[1:]).as_posix())
+                path = str(Path(str(Path(destination_path).as_posix()).replace(str(self._dataset_path.as_posix()), "")[
+                                1:]).as_posix())
                 manifest = self._metadata["manifest"]
                 manifest.remove_row(path)
                 manifest.save()
