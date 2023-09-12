@@ -239,6 +239,8 @@ class Schema(object):
                 try:
                     if math.isnan(example):
                         example = None
+                    if math.isnan(description):
+                        description = None
                 except:
                     pass
 
@@ -254,7 +256,38 @@ class Schema(object):
 
             self.save(save_dir, schema, sheet)
 
-    def save(self, save_dir, category):
+    def convert_schema_excel_to_json(self, source_path, dest_path):
+        """
+        :param source_path: The Excel schema file path
+        :type source_path: str
+        :param dest_path: The converted Json file store path
+        :type dest_path: str
+        """
+        wb = openpyxl.load_workbook(source_path)
+        sheets = wb.sheetnames
+
+        schema = dict()
+        for sheet in sheets:
+            schema[sheet] = dict()
+            try:
+                element_description = pd.read_excel(source_path, sheet_name=sheet)
+            except XLRDError:
+                element_description = pd.read_excel(source_path, sheet_name=sheet, engine='openpyxl')
+
+            element_description = element_description.where(pd.notnull(element_description), None)
+
+            for index, row in element_description.iterrows():
+                element = row["Element"]
+                schema[sheet][element] = dict()
+                schema[sheet][element]["Required"] = row["Required"]
+                schema[sheet][element]["Type"] = row["Type"]
+                schema[sheet][element]["Description"] = row["Description"]
+                schema[sheet][element]["Example"] = row["Example"]
+
+        with open(dest_path, 'w') as f:
+            json.dump(schema, f, indent=4)
+
+    def save(self, save_dir, schema, category):
         """
         Save schema
         :param save_dir: path to the destination directory
@@ -269,18 +302,23 @@ class Schema(object):
         save_dir = Path(save_dir)
         if not save_dir.exists():
             os.makedirs(save_dir)
+
         filename = '{sheet}.json'.format(sheet=category)
+
         save_path = Path.joinpath(save_dir, filename)
         with open(save_path, 'w', encoding='utf-8') as f:
-            json.dump(self._schema, f, indent=4)
+            json.dump(schema, f, indent=4)
 
 
 if __name__ == '__main__':
-    schema_xlsm = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/schema.xlsx")
-    save_dir = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/schema")
+    # schema_xlsm = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/schema.xlsx")
+    # save_dir = Path.joinpath(current_dir, "../resources/templates/version_1_2_3/schema")
+    schema_xlsm = Path.joinpath(current_dir, "../resources/templates/version_2_0_0/schema.xlsx")
+    save_dir = Path.joinpath(current_dir, "../resources/templates/version_2_0_0/schema")
 
     schema = Schema()
     schema.generate_from_template(schema_xlsm, save_dir=save_dir)
+    schema.convert_schema_excel_to_json(schema_xlsm, "../resources/templates/version_2_0_0/schema.json")
 
     # instance = {"Name": "test", "Description": "test", "Keywords":"sassf"}
     # validator = Validator()

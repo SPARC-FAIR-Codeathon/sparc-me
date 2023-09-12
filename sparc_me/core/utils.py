@@ -30,31 +30,6 @@ def check_row_exist(dataframe, unique_column, unique_value):
     return row_index
 
 
-def convert_schema_excel_to_json(source_path, dest_path):
-    wb = openpyxl.load_workbook(source_path)
-    sheets = wb.sheetnames
-
-    schema = dict()
-    for sheet in sheets:
-        schema[sheet] = dict()
-        try:
-            element_description = pd.read_excel(source_path, sheet_name=sheet)
-        except XLRDError:
-            element_description = pd.read_excel(source_path, sheet_name=sheet, engine='openpyxl')
-
-        element_description = element_description.where(pd.notnull(element_description), None)
-
-        for index, row in element_description.iterrows():
-            element = row["Element"]
-            schema[sheet][element] = dict()
-            schema[sheet][element]["Required"] = row["Required"]
-            schema[sheet][element]["Type"] = row["Type"]
-            schema[sheet][element]["Description"] = row["Description"]
-            schema[sheet][element]["Example"] = row["Example"]
-
-    with open(dest_path, 'w') as f:
-        json.dump(schema, f, indent=4)
-
 
 def get_sub_folder_paths_in_folder(folder_path):
     """
