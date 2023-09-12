@@ -1,0 +1,179 @@
+{
+    "type": "object",
+    "properties": {
+        "subject id": {
+            "type": "string",
+            "required": "Y",
+            "description": "Lab-based schema for identifying each subject, should match folder names.",
+            "example": "sub-1"
+        },
+        "pool id": {
+            "type": "string",
+            "required": "N",
+            "description": "If data is collected on multiple subjects at the same time include the identifier of the pool where the data file will be found. If this is included it should be the name of the top level folder inside primary. ",
+            "example": "pool-1"
+        },
+        "subject experimental group": {
+            "type": "string",
+            "required": "Y",
+            "description": "Experimental group subject is assigned to in research project.",
+            "example": "Control"
+        },
+        "age": {
+            "type": "string",
+            "required": "Y",
+            "description": "Age of the subject (e.g., hours, days, weeks, years old) or if unknown fill in with \u201cunknown\u201d. ",
+            "example": "4 weeks"
+        },
+        "sex": {
+            "type": "string",
+            "required": "Y",
+            "description": "Sex of the subject, or if unknown fill in with \u201cUnknown\u201d.",
+            "example": "Female"
+        },
+        "species": {
+            "type": "string",
+            "required": "Y",
+            "description": "Subject species.",
+            "example": "Rattus norvegicus"
+        },
+        "strain": {
+            "type": "string",
+            "required": "Y",
+            "description": "Organism strain of the subject.",
+            "example": "Sprague-Dawley"
+        },
+        "RRID for strain": {
+            "type": "string",
+            "required": "Y",
+            "description": "Research Resource Identifier Identification (RRID) for the strain For this field.",
+            "example": "RRID:RGD_10395233"
+        },
+        "age category": {
+            "type": "string",
+            "required": "Y",
+            "description": "Description of age category from derived from UBERON life cycle stage.",
+            "example": "prime adult stage"
+        },
+        "also in dataset": {
+            "type": "string",
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "member of": {
+            "type": "string",
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "laboratory internal id": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "date of birth": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "age range (min)": {
+            "type": "string",
+            "required": "N",
+            "description": "The minimal age (youngest) of the research subjects. The format for this field: numerical value + space + unit (spelled out).",
+            "example": "10 days"
+        },
+        "age range (max)": {
+            "type": "string",
+            "required": "N",
+            "description": "The maximal age (oldest) of the research subjects. The format for this field: numerical value + space + unit (spelled out).",
+            "example": "20 days"
+        },
+        "body mass": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "genotype": {
+            "type": "string",
+            "required": "N",
+            "description": "Ignore if RRID is filled in, Genetic makeup of genetically modified alleles in transgenic animals belonging to the same subject group.",
+            "example": "MGI:3851780"
+        },
+        "phenotype": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "handedness": {
+            "type": "string",
+            "required": "N",
+            "description": "Preference of the subject to use the right or left hand, if applicable.",
+            "example": "right"
+        },
+        "reference atlas": {
+            "type": "string",
+            "required": "N",
+            "description": "The reference atlas and organ.",
+            "example": "Paxinos and Watson, The Rat Brain In Stereotaxic Coordinates, 7th Ed, 2013"
+        },
+        "experimental log file path": {
+            "type": "string",
+            "required": "N",
+            "description": "A file containing experimental records for each sample.",
+            "example": null
+        },
+        "experiment date": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "disease or disorder": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "intervention": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "disease model": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "protocol title": {
+            "type": "string",
+            "required": "N",
+            "description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "example": "Spinal Cord extraction"
+        },
+        "protocol url or doi": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        }
+    },
+    "required": [
+        "subject id",
+        "subject experimental group",
+        "age",
+        "sex",
+        "species",
+        "strain",
+        "RRID for strain",
+        "age category",
+        "also in dataset",
+        "member of"
+    ]
+}

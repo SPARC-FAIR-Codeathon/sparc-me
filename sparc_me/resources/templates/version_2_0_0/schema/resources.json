@@ -1,0 +1,41 @@
+{
+    "type": "object",
+    "properties": {
+        "RRID": {
+            "type": NaN,
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "URL": {
+            "type": NaN,
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "Vendor": {
+            "type": NaN,
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "Version": {
+            "type": NaN,
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "Additional Metadata": {
+            "type": NaN,
+            "required": "N",
+            "description": null,
+            "example": null
+        }
+    },
+    "required": [
+        "RRID",
+        "URL",
+        "Vendor",
+        "Version"
+    ]
+}

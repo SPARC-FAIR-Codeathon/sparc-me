@@ -657,6 +657,8 @@ class Dataset(object):
     def add_sample(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
                    overwrite=True, sample_metadata={}, subject_metadata={}):
 
+        subject = validate_sub_sam_name(subject, "sub")
+        sample = validate_sub_sam_name(sample, "sam")
         subject_metadata["subject id"] = subject
         sample_metadata["sample id"] = sample
         sample_metadata["subject id"] = subject
@@ -837,8 +839,6 @@ class Dataset(object):
         :type overwrite: bool, optional
         :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
         """
-        subject = validate_sub_sam_name(subject, "sub")
-        sample = validate_sub_sam_name(sample, "sam")
         destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
         # If overwrite is True, remove existing sample
         if os.path.exists(destination_path):
@@ -1083,8 +1083,8 @@ class Dataset(object):
                 folders = get_sub_folder_paths_in_folder(sub)
                 sample_folders.extend(folders)
         dataset_description_metadata = self._metadata["dataset_description"]
-        dataset_description_metadata.add_values(str(len(subject_folders)), row_name="Number of subjects",
+        dataset_description_metadata.add_values(len(subject_folders), row_name="Number of subjects",
                                                 col_name='Value', append=False)
-        dataset_description_metadata.add_values(str(len(sample_folders)), row_name="Number of samples",
+        dataset_description_metadata.add_values(len(sample_folders), row_name="Number of samples",
                                                 col_name='Value', append=False)
         dataset_description_metadata.save()

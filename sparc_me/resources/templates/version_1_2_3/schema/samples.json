@@ -46,7 +46,7 @@
         "Additional Fields (e.g. MINDS)": {
             "type": "string",
             "required": "N",
-            "description": NaN,
+            "description": null,
             "example": null
         },
         "species": {
