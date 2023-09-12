@@ -1,0 +1,129 @@
+{
+    "type": "object",
+    "properties": {
+        "subject id": {
+            "type": "string",
+            "required": "Y",
+            "description": "Lab-based schema for identifying each subject.",
+            "example": "sub-1"
+        },
+        "sample id": {
+            "type": "string",
+            "required": "Y",
+            "description": "Lab-based schema for identifying each sample, must be unique.",
+            "example": "sam-2"
+        },
+        "wasDerivedFromSample": {
+            "type": "string",
+            "required": "Y",
+            "description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.).",
+            "example": "sam-1"
+        },
+        "pool id": {
+            "type": "string",
+            "required": "N",
+            "description": "If data is collected on multiple samples at the same time in-clude the identifier of the pool where the data file will be found.",
+            "example": "pool-1"
+        },
+        "sample experimental group": {
+            "type": "string",
+            "required": "Y",
+            "description": "Experimental group subject is assigned to in research project. If you have experimental groups for samples please add another column.",
+            "example": "Control"
+        },
+        "sample type": {
+            "type": "string",
+            "required": "Y",
+            "description": "Physical type of the specimen from which the data were extracted.",
+            "example": "tissue"
+        },
+        "sample anatomical location": {
+            "type": "string",
+            "required": "Y",
+            "description": " The organ, or subregion of organ from which the data were extracted.",
+            "example": "dentate gyrus"
+        },
+        "also in dataset": {
+            "type": "string",
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "member of": {
+            "type": "string",
+            "required": "Y",
+            "description": null,
+            "example": null
+        },
+        "laboratory internal id": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "date of derivation": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "experimental log file path": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "reference atlas": {
+            "type": "string",
+            "required": "N",
+            "description": "The reference atlas and organ.",
+            "example": "Paxinos Rat V3"
+        },
+        "pathology": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "laterality": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "cell type": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "plane of section": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        },
+        "protocol title": {
+            "type": "string",
+            "required": "N",
+            "description": "Once the research protocol is uploaded to Protocols.io, the title of the protocol within Protocols.io must be noted in this field.",
+            "example": "Spinal Cord extraction"
+        },
+        "protocol url or doi": {
+            "type": "string",
+            "required": "N",
+            "description": null,
+            "example": null
+        }
+    },
+    "required": [
+        "subject id",
+        "sample id",
+        "wasDerivedFromSample",
+        "sample experimental group",
+        "sample type",
+        "sample anatomical location",
+        "also in dataset",
+        "member of"
+    ]
+}

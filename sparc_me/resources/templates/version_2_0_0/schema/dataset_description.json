@@ -1,0 +1,172 @@
+{
+    "type": "object",
+    "properties": {
+        "Metadata Version": {
+            "type": "string",
+            "required": "Y",
+            "description": "SDS version number, e.g. 2.0.0. DO NOT CHANGE",
+            "example": "2.0.0"
+        },
+        "Type": {
+            "type": "string",
+            "required": "Y",
+            "description": "Each dataset consists of a single \u201ctype\u201d of data, covered by the same ethics, same access control, same protocol, etc. There are two datasets types,  experimental and computation. Experimental is the default value. Make sure to change it to computation only if you are submitting a computational study. If the dataset is not\u201d computational\u201d, it should be set to \u201cexperimental\u201d",
+            "example": "experimental"
+        },
+        "Title": {
+            "type": "string",
+            "required": "Y",
+            "description": "Descriptive title for the data set. Equivalent to the title of a scientific paper.",
+            "example": "My SPARC dataset"
+        },
+        "Subtitle": {
+            "type": "string",
+            "required": "Y",
+            "description": "Brief description of the study and the data set. Equivalent to the abstract of a scientific paper. Include the rationale for the approach, the types of data collected, the techniques used, formats and number of files and an approximate size.",
+            "example": "A really cool dataset that I collected to answer some question."
+        },
+        "Keywords": {
+            "type": "string",
+            "required": "Y",
+            "description": "A set of keywords to assist in search.",
+            "example": "spinal cord, electrophysiology, RNA-seq, mouse"
+        },
+        "Funding": {
+            "type": "string",
+            "required": "N",
+            "description": "Funding sources",
+            "example": "OT2OD025349"
+        },
+        "Acknowledgments": {
+            "type": "string",
+            "required": "N",
+            "description": "Acknowledgments beyond funding and contributors.",
+            "example": "Thank you everyone!"
+        },
+        "Study purpose": {
+            "type": "string",
+            "required": "Y",
+            "description": "A description of the study purpose for the structured abstract.",
+            "example": "This study was conducted to demonstrate data wranglers how to fill out dataset templates."
+        },
+        "Study data collection": {
+            "type": "string",
+            "required": "Y",
+            "description": "A description of the study data collection process for this dataset.",
+            "example": "Using an earlier version of this template we measured how much it confused data wranglers by counting the number of emails we had to exchange with them in order to fill it out."
+        },
+        "Study primary conclusion": {
+            "type": "string",
+            "required": "Y",
+            "description": "A description of the primary conclusion drawn from the study for the structured abstract.",
+            "example": "The primary conclusion of this study is that it is hard to make a good dataset template."
+        },
+        "Study organ system": {
+            "type": "string",
+            "required": "Y",
+            "description": "The major organ systems related to this study.",
+            "example": "spinal cord"
+        },
+        "Study approach": {
+            "type": "string",
+            "required": "Y",
+            "description": "The experimental approach or approaches taken in this study.",
+            "example": "electrophysiology"
+        },
+        "Study technique": {
+            "type": "string",
+            "required": "Y",
+            "description": "The experimental techniques used in this study.",
+            "example": "patch clamp"
+        },
+        "Study collection title": {
+            "type": "string",
+            "required": "N",
+            "description": "Title of the larger collection to which this dataset belongs.",
+            "example": "My SPARC research study"
+        },
+        "Contributor name": {
+            "type": "string",
+            "required": "Y",
+            "description": " Name of any contributors to the dataset.  These individuals need not have been authors on any publications describing the data, but should be acknowledged for their role in producing and publishing the data set.  If more than one, add each contributor in a new column.",
+            "example": "Last, First Middle"
+        },
+        "Contributor ORCiD": {
+            "type": "string",
+            "required": "Y",
+            "description": "ORCiD ID",
+            "example": "https://orcid.org/0000-0002-5497-0243"
+        },
+        "Contributor affiliation": {
+            "type": "string",
+            "required": "Y",
+            "description": "Institutional affiliation for contributors",
+            "example": "https://ror.org/0168r3w48"
+        },
+        "Contributor role": {
+            "type": "string",
+            "required": "Y",
+            "description": "Contributor role. At most one PrincipalInvestigator and at least one CorrespondingAuthor are required. These roles are provided by the Data Cite schema. Options are:\nPrincipalInvestigator\nCreator\nCoInvestigator\nCorrespondingAuthor\nDataCollector\nDataCurator\nDataManager\nDistributor\nEditor\nProducer\nProjectLeader\nProjectManager\nProjectMember\nRelatedPerson\nResearcher\nResearchGroup\nSponsor\nSupervisor\nWorkPackageLeader\nOther",
+            "example": "DataCollector"
+        },
+        "Identifier description": {
+            "type": "string",
+            "required": "Y",
+            "description": "A description of the referent of the related identifier.",
+            "example": "The protocol use to generate this dataset."
+        },
+        "Relation type": {
+            "type": "string",
+            "required": "Y",
+            "description": "The relationship of this dataset to its related identifier. For example, if the identifier is the originating article, it would be \u201cthis dataset IsDescribedBy the originating article\u201d. Options are\nIsProtocolFor\nHasProtocol\nIsSoftwareFor\nHasSoftware\nIsCitedBy\nCites\nIsSupplementTo\nIsSupplementedBy\nIsContinuedByContinues\nIsDescribedBy\nDescribes\nHasMetadata\nIsMetadataFor\nHasVersion\nIsVersionOf\nIsNewVersionOf\nIsPreviousVersionOf\nIsPartOf\nHasPart\nIsPublishedIn\nIsReferencedBy\nReferences\nIsDocumentedBy\nDocuments\nIsCompiledBy\nCompiles\nIsVariantFormOf\nIsOriginalFormOf\nIsIdenticalTo\nIsReviewedBy\nReviews\nIsDerivedFrom\nIsSourceOf\nIsRequiredBy\nRequires\nIsObsoletedBy\nObsoletes",
+            "example": "HasProtocol"
+        },
+        "Identifier": {
+            "type": "string",
+            "required": "Y",
+            "description": "The identifier for something related to this dataset. For example, the DOI or the relative path to the protocol generated by the Protocols.io, and/or the UUID generated by 12L digital twin platform.",
+            "example": "https://doi.org/10.13003/5jchdy"
+        },
+        "Identifier type": {
+            "type": "string",
+            "required": "Y",
+            "description": "The type of the identifier. For example, DOI/path for protocol, and/or an UUID if referencing to a primary dataset already deposited in the 12L digital twin platform.",
+            "example": "DOI"
+        },
+        "Number of subjects": {
+            "type": "integer",
+            "required": "Y",
+            "description": "Number of unique subjects in this dataset, should match subjects metadata file.",
+            "example": 1
+        },
+        "Number of samples": {
+            "type": "integer",
+            "required": "Y",
+            "description": "Number of unique samples in this dataset, should match samples metadata file. Set to zero if there are no samples. ",
+            "example": 0
+        }
+    },
+    "required": [
+        "Metadata Version",
+        "Type",
+        "Title",
+        "Subtitle",
+        "Keywords",
+        "Study purpose",
+        "Study data collection",
+        "Study primary conclusion",
+        "Study organ system",
+        "Study approach",
+        "Study technique",
+        "Contributor name",
+        "Contributor ORCiD",
+        "Contributor affiliation",
+        "Contributor role",
+        "Identifier description",
+        "Relation type",
+        "Identifier",
+        "Identifier type",
+        "Number of subjects",
+        "Number of samples"
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "type": "object",
+    "properties": {
+        "filename": {
+            "type": "string",
+            "required": "Y",
+            "description": "Relative path to file.",
+            "example": null
+        },
+        "timestamp": {
+            "type": "string",
+            "required": "Y",
+            "description": "Collection time.",
+            "example": null
+        },
+        "description": {
+            "type": "string",
+            "required": "Y",
+            "description": "Description of the file.",
+            "example": null
+        },
+        "file type": {
+            "type": "string",
+            "required": "Y",
+            "description": "Type of the file.",
+            "example": ".dcom"
+        },
+        "Additional Metadata": {
+            "type": "string",
+            "required": "N",
+            "description": "additional metadata in json format",
+            "example": null
+        }
+    },
+    "required": [
+        "filename",
+        "timestamp",
+        "description",
+        "file type"
+    ]
+}
