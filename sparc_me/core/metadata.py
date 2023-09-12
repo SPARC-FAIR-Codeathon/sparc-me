@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 
 
-class MetadataEditor:
+class Metadata:
     def __init__(self, category, metadata, dataset_path):
         """
         :param category: metadata file name

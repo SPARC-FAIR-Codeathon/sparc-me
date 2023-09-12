@@ -1,0 +1,70 @@
+{
+    "type": "object",
+    "properties": {
+        "Type": {
+            "type": "String",
+            "required": "Y",
+            "description": "Input or Output",
+            "example": "Input or Output"
+        },
+        "Service Alias (User-given name)": {
+            "type": "String",
+            "required": "Y",
+            "description": "Name of the service containing this input, given by the user",
+            "example": "Name of the service containing this input, given by the user"
+        },
+        "Service name": {
+            "type": "String",
+            "required": "Y",
+            "description": "Name of the service containing this input",
+            "example": "Name of the service containing this input"
+        },
+        "Service version": {
+            "type": "String",
+            "required": "Y",
+            "description": "Version of the service containing this input",
+            "example": "Version of the service containing this input"
+        },
+        "Name": {
+            "type": "String",
+            "required": "Y",
+            "description": "An input field to the MSoP submission",
+            "example": "An input field to the MSoP submission"
+        },
+        "Data Ontology Identifier": {
+            "type": "String",
+            "required": "Y",
+            "description": "Ontology identifier for the input field, if applicable",
+            "example": "Ontology identifier for the input field, if applicable"
+        },
+        "Data Type": {
+            "type": "String",
+            "required": "Y",
+            "description": "Data type for the input field (in plain text)",
+            "example": "Data type for the input field (in plain text)"
+        },
+        "Data Units": {
+            "type": "String",
+            "required": "Y",
+            "description": "Units of data for the input field, if applicable",
+            "example": "Units of data for the input field, if applicable"
+        },
+        "Data Default Value": {
+            "type": "String",
+            "required": "Y",
+            "description": "Default value for the input field, if applicable (doi or value)",
+            "example": "Default value for the input field, if applicable (doi or value)"
+        }
+    },
+    "required": [
+        "Type",
+        "Service Alias (User-given name)",
+        "Service name",
+        "Service version",
+        "Name",
+        "Data Ontology Identifier",
+        "Data Type",
+        "Data Units",
+        "Data Default Value"
+    ]
+}

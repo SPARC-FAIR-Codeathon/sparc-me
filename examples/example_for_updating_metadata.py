@@ -1,4 +1,5 @@
 from sparc_me import Dataset
+from sparc_me.core.schema import Schema, Validator
 
 
 def add_values_dataset_description(dataset_description):
@@ -10,6 +11,7 @@ def add_values_dataset_description(dataset_description):
     dataset_description.add_values("Breast cancer", "image processing", row_name='Keywords')
     dataset_description.add_values("""Preprocessing the breast cancer MRI images and saving in Nifti format""",
                                    row_name="Study purpose")
+    dataset_description.add_values("The result is great.", row_name="Study primary conclusion")
     dataset_description.add_values("derived from Duke Breast Cancer MRI dataset",
                                    row_name='Study data Collection')
     dataset_description.add_values("NA", row_name='Study primary conclusion')
@@ -40,10 +42,43 @@ def add_values_dataset_description(dataset_description):
     dataset_description.add_values("1", row_name='Number of samples')
 
 
+def add_values_for_sample_metadata(sample_metadata):
+    sample_metadata.add_values(*["test"] * 6, col_name="was derived from", append=False)
+    sample_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3", "pool id 4", "pool id 5", "pool id 6"],
+                               col_name="pool id", append=False)
+    sample_metadata.add_values(*["Yes"] * 5, "No", col_name="also in dataset", append=False)
+    sample_metadata.add_values(*["Global"] * 6, col_name="member of", append=False)
+    sample_metadata.add_values(
+        *["laboratory 1", "laboratory 2", "laboratory 3", "laboratory 4", "laboratory 5", "laboratory 6"],
+        col_name="laboratory internal id", append=False)
+    sample_metadata.add_values(*["1991-05-25"] * 3, *["1991-06-10"] * 3, col_name="date of derivation", append=False)
+
+    sample_metadata.save()
+
+def add_values_for_subject_metadata(subject_metadata):
+    subject_metadata.add_values("test-xyz", col_name='subject experimental group', append=False)
+    subject_metadata.add_values("30", col_name='age', append=False)
+    subject_metadata.add_values("M", col_name='sex', append=False)
+    subject_metadata.add_values("P", col_name='species', append=False)
+    subject_metadata.add_values("test", col_name='strain', append=False)
+    subject_metadata.add_values("old", col_name="age category", append=False)
+    subject_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3"],
+                               col_name="pool id", append=False)
+    subject_metadata.add_values(*["Yes"] * 3, col_name="also in dataset", append=False)
+    subject_metadata.add_values(*["515dsd1515","da515daa69", "515dsa62a"], col_name="RRID for strain", append=False)
+    subject_metadata.add_values(*["Global"] * 3, col_name="member of", append=False)
+    subject_metadata.add_values(
+        *["laboratory 1", "laboratory 2", "laboratory 3"],
+        col_name="laboratory internal id", append=False)
+    subject_metadata.add_values(*["1996-03-25","1995-09-05", "1996-04-11"], col_name="date of birth", append=False)
+    subject_metadata.save()
+
 if __name__ == '__main__':
     save_dir = "./tmp/template/"
 
     dataset = Dataset()
+    schema = Schema()
+    validator = Validator()
     dataset.set_dataset_path(save_dir)
     # NOTE: Step:1 list categories and dataset_description elements
     categories = dataset.list_categories(version="2.0.0")
@@ -64,6 +99,9 @@ if __name__ == '__main__':
     dataset_description = dataset.get_metadata(category="dataset_description")
     # code_parameters = dataset.get_metadata(category="code_parameters")
     # code_description = dataset.get_metadata(category="code_description")
+
+    des_schema = schema.get_schema("dataset_description")
+    print(des_schema.get('Subtitle'))
 
     # NOTE: Step3.1(optional), remove entire values in dataset_description
     dataset_description.clear_values()
@@ -125,8 +163,7 @@ if __name__ == '__main__':
 
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
     dataset.add_subjects(source_paths=["./test_data/bids_data/sub-01", "./test_data/bids_data/sub-02"],
-                         subjects=["sub-1", "sub-2"], subject_metadata={
-            "subject id": "",
+                         subjects=["1", "sub-2"], subject_metadata={
             "subject experimental group": "experimental",
             "age": "041Y",
             "sex": "F",
@@ -134,8 +171,6 @@ if __name__ == '__main__':
             "strain": "tissue",
             "age category": "middle adulthood"
         }, sample_metadata={
-            "sample id": "",
-            "subject id": "",
             "sample experimental group": "experimental",
             "sample type": "tissue",
             "sample anatomical location": "breast tissue",
@@ -147,6 +182,11 @@ if __name__ == '__main__':
                        sample="sam-2",
                        data_type="primary", sds_parent_dir=save_dir)
 
+    sample_metadata = dataset.get_metadata("samples")
+    subject_metadata = dataset.get_metadata("subjects")
+    add_values_for_sample_metadata(sample_metadata)
+    add_values_for_subject_metadata(subject_metadata)
+
     dataset.add_thumbnail("./test_data/thumbnail_0.jpg")
     dataset.add_thumbnail("./test_data/thumbnail_1.jpg")
     dataset.delete_data("./tmp/template/primary/thumbnail_0.jpg")
@@ -157,3 +197,10 @@ if __name__ == '__main__':
     # dataset.delete_samples(["./tmp/template/primary/subject-1/func"])
 
     dataset.save()
+
+    # NOTE: Step10 validate dataset via schema
+    description_meta = schema.load_data("./tmp/template/dataset_description.xlsx")
+    validator.validate(description_meta, category="dataset_description", version="2.0.0")
+    sub_meta = schema.load_data("./tmp/template/subjects.xlsx")
+    validator.validate(sub_meta, category="subjects", version="2.0.0")
+

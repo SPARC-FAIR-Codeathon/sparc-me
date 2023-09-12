@@ -1,0 +1,239 @@
+{
+    "type": "object",
+    "properties": {
+        "RRID Term": {
+            "type": "string",
+            "required": "Y",
+            "description": "Associated tools or resources used",
+            "example": "ImageJ"
+        },
+        "RRID Identifier": {
+            "type": "string",
+            "required": "Y",
+            "description": "Associated tools or resources identifier (with 'RRID:')",
+            "example": "RRID:SCR_003070"
+        },
+        "Ontological term": {
+            "type": "string",
+            "required": "Y",
+            "description": "Associated ontological term (human-readable)",
+            "example": "Heart"
+        },
+        "Ontological Identifier": {
+            "type": "string",
+            "required": "Y",
+            "description": "Associated ontological identifier from SciCrunch",
+            "example": "UBERON:0000948"
+        },
+        "TSR1: Define Context Clearly Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Develop and document the subject, purpose and intended use(s) of model, simulation or data processing (MSoP) submission",
+            "example": 3
+        },
+        "TSR1: Define Context Clearly Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to context of use",
+            "example": "https://journals.plos.org/plosone/doi?id=10.1371/journal.pone.0180194"
+        },
+        "TSR2: Use Appropriate Data Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Employ relevant and traceable information in the development or operation of the MSoP submission",
+            "example": 2
+        },
+        "TSR2: Use Appropriate Data Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to relevant and traceable information employed in the development or operation",
+            "example": "https://github.com/example_user/example_project/README"
+        },
+        "TSR3: Evaluate Within Context Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Verification, validation, uncertainty quantification and sensitivity analysis of the submission are accomplished with respect ot the reality of interest and intended use(s) of MSoP",
+            "example": 3
+        },
+        "TSR3: Evaluate Within Context Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to verification, validation, uncertainty quantification and sensitivity analysis",
+            "example": "https://doi.org/10.0000/0000"
+        },
+        "TSR4: List Limitations Explicitly Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Restrictions, constraints or qualifications for, or on, the use of the submission are available for consideration by the users",
+            "example": 0
+        },
+        "TSR4: List Limitations Explicitly Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to restrictions, constraints or qualifcations for use",
+            "example": "https://doi.org/10.0000/0000"
+        },
+        "TSR5: Use Version Control Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Implement a system to trace the time history of MSoP activities, including delineation of contributors' efforts",
+            "example": 4
+        },
+        "TSR5: Use Version Control Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to version control system",
+            "example": "https://github.com/example_user/example_project"
+        },
+        "TSR6: Document Adequately Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Maintain up-to-date informative records of all MSoP activities, including simulation code, model mark-up, scope and intended use of the MSoP activities, as well as users' and developers' guides",
+            "example": 4
+        },
+        "TSR6: Document Adequately Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to documentation described above",
+            "example": "https://github.com/example_user/example_project/README"
+        },
+        "TSR7: Disseminate Broadly Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Publish all components of MSoP including simulation software, models, simulation scenarios and results",
+            "example": 4
+        },
+        "TSR7: Disseminate Broadly Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to publications",
+            "example": "https://doi.org/10.0000/0000"
+        },
+        "TSR8: Get Independent Reviews Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Have the MSoP submission reviewed by nonpartisan third-party users and developers",
+            "example": 2
+        },
+        "TSR8: Get Independent Reviews Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to independent reviews",
+            "example": "https://github.com/example_user/example_repository/pull/1"
+        },
+        "TSR9: Test Competing Implementations Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Use contrasting MSoP execution strategies to compare the conclusions of the different execution strategies against each other",
+            "example": 0
+        },
+        "TSR9: Test Competing Implementations Reference": {
+            "type": "number",
+            "required": "N",
+            "description": "Reference to implementations tested",
+            "example": null
+        },
+        "TSR10a: Conform to Standards Rating (0-4)": {
+            "type": "integer",
+            "required": "N",
+            "description": "Adopt and promote generally applicable and discipline-specific operating procedures, guidelines and regulation accepted as best practices",
+            "example": 4
+        },
+        "TSR10a: Conform to Standards Reference": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to conformance to standards",
+            "example": "https://models.physiomeproject.org/workspace/author_2021/@@rawfile/xx/my_model.cellml"
+        },
+        "TSR10b: Relevant standards": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to relevant standards",
+            "example": "https://www.cellml.org"
+        },
+        "Ann1: Code Verification Status": {
+            "type": "string",
+            "required": "N",
+            "description": "Provide assurance that the MSoP submissions is free of bugs in the source code and numerical algorithms (yes/no)",
+            "example": "yes"
+        },
+        "Ann1: Reference to Code Verification": {
+            "type": "string",
+            "required": "N",
+            "description": "Link to the verification documentation",
+            "example": "https://github.com/example_user/example_repository/tests.py"
+        },
+        "Ann2: Code Validation Status": {
+            "type": "string",
+            "required": "N",
+            "description": "Assess the degree to which a computer model and simulation framework is able to simulate a reality of interest",
+            "example": "yes"
+        },
+        "Ann2: Reference to Code Validation": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to assessment",
+            "example": "https://doi.org/10.0000/0000"
+        },
+        "Ann3: Certification Status": {
+            "type": "string",
+            "required": "N",
+            "description": "The code has been certified externally (yes/no)",
+            "example": "yes"
+        },
+        "Ann3: Reference to Certification": {
+            "type": "string",
+            "required": "N",
+            "description": "Reference to the certification, if it has been certified",
+            "example": "https://github.com/exampleuser/certifier.md"
+        },
+        "Ann4: Onboarded to o\u00b2S\u00b2PARC Status": {
+            "type": "string",
+            "required": "N",
+            "description": "The MSoP submission has been integrated into the o\u00b2S\u00b2PARC platform and is publicly available",
+            "example": "yes"
+        },
+        "Ann4: Reference to onboarded MSoP submission on o\u00b2S\u00b2PARC": {
+            "type": "string",
+            "required": "N",
+            "description": "The name of the onboarded service or template on the o\u00b2S\u00b2PARC platform",
+            "example": "My Wonderful Model Service"
+        },
+        "Ann5: Testing on o\u00b2S\u00b2PARC Status": {
+            "type": "string",
+            "required": "N",
+            "description": "The MSoP submission includes unit and integration testing on the o\u00b2S\u00b2PARC platform",
+            "example": "no"
+        },
+        "Ann5: Testing on o\u00b2S\u00b2PARC Reference": {
+            "type": "number",
+            "required": "N",
+            "description": "Reference to the tests run on the onboarded MSoP submission",
+            "example": null
+        },
+        "Number of Inputs": {
+            "type": "integer",
+            "required": "N",
+            "description": "Model/Simulation/Data Processing Inputs (if any)",
+            "example": 10
+        },
+        "Number of Outputs": {
+            "type": "integer",
+            "required": "N",
+            "description": "Model/Simulation/Data Processing Outputs (if any)",
+            "example": 5
+        },
+        "Representation in CellML": {
+            "type": "string",
+            "required": "N",
+            "description": "Analogous CellML/SED-ML model representation, if any",
+            "example": "https://models.physiomeproject.org/workspace/author_2021/@@rawfile/xx/my_model.cellml"
+        }
+    },
+    "required": [
+        "RRID Term",
+        "RRID Identifier",
+        "Ontological term",
+        "Ontological Identifier"
+    ]
+}
