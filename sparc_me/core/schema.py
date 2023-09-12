@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from pathlib import Path
+from typing import Dict
 import openpyxl
 import os
 import math
@@ -134,8 +135,28 @@ class Schema(object):
 
         return schema
 
-    def get_schema(self):
-        return self._schema
+    def get_schema(self, category, version="2.0.0", print_schema=True):
+        """
+        get a schema via category/metadate file name
+        :param category: the metadata file name
+        :type category: str
+        :param version: "2.0.0"|"1.2.3"
+        :type version: str
+        :return: dict
+        """
+        filename = category + ".json"
+        if version == "2.0.0":
+            schema_path = resources_dir / "templates" / "version_2_0_0" / "schema" / filename
+        elif version == "1.2.3":
+            schema_path = resources_dir / "templates" / "version_1_2_3" / "schema" / filename
+        else:
+            msg = "Please provide a correct version 2.0.0 or 1.2.3"
+            raise ValueError(msg)
+        with open(schema_path, 'r') as file:
+            schema_json: Dict = json.load(file)
+            if print_schema:
+                print(schema_json.get('properties'))
+            return schema_json.get('properties')
 
     def set_schema(self, schema):
         self._schema = schema

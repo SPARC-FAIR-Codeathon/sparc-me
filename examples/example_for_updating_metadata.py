@@ -1,4 +1,5 @@
 from sparc_me import Dataset
+from sparc_me.core.schema import Schema, Validator
 
 
 def add_values_dataset_description(dataset_description):
@@ -10,6 +11,7 @@ def add_values_dataset_description(dataset_description):
     dataset_description.add_values("Breast cancer", "image processing", row_name='Keywords')
     dataset_description.add_values("""Preprocessing the breast cancer MRI images and saving in Nifti format""",
                                    row_name="Study purpose")
+    dataset_description.add_values("The result is great.", row_name="Study primary conclusion")
     dataset_description.add_values("derived from Duke Breast Cancer MRI dataset",
                                    row_name='Study data Collection')
     dataset_description.add_values("NA", row_name='Study primary conclusion')
@@ -54,6 +56,12 @@ def add_values_for_sample_metadata(sample_metadata):
     sample_metadata.save()
 
 def add_values_for_subject_metadata(subject_metadata):
+    subject_metadata.add_values("test-xyz", col_name='subject experimental group', append=False)
+    subject_metadata.add_values("30", col_name='age', append=False)
+    subject_metadata.add_values("M", col_name='sex', append=False)
+    subject_metadata.add_values("P", col_name='species', append=False)
+    subject_metadata.add_values("test", col_name='strain', append=False)
+    subject_metadata.add_values("old", col_name="age category", append=False)
     subject_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3"],
                                col_name="pool id", append=False)
     subject_metadata.add_values(*["Yes"] * 3, col_name="also in dataset", append=False)
@@ -69,6 +77,8 @@ if __name__ == '__main__':
     save_dir = "./tmp/template/"
 
     dataset = Dataset()
+    schema = Schema()
+    validator = Validator()
     dataset.set_dataset_path(save_dir)
     # NOTE: Step:1 list categories and dataset_description elements
     categories = dataset.list_categories(version="2.0.0")
@@ -89,6 +99,9 @@ if __name__ == '__main__':
     dataset_description = dataset.get_metadata(category="dataset_description")
     # code_parameters = dataset.get_metadata(category="code_parameters")
     # code_description = dataset.get_metadata(category="code_description")
+
+    des_schema = schema.get_schema("dataset_description")
+    print(des_schema.get('Subtitle'))
 
     # NOTE: Step3.1(optional), remove entire values in dataset_description
     dataset_description.clear_values()
@@ -184,3 +197,10 @@ if __name__ == '__main__':
     # dataset.delete_samples(["./tmp/template/primary/subject-1/func"])
 
     dataset.save()
+
+    # NOTE: Step10 validate dataset via schema
+    description_meta = schema.load_data("./tmp/template/dataset_description.xlsx")
+    validator.validate(description_meta, category="dataset_description", version="2.0.0")
+    sub_meta = schema.load_data("./tmp/template/subjects.xlsx")
+    validator.validate(sub_meta, category="subjects", version="2.0.0")
+

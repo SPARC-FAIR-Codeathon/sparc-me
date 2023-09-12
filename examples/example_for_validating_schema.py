@@ -14,6 +14,7 @@ if __name__ == '__main__':
     print("Validating dataset_description")
     metadata_file = dataset_dir.joinpath("dataset_description.xlsx")
     schema = Schema()
+    schema.get_schema("dataset_description")
     data = schema.load_data(metadata_file)
     validator = Validator()
     # validator.validate(data, category="dataset_description", version="1.2.3")
