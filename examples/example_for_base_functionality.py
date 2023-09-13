@@ -13,7 +13,7 @@ if __name__ == '__main__':
     print(categories)
 
     # List elements/fields
-    elements = dataset.list_elements(category="dataset_description", version="2.0.0")
+    elements = dataset.list_elements(metadata_file="dataset_description", version="2.0.0")
 
     # Creating/loading dataset. 
 
@@ -28,12 +28,12 @@ if __name__ == '__main__':
 
     # Update a metadata file.
     # Note: Excel index starts from 1 where index 1 is the header row. so actual data index starts from 2. 
-    dataset.set_field(category="dataset_description", row_index=2, header="Value", value="testValue")
-    dataset.set_field(category="dataset_description", row_index=2, header="Value 2", value="testValue")
+    dataset.set_field(metadata_file="dataset_description", row_index=2, header="Value", value="testValue")
+    dataset.set_field(metadata_file="dataset_description", row_index=2, header="Value 2", value="testValue")
 
     # # Append a row to the "subjects" metadata file. "subject id" will be set to "test_id"
-    dataset.append(category="subjects", row={"subject id": "test_id"})
-    dataset.set_field_using_row_name(category="subjects", row_name="test_id", header="sex", value="male")
+    dataset.append(metadata_file="subjects", row={"subject id": "test_id"})
+    dataset.set_field_using_row_name(metadata_file="subjects", row_name="test_id", header="sex", value="male")
 
     dataset.save(save_dir)
 

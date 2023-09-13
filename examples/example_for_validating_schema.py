@@ -17,8 +17,8 @@ if __name__ == '__main__':
     schema.get_schema("dataset_description")
     data = schema.load_data(metadata_file)
     validator = Validator()
-    # validator.validate(data, category="dataset_description", version="1.2.3")
-    validator.validate(data, category="dataset_description", version="2.0.0")
+    # validator.validate(data, metadata_file="dataset_description", version="1.2.3")
+    validator.validate(data, metadata_file="dataset_description", version="2.0.0")
 
     # Validate samples.
     # This one will fail because there is a required field in which its value missing
@@ -27,5 +27,5 @@ if __name__ == '__main__':
     schema = Schema()
     data = schema.load_data(metadata_file)
     validator = Validator()
-    # validator.validate(data, category="samples", version="1.2.3")
-    validator.validate(data, category="samples", version="2.0.0")
+    # validator.validate(data, metadata_file="samples", version="1.2.3")
+    validator.validate(data, metadata_file="samples", version="2.0.0")
