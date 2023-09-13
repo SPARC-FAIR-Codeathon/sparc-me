@@ -3,75 +3,81 @@ from sparc_me.core.schema import Schema, Validator
 
 
 def add_values_dataset_description(dataset_description):
-    dataset_description.add_values("2.0.0", row_name='metadataversion')
-    dataset_description.add_values("experimental", row_name='type')
-    dataset_description.add_values("Duke breast cancer MRI preprocessing", row_name='Title')
-    dataset_description.add_values("""Preprocessing the breast cancer MRI images and saving in Nifti format""",
-                                   row_name='subtitle')
-    dataset_description.add_values("Breast cancer", "image processing", row_name='Keywords')
-    dataset_description.add_values("""Preprocessing the breast cancer MRI images and saving in Nifti format""",
-                                   row_name="Study purpose")
-    dataset_description.add_values("The result is great.", row_name="Study primary conclusion")
-    dataset_description.add_values("derived from Duke Breast Cancer MRI dataset",
-                                   row_name='Study data Collection')
-    dataset_description.add_values("NA", row_name='Study primary conclusion')
-    dataset_description.add_values("NA", row_name='Study primary conclusion', append=True)
-    dataset_description.add_values("breast", row_name='Study organ system')
-    dataset_description.add_values("image processing", row_name='Study approach')
-    dataset_description.add_values("""dicom2nifti""", row_name='Study technique')
-    dataset_description.add_values("Lin, Chinchien", "Gao, Linkun", row_name='contributorname')
-    dataset_description.add_values("Prasad", "Jiali", row_name='contributorNAME', append=True)
-    dataset_description.add_values(*["bob", "db"], row_name="contributor name", append=True)
+    dataset_description.add_values('metadataversion', "2.0.0")
+    dataset_description.add_values(field_name='type', values="experimental")
+    dataset_description.add_values(field_name='Title', values="Duke breast cancer MRI preprocessing")
+    dataset_description.add_values(field_name='subtitle',
+                                   values="""Preprocessing the breast cancer MRI images and saving in Nifti format""")
+    dataset_description.add_values(field_name='Keywords', values=["Breast cancer", "image processing"])
+    dataset_description.add_values(field_name="Study purpose",
+                                   values="""Preprocessing the breast cancer MRI images and saving in Nifti format""")
+    dataset_description.add_values(field_name="Study primary conclusion", values="The result is great.")
+    dataset_description.add_values(field_name='Study data Collection',
+                                   values="derived from Duke Breast Cancer MRI dataset")
+    dataset_description.add_values(field_name='Study primary conclusion', values="NA")
+    dataset_description.add_values(field_name='Study primary conclusion', values="NA")
+    dataset_description.add_values(field_name='Study organ system', values="breast")
+    dataset_description.add_values(field_name='Study approach', values="image processing")
+    dataset_description.add_values(field_name='Study technique', values="dicom2nifti", )
+    dataset_description.add_values(field_name='contributorname', values=["Lin, Chinchien", "Gao, Linkun"])
+    dataset_description.add_values(field_name='contributorNAME', values=["Prasad", "Jiali"])
+    dataset_description.add_values(field_name="contributor name", values=["bob", "db"])
     dataset_description.add_values(
-        "https://orcid.org/0000-0001-8170-199X",
-        "https://orcid.org/0000-0001-8171-199X",
-        "https://orcid.org/0000-0001-8172-199X",
-        "https://orcid.org/0000-0001-8173-199X",
-        "https://orcid.org/0000-0001-8174-199X",
-        "https://orcid.org/0000-0001-8176-199X",
-        row_name='Contributor orcid')
+        field_name='Contributor orcid',
+        values=["https://orcid.org/0000-0001-8170-199X",
+                "https://orcid.org/0000-0001-8171-199X",
+                "https://orcid.org/0000-0001-8172-199X",
+                "https://orcid.org/0000-0001-8173-199X",
+                "https://orcid.org/0000-0001-8174-199X",
+                "https://orcid.org/0000-0001-8176-199X"],
+        append=False)
 
-    dataset_description.add_values(*["University of Auckland"] * 6, row_name='Contributor affiliation')
-    dataset_description.add_values(*["developer", "developer", "Researcher", "Researcher", "tester", "tester"],
-                                   row_name="contributor role")
-    dataset_description.add_values("source", row_name='Identifier description')
-    dataset_description.add_values("WasDerivedFrom", row_name='Relation type')
-    dataset_description.add_values("DTP-UUID", row_name='Identifier')
-    dataset_description.add_values("12L digital twin UUID", row_name='Identifier type')
-    dataset_description.add_values("1", row_name='Number of subjects')
-    dataset_description.add_values("1", row_name='Number of samples')
+    dataset_description.add_values(field_name='Contributor affiliation', values=["University of Auckland"] * 6, )
+    dataset_description.add_values(field_name="contributor role",
+                                   values=["developer", "developer", "Researcher", "Researcher", "tester", "tester"])
+    dataset_description.add_values(field_name='Identifier description', values="source")
+    dataset_description.add_values(field_name='Relation type', values="WasDerivedFrom")
+    dataset_description.add_values(field_name='Identifier', values="DTP-UUID")
+    dataset_description.add_values(field_name='Identifier type', values="12L digital twin UUID")
 
 
 def add_values_for_sample_metadata(sample_metadata):
-    sample_metadata.add_values(*["test"] * 6, col_name="was derived from", append=False)
-    sample_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3", "pool id 4", "pool id 5", "pool id 6"],
-                               col_name="pool id", append=False)
-    sample_metadata.add_values(*["Yes"] * 5, "No", col_name="also in dataset", append=False)
-    sample_metadata.add_values(*["Global"] * 6, col_name="member of", append=False)
+    sample_metadata.add_values(field_name="was derived from", values=["test"] * 6, append=False)
+    sample_metadata.add_values(field_name="pool id",
+                               values=["pool id 1", "pool id 2", "pool id 3", "pool id 4", "pool id 5", "pool id 6"],
+                               append=False)
+    sample_metadata.add_values(field_name="also in dataset", values=[*["Yes"] * 5, "No"], append=False)
+    sample_metadata.add_values(field_name="member of", values=["Global"] * 6, append=False)
     sample_metadata.add_values(
-        *["laboratory 1", "laboratory 2", "laboratory 3", "laboratory 4", "laboratory 5", "laboratory 6"],
-        col_name="laboratory internal id", append=False)
-    sample_metadata.add_values(*["1991-05-25"] * 3, *["1991-06-10"] * 3, col_name="date of derivation", append=False)
+        field_name="laboratory internal id",
+        values=["laboratory 1", "laboratory 2", "laboratory 3", "laboratory 4", "laboratory 5", "laboratory 6"],
+        append=False)
+    sample_metadata.add_values(field_name="date of derivation", values=[*["1991-05-25"] * 3, *["1991-06-10"] * 3],
+                               append=False)
 
     sample_metadata.save()
 
+
 def add_values_for_subject_metadata(subject_metadata):
-    subject_metadata.add_values("test-xyz", col_name='subject experimental group', append=False)
-    subject_metadata.add_values("30", col_name='age', append=False)
-    subject_metadata.add_values("M", col_name='sex', append=False)
-    subject_metadata.add_values("P", col_name='species', append=False)
-    subject_metadata.add_values("test", col_name='strain', append=False)
-    subject_metadata.add_values("old", col_name="age category", append=False)
-    subject_metadata.add_values(*["pool id 1", "pool id 2", "pool id 3"],
-                               col_name="pool id", append=False)
-    subject_metadata.add_values(*["Yes"] * 3, col_name="also in dataset", append=False)
-    subject_metadata.add_values(*["515dsd1515","da515daa69", "515dsa62a"], col_name="RRID for strain", append=False)
-    subject_metadata.add_values(*["Global"] * 3, col_name="member of", append=False)
+    subject_metadata.add_values(field_name='subject experimental group', values="test-xyz", append=False)
+    subject_metadata.add_values(field_name='age', values="30", append=False)
+    subject_metadata.add_values(field_name='sex', values="Male", append=False)
+    subject_metadata.add_values(field_name='species', values="P", append=False)
+    subject_metadata.add_values(field_name='strain', values="test", append=False)
+    subject_metadata.add_values(field_name="age category", values="old", append=False)
+    subject_metadata.add_values(field_name="pool id", values=["pool id 1", "pool id 2", "pool id 3"],
+                                append=False)
+    subject_metadata.add_values(field_name="also in dataset", values=["Yes"] * 3, append=False)
+    subject_metadata.add_values(field_name="RRID for strain", values=["515dsd1515", "da515daa69", "515dsa62a"],
+                                append=False)
+    subject_metadata.add_values(field_name="member of", values=["Global"] * 3, append=False)
     subject_metadata.add_values(
-        *["laboratory 1", "laboratory 2", "laboratory 3"],
-        col_name="laboratory internal id", append=False)
-    subject_metadata.add_values(*["1996-03-25","1995-09-05", "1996-04-11"], col_name="date of birth", append=False)
+        field_name="laboratory internal id", values=["laboratory 1", "laboratory 2", "laboratory 3"],
+        append=False)
+    subject_metadata.add_values(field_name="date of birth", values=["1996-03-25", "1995-09-05", "1996-04-11"],
+                                append=False)
     subject_metadata.save()
+
 
 if __name__ == '__main__':
     save_dir = "./tmp/template/"
@@ -131,8 +137,8 @@ if __name__ == '__main__':
     # print(code_description.get_values(field_name="TSR1: Define Context Clearly Rating (0-4)"))
 
     # NOTE: Step6, remove values in specific header/row_name, code_parameters
-    dataset_description.remove_values("tester", field_name="contributor role")
-    # code_parameters.remove_values("test1_name", field_name="name")
+    dataset_description.remove_values( field_name="contributor role", values="tester")
+    # code_parameters.remove_values(field_name="name", values="test1_name")
     # Step6, remove entire values in code_parameters_editor
     # code_parameters.clear_values()
     # Step6, remove entire values in dataset_description_editor
@@ -166,7 +172,7 @@ if __name__ == '__main__':
                          subjects=["1", "sub-2"], subject_metadata={
             "subject experimental group": "experimental",
             "age": "041Y",
-            "sex": "F",
+            "sex": "Female",
             "species": "human",
             "strain": "tissue",
             "age category": "middle adulthood"
@@ -189,13 +195,14 @@ if __name__ == '__main__':
 
     dataset.add_thumbnail("./test_data/thumbnail_0.jpg")
     dataset.add_thumbnail("./test_data/thumbnail_1.jpg")
-    dataset.delete_data("./tmp/template/primary/thumbnail_0.jpg")
+    # dataset.delete_data("./tmp/template/docs/thumbnail_0.jpg")
     # NOTE: Step9 Delete folder
     # Step9.1 Delete subject folder
     # dataset.delete_subject("./tmp/template/primary/subject-xyz")
     # Step9.2 Delete sample folder
     # dataset.delete_samples(["./tmp/template/primary/subject-1/func"])
 
+    # dataset_description.clear_values()
     dataset.save()
 
     # NOTE: Step10 validate dataset via schema
@@ -203,4 +210,3 @@ if __name__ == '__main__':
     validator.validate(description_meta, category="dataset_description", version="2.0.0")
     sub_meta = schema.load_data("./tmp/template/subjects.xlsx")
     validator.validate(sub_meta, category="subjects", version="2.0.0")
-
