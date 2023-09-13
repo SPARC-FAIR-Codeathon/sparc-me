@@ -3,7 +3,6 @@ from sparc_me.core.schema import Schema, Validator
 
 
 def add_values_dataset_description(dataset_description):
-    dataset_description.add_values('metadataversion', "2.0.0")
     dataset_description.add_values(field_name='type', values="experimental")
     dataset_description.add_values(field_name='Title', values="Duke breast cancer MRI preprocessing")
     dataset_description.add_values(field_name='subtitle',
@@ -14,8 +13,7 @@ def add_values_dataset_description(dataset_description):
     dataset_description.add_values(field_name="Study primary conclusion", values="The result is great.")
     dataset_description.add_values(field_name='Study data Collection',
                                    values="derived from Duke Breast Cancer MRI dataset")
-    dataset_description.add_values(field_name='Study primary conclusion', values="NA")
-    dataset_description.add_values(field_name='Study primary conclusion', values="NA")
+    dataset_description.add_values(field_name='Study primary conclusion', values="Your conclusion here!")
     dataset_description.add_values(field_name='Study organ system', values="breast")
     dataset_description.add_values(field_name='Study approach', values="image processing")
     dataset_description.add_values(field_name='Study technique', values="dicom2nifti", )
@@ -87,10 +85,10 @@ if __name__ == '__main__':
     validator = Validator()
     dataset.set_dataset_path(save_dir)
     # NOTE: Step:1 list categories and dataset_description elements
-    categories = dataset.list_categories(version="2.0.0")
-    elements = dataset.list_elements(category="dataset_description", version="2.0.0")
+    categories = dataset.list_metadata_files(version="2.0.0")
+    elements = dataset.list_elements(metadata_file="dataset_description", version="2.0.0")
     # list code_parameters elements
-    # elements = dataset.list_elements(category="code_parameters", version="2.0.0")
+    # elements = dataset.list_elements(metadata_file="code_parameters", version="2.0.0")
 
     # NOTE: Step2, way1: load dataset from template
     dataset.load_from_template(version="2.0.0")
@@ -102,9 +100,9 @@ if __name__ == '__main__':
     # dataset.load_dataset(dataset_path=save_dir)
 
     # NOTE: Step3, get dataset_description, code_description, code_parameters metadataEditor
-    dataset_description = dataset.get_metadata(category="dataset_description")
-    # code_parameters = dataset.get_metadata(category="code_parameters")
-    # code_description = dataset.get_metadata(category="code_description")
+    dataset_description = dataset.get_metadata(metadata_file="dataset_description")
+    # code_parameters = dataset.get_metadata(metadata_file="code_parameters")
+    # code_description = dataset.get_metadata(metadata_file="code_description")
 
     des_schema = schema.get_schema("dataset_description")
     print(des_schema.get('Subtitle'))
@@ -205,8 +203,10 @@ if __name__ == '__main__':
     # dataset_description.clear_values()
     dataset.save()
 
+
     # NOTE: Step10 validate dataset via schema
-    description_meta = schema.load_data("./tmp/template/dataset_description.xlsx")
-    validator.validate(description_meta, category="dataset_description", version="2.0.0")
-    sub_meta = schema.load_data("./tmp/template/subjects.xlsx")
-    validator.validate(sub_meta, category="subjects", version="2.0.0")
+    validator.validate_dataset(dataset)
+    # description_meta = schema.load_data("./tmp/template/dataset_description.xlsx")
+    # validator.validate(description_meta, metadata_file="dataset_description", version="2.0.0")
+    # sub_meta = schema.load_data("./tmp/template/subjects.xlsx")
+    # validator.validate(sub_meta, metadata_file="subjects", version="2.0.0")
