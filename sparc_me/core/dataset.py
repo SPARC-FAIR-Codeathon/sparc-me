@@ -335,38 +335,38 @@ class Dataset(object):
 
         return metadata
 
-    def list_categories(self, version, print_list=True):
+    def list_metadata_files(self, version, print_list=True):
         """
-        list all categories based on the metadata files in the template dataset
+        list all metadata_files based on the metadata files in the template dataset
 
         :param version: reference template version
         :type version: string
-        :return: all metadata categories
+        :return: all metadata metadata_files
         :rtype: list
         """
-        categories = list()
+        metadata_files = list()
 
         self.load_template(version=version)
 
         for key, value in self._template.items():
             if isinstance(value, dict):
                 file_path = Path(value.get("path"))
-                category = file_path.stem
-                categories.append(category)
+                metadata_file = file_path.stem
+                metadata_files.append(metadata_file)
 
         if print_list:
-            print("Categories:")
-            for category in categories:
-                print(category)
+            print("metadata_files:")
+            for metadata_file in metadata_files:
+                print(metadata_file)
 
-        return categories
+        return metadata_files
 
-    def list_elements(self, category, axis=0, version=None):
+    def list_elements(self, metadata_file, axis=0, version=None):
         """
         List field from a metadata file
 
-        :param category: metadata category
-        :type category: string
+        :param metadata_file: metadata metadata_file
+        :type metadata_file: string
         :param axis: If axis=0, column-based. list all column headers. i.e. the first row.
                      If axis=1, row-based. list all row index. i.e. the first column in each row
         :type axis: int
@@ -377,7 +377,7 @@ class Dataset(object):
         """
         fields = None
 
-        if category == "dataset_description":
+        if metadata_file == "dataset_description":
             axis = 1
 
         if version:
@@ -387,11 +387,11 @@ class Dataset(object):
             element_description_file = template_dir / "../schema.xlsx"
 
             try:
-                element_description = pd.read_excel(element_description_file, sheet_name=category)
+                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file)
             except XLRDError:
-                element_description = pd.read_excel(element_description_file, sheet_name=category, engine='openpyxl')
+                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file, engine='openpyxl')
 
-            print("Category: " + str(category))
+            print("metadata_file: " + str(metadata_file))
             for index, row in element_description.iterrows():
                 print(str(row["Element"]))
                 print("    Required: " + str(row["Required"]))
@@ -405,7 +405,7 @@ class Dataset(object):
         if not self._template:
             self.load_template(version=None)
 
-        data = self._template.get(category)
+        data = self._template.get(metadata_file)
         metadata = data.get("metadata")
         # set the first column as the index column
         metadata = metadata.set_index(list(metadata)[0])
@@ -421,29 +421,29 @@ class Dataset(object):
         return fields
 
     def _generate_metadata(self):
-        categories = self.list_categories(self._version, print_list=False)
-        for category in categories:
-            metadata = self._dataset.get(category).get("metadata")
-            self._metadata[category] = Metadata(category, metadata, self._version, self._dataset_path)
+        metadata_files = self.list_metadata_files(self._version, print_list=False)
+        for metadata_file in metadata_files:
+            metadata = self._dataset.get(metadata_file).get("metadata")
+            self._metadata[metadata_file] = Metadata(metadata_file, metadata, self._version, self._dataset_path)
 
-    def get_metadata(self, category):
+    def get_metadata(self, metadata_file):
         """
-        :param category: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
-        :type  category: string
+        :param metadata_file: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
+        :type  metadata_file: string
         :return: give a metadata editor for a specific metadata
         """
         if not self._dataset:
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        return self._metadata[category]
+        return self._metadata[metadata_file]
 
-    def set_field(self, category, row_index, header, value):
+    def set_field(self, metadata_file, row_index, header, value):
         """
         Set single field by row idx/name and column name (the header)
 
-        :param category: metadata category
-        :type category: string
+        :param metadata_file: metadata metadata_file
+        :type metadata_file: string
         :param row_index: row index in Excel. Excel index starts from 1 where index 1 is the header row. so actual data index starts from 2
         :type row_index: int
         :param header: column name. the header is the first row
@@ -457,7 +457,7 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        metadata = self._dataset.get(category).get("metadata")
+        metadata = self._dataset.get(metadata_file).get("metadata")
 
         if not isinstance(row_index, int):
             msg = "row_index should be 'int'."
@@ -471,17 +471,17 @@ class Dataset(object):
             msg = "Value error. row does not exists."
             raise ValueError(msg)
 
-        self._dataset[category]["metadata"] = metadata
+        self._dataset[metadata_file]["metadata"] = metadata
 
         return self._dataset
 
-    def set_field_using_row_name(self, category, row_name, header, value):
+    def set_field_using_row_name(self, metadata_file, row_name, header, value):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
 
-        :param category: metadata category
-        :type category: string
-        :param row_name: Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
+        :param metadata_file: metadata metadata_file
+        :type metadata_file: string
+        :param row_name: Unique row name in Excel. (Ex: if subjects is metadata_file, a row name can be a unique subjet id)
         :type row_name: string
         :param header: column name. the header is the first row
         :type header: string
@@ -494,7 +494,7 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        metadata = self._dataset.get(category).get("metadata")
+        metadata = self._dataset.get(metadata_file).get("metadata")
 
         if not isinstance(row_name, str):
             msg = "row_name should be string."
@@ -513,19 +513,19 @@ class Dataset(object):
             raise ValueError(msg)
         else:
             excel_row_index = matching_indices[0] + 2
-            return self.set_field(category=category, row_index=excel_row_index, header=header, value=value)
+            return self.set_field(metadata_file=metadata_file, row_index=excel_row_index, header=header, value=value)
 
-    def append(self, category, row, check_exist=False, unique_column=None):
+    def append(self, metadata_file, row, check_exist=False, unique_column=None):
         """
         Append a row to a metadata file
 
-        :param category: metadata category
-        :type category: string
+        :param metadata_file: metadata metadata_file
+        :type metadata_file: string
         :param row: a row to be appended
         :type row: dic
         :param check_exist: Check if row exist before appending, if exist, update row, defaults to False
         :type check_exist: bool, optional
-        :param unique_column: if check_exist is True, provide which column in category is unique, defaults to None
+        :param unique_column: if check_exist is True, provide which column in metadata_file is unique, defaults to None
         :type unique_column: string, optional
         :raises ValueError: _description_
         :return: updated dataset
@@ -535,16 +535,16 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        # metadata = self._dataset.get(category).get("metadata")
-        category_metadata = self.get_metadata(category)
+        # metadata = self._dataset.get(metadata_file).get("metadata")
+        metadata_file_metadata = self.get_metadata(metadata_file)
         if check_exist:
             # In version 1, the unique column is not the column 0. Hence, unique column must be specified
             if unique_column is None:
-                error_msg = "Provide which column in category is unique. Ex: subject_id"
+                error_msg = "Provide which column in metadata_file is unique. Ex: subject_id"
                 raise ValueError(error_msg)
 
             try:
-                row_index = check_row_exist(category_metadata.metadata, unique_column, unique_value=row[unique_column])
+                row_index = check_row_exist(metadata_file_metadata.metadata, unique_column, unique_value=row[unique_column])
             except ValueError:
                 error_msg = "Row values provided does not contain a unique identifier"
                 raise ValueError(error_msg)
@@ -554,27 +554,27 @@ class Dataset(object):
         if row_index == -1:
             # Add row
             row_df = pd.DataFrame([row])
-            category_metadata.metadata = pd.concat([category_metadata.metadata, row_df], axis=0,
+            metadata_file_metadata.metadata = pd.concat([metadata_file_metadata.metadata, row_df], axis=0,
                                  ignore_index=True)  # If new header comes, it will be added as a new column with its value
         else:
             # Append row with additional values
             for key, value in row.items():
-                category_metadata.metadata.loc[row_index, key] = value
+                metadata_file_metadata.metadata.loc[row_index, key] = value
 
-        self._dataset[category]["metadata"] = category_metadata.metadata
+        self._dataset[metadata_file]["metadata"] = metadata_file_metadata.metadata
         return self._dataset
 
-    def update_by_json(self, category, json_file):
+    def update_by_json(self, metadata_file, json_file):
         """
         Given json file, update metadata file
-        :param category: metadata category/filename
-        :type category: string
+        :param metadata_file: metadata metadata_file/filename
+        :type metadata_file: string
         :param json_file: path to metadata file in json
         :type json_file: string
         :return:
         :rtype:
         """
-        metadata = self._dataset.get(category).get("metadata")
+        metadata = self._dataset.get(metadata_file).get("metadata")
 
         with open(json_file, "r") as f:
             data = json.load(f)
@@ -604,20 +604,20 @@ class Dataset(object):
 
         return metadata
 
-    def generate_file_from_template(self, save_path, category, data=pd.DataFrame(), keep_style=False):
+    def generate_file_from_template(self, save_path, metadata_file, data=pd.DataFrame(), keep_style=False):
         """Generate file from a template and populate with data if givn
 
         :param save_path: destination to save the generated file
         :type save_path: string
-        :param category: SDS category (Ex: samples, subjects)
-        :type category: string
+        :param metadata_file: SDS metadata_file (Ex: samples, subjects)
+        :type metadata_file: string
         :param data: pandas dataframe containing data, defaults to pd.DataFrame()
         :type data: pd.DataFrame, optional
         """
 
         if keep_style:
             self._template_dir = self._get_template_dir(version=self._version)
-            sf = StyleFrame.read_excel_as_template(os.path.join(self._template_dir, f'{category}.xlsx'), data)
+            sf = StyleFrame.read_excel_as_template(os.path.join(self._template_dir, f'{metadata_file}.xlsx'), data)
             writer = StyleFrame.ExcelWriter(save_path)
             sf.to_excel(writer)
             writer.save()
@@ -738,14 +738,14 @@ class Dataset(object):
 
         if not sample_metadata:
             self.append(
-                category="samples",
+                metadata_file="samples",
                 row={self._subject_id_field: subject, self._sample_id_field: sample},
                 check_exist=True,
                 unique_column=self._sample_id_field
             )
         else:
             self.append(
-                category="samples",
+                metadata_file="samples",
                 row=sample_metadata,
                 check_exist=True,
                 unique_column=self._sample_id_field
@@ -754,14 +754,14 @@ class Dataset(object):
 
         if not subject_metadata:
             self.append(
-                category="subjects",
+                metadata_file="subjects",
                 row={self._subject_id_field: subject},
                 check_exist=True,
                 unique_column=self._subject_id_field
             )
         else:
             self.append(
-                category="subjects",
+                metadata_file="subjects",
                 row=subject_metadata,
                 check_exist=True,
                 unique_column=self._subject_id_field
@@ -799,15 +799,15 @@ class Dataset(object):
         self._add_sample_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
                               overwrite=overwrite)
 
-    def add_element(self, category, element):
-        metadata = self._dataset.get(category).get("metadata")
-        if category in self._column_based:
+    def add_element(self, metadata_file, element):
+        metadata = self._dataset.get(metadata_file).get("metadata")
+        if metadata_file in self._column_based:
             row_pd = pd.DataFrame([{"Metadata element": element}])
             metadata = pd.concat([metadata, row_pd], axis=0, ignore_index=True)
         else:
             metadata[element] = None
 
-        self._dataset[category]["metadata"] = metadata
+        self._dataset[metadata_file]["metadata"] = metadata
 
     def add_thumbnail(self, source_path, copy=True, overwrite=True):
 
@@ -954,10 +954,10 @@ class Dataset(object):
             df = pd.read_json(manifest_file_path, orient="index")
         return
 
-    def _update_dataset_by_df(self, df, category):
-        manifest_metadata = self._metadata[category]
+    def _update_dataset_by_df(self, df, metadata_file):
+        manifest_metadata = self._metadata[metadata_file]
         manifest_metadata.metadata = df
-        self._dataset[category]["metadata"] = manifest_metadata.metadata
+        self._dataset[metadata_file]["metadata"] = manifest_metadata.metadata
 
     """************************************ Delete Data Functions ************************************"""
 

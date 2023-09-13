@@ -4,10 +4,10 @@ from pathlib import Path
 
 
 class Metadata:
-    def __init__(self, category, metadata, version, dataset_path):
+    def __init__(self, metadata_file, metadata, version, dataset_path):
         """
-        :param category: metadata file name
-        :type category: str
+        :param metadata_file: metadata file name
+        :type metadata_file: str
         :param metadata: metadata dataframe content
         :type metadata: Dataframe
         :param version: dataset version
@@ -15,10 +15,10 @@ class Metadata:
         :param dataset_path: root dataset path
         :type dataset_path: Path
         """
-        self.category = category
+        self.metadata_file = metadata_file
         self.metadata = metadata
         self.version = version
-        self.category_path = Path(dataset_path).joinpath(f"{category}.xlsx")
+        self.metadata_file_path = Path(dataset_path).joinpath(f"{metadata_file}.xlsx")
 
     """********************************* Add values *********************************"""
 
@@ -35,7 +35,7 @@ class Metadata:
         :rtype: dict
         """
         values = self._validate_input_values(values)
-        if self.category == "dataset_description" or self.category == "code_description":
+        if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             if field_name == '':
                 return
             else:
@@ -73,7 +73,7 @@ class Metadata:
         if not isinstance(row_index, int):
             msg = "row_index should be 'int'."
             raise ValueError(msg)
-        if self.category == "dataset_description" or self.category == "code_description":
+        if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             try:
                 row_index = row_index - 2
                 # find out column index
@@ -157,18 +157,18 @@ class Metadata:
 
     def clear_values(self, field_name=''):
         """
-        :param field_name:  Unique row/col name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
+        :param field_name:  Unique row/col name in Excel. (Ex: if subjects is metadata_file, a row name can be a unique subjet id)
         :type field_name: str
         :return:
         """
-        if self.category == "dataset_description" or self.category == "code_description":
+        if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             header_name = 'Value'
             if field_name == '':
                 self.metadata.fillna('None', inplace=True)
                 self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):],
                                    inplace=True)
                 self.metadata['Value'] = pd.NA
-                if self.category == "dataset_description":
+                if self.metadata_file == "dataset_description":
                     self.add_values(field_name="Metadata version", values="2.0.0", append=False)
             else:
                 excel_row_index = self._find_row_index(field_name)
@@ -191,7 +191,7 @@ class Metadata:
         :return:
         """
         validate_values = self._validate_input_values(values)
-        if self.category == "dataset_description" or self.category == "code_description":
+        if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             excel_row_index = self._find_row_index(field_name)
             self._remove_values(field_index=excel_row_index, values=validate_values)
         else:
@@ -217,7 +217,7 @@ class Metadata:
         for value in values:
             if value in current_values.tolist():
                 self.metadata.fillna('None', inplace=True)
-                if self.category == "dataset_description" or self.category == "code_description":
+                if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
                     column_with_value = self.metadata.loc[df_field_index].eq(value)
                     self.metadata.loc[df_field_index, column_with_value] = 'None'
                 else:
@@ -242,7 +242,7 @@ class Metadata:
         :param field_name: a col/row name in Excel
         :return:
         """
-        if self.category == "dataset_description" or self.category == "code_description":
+        if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             excel_row_index = self._find_row_index(field_name)
             return self._get_values(excel_row_index)
         else:
@@ -254,7 +254,7 @@ class Metadata:
         :param field_index: a col/row name index in Excel
         :return:
         """
-        if self.category == "dataset_description" or self.category == "code_description":
+        if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             value_header_start = self.metadata.columns.get_loc('Value')
             values = self.metadata.iloc[field_index - 2, value_header_start:]
         else:
@@ -370,9 +370,9 @@ class Metadata:
     def save(self, path=""):
         try:
             if path == "":
-                path = self.category_path
+                path = self.metadata_file_path
 
             self.metadata.to_excel(path, index=False)
         except:
-            msg = f"Please provide a correct path for {self.category}"
+            msg = f"Please provide a correct path for {self.metadata_file}"
             raise ValueError(msg)
