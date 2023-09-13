@@ -36,22 +36,35 @@ def convert_version_format(version):
 class Validator(object):
     def __init__(self):
         self._version = None
-        self._category = None
+        self._metadata_file = None
         self._schema_ref = None
 
-    def validate(self, data, category, version):
+    def validate_dataset(self, dataset):
+
+        metadata_files = dataset.list_metadata_files(version="2.0.0", print_list=False)
+        currently_support_metadata_files = ['dataset_description', 'manifest', 'samples', 'subjects']
+        schema = Schema()
+
+        for metadata_file in currently_support_metadata_files:
+            metadata = dataset.get_metadata(metadata_file)
+            data_dict = metadata.data.to_dict()
+            data = schema.generate_validate_data(metadata_file, data_dict)
+            self.validate(data, metadata_file=metadata_file, version=metadata.version)
+
+
+    def validate(self, data, metadata_file, version):
         """
         Validate data instance
         :param data: Target data
         :type data: dict or list
-        :param category: metadata filename
-        :type category: string
+        :param metadata_file: metadata filename
+        :type metadata_file: string
         :param version: dataset version
         :type version: string
         :return:
         :rtype:
         """
-        self._category = category
+        self._metadata_file = metadata_file
         self._version = convert_version_format(version)
         self._load_reference_schema()
         if isinstance(data, dict):
@@ -69,7 +82,7 @@ class Validator(object):
         :rtype:
         """
         version = "version_" + self._version
-        filename = self._category + ".json"
+        filename = self._metadata_file + ".json"
         schema_path = resources_dir / "templates" / version / "schema" / filename
         if not schema_path.exists():
             raise ValueError("Reference schema not found!")
@@ -115,17 +128,17 @@ class Schema(object):
         self._version = None
         self._schema = dict()
         self._schemas = dict()
-        self._categories = list()
+        self._metadata_files = list()
 
         self._schema_dir = Path()
 
         self._column_based = ["dataset_description", "code_description"]
 
     @staticmethod
-    def get_default_schema(version, category):
+    def get_default_schema(version, metadata_file):
         version = convert_version_format(version)
         version = "version_" + version
-        filename = category + ".json"
+        filename = metadata_file + ".json"
         schema_path = resources_dir / "templates" / version / "schema" / filename
         if not schema_path.exists():
             raise ValueError("Reference schema not found!")
@@ -135,16 +148,16 @@ class Schema(object):
 
         return schema
 
-    def get_schema(self, category, version="2.0.0", print_schema=True):
+    def get_schema(self, metadata_file, version="2.0.0", print_schema=True):
         """
-        get a schema via category/metadate file name
-        :param category: the metadata file name
-        :type category: str
+        get a schema via metadata_file/metadate file name
+        :param metadata_file: the metadata file name
+        :type metadata_file: str
         :param version: "2.0.0"|"1.2.3"
         :type version: str
         :return: dict
         """
-        filename = category + ".json"
+        filename = metadata_file + ".json"
         if version == "2.0.0":
             schema_path = resources_dir / "templates" / "version_2_0_0" / "schema" / filename
         elif version == "1.2.3":
@@ -183,7 +196,9 @@ class Schema(object):
             data_pd = pd.read_excel(path, engine='openpyxl')
 
         data_dict = data_pd.to_dict()
+        return self.generate_validate_data(filename, data_dict)
 
+    def generate_validate_data(self, filename, data_dict):
         if filename in self._column_based:
             data = {}
             elements = data_dict.get("Metadata element")
@@ -308,15 +323,15 @@ class Schema(object):
         with open(dest_path, 'w') as f:
             json.dump(schema, f, indent=4)
 
-    def save(self, save_dir, schema, category):
+    def save(self, save_dir, schema, metadata_file):
         """
         Save schema
         :param save_dir: path to the destination directory
         :type save_dir: string
         :param schema: metadata schema
         :type schema: dict
-        :param category: metadata category (filename)
-        :type category: string
+        :param metadata_file: metadata metadata_file (filename)
+        :type metadata_file: string
         :return:
         :rtype:
         """
@@ -324,7 +339,7 @@ class Schema(object):
         if not save_dir.exists():
             os.makedirs(save_dir)
 
-        filename = '{sheet}.json'.format(sheet=category)
+        filename = '{sheet}.json'.format(sheet=metadata_file)
 
         save_path = Path.joinpath(save_dir, filename)
         with open(save_path, 'w', encoding='utf-8') as f:
@@ -343,4 +358,4 @@ if __name__ == '__main__':
 
     # instance = {"Name": "test", "Description": "test", "Keywords":"sassf"}
     # validator = Validator()
-    # validator.validate(instance, category="dataset_description", version="1.2.3")
+    # validator.validate(instance, metadata_file="dataset_description", version="1.2.3")
