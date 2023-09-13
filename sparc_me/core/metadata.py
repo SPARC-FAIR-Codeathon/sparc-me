@@ -4,107 +4,71 @@ from pathlib import Path
 
 
 class Metadata:
-    def __init__(self, category, metadata, dataset_path):
+    def __init__(self, category, metadata, version, dataset_path):
         """
         :param category: metadata file name
         :type category: str
         :param metadata: metadata dataframe content
         :type metadata: Dataframe
+        :param version: dataset version
+        :type version: "2.0.0" | "1.2.3"
         :param dataset_path: root dataset path
         :type dataset_path: Path
         """
         self.category = category
         self.metadata = metadata
+        self.version = version
         self.category_path = Path(dataset_path).joinpath(f"{category}.xlsx")
 
-    def add_values(self, *values, row_name='', col_name='', append=True):
+    """********************************* Add values *********************************"""
+
+    def add_values(self, field_name, values, append=True):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
-        :param values: field value
-        :type values: *str
-        :param row_name: Unique row name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
-        :type row_name: str
-        :param col_name: column name. the header is the first row
-        :type col_name: str
+        :param values: field values
+        :type values: list | str | int | bool
+        :param field_name: a col/row name in Excel
+        :type field_name: str
         :param append: insert values into last col or row
         :type append: bool
         :return: updated dataset
         :rtype: dict
         """
+        values = self._validate_input_values(values)
         if self.category == "dataset_description" or self.category == "code_description":
-            if row_name == '':
+            if field_name == '':
                 return
             else:
-                if col_name == '':
-                    col_name = 'Value'
-            excel_row_index = self._find_row_index(row_name)
-            self.set_row_values(*values, row_index=excel_row_index, col_name=col_name, append=append)
+                col_name = 'Value'
+            excel_row_index = self._find_row_index(field_name)
+            self.set_row_values(row_index=excel_row_index, values=values, col_name=col_name, append=append)
         else:
-            if col_name == '':
+            if field_name == '':
                 # add values by rows start at (0,0)
                 # get first header
                 header = self.metadata.columns[0]
-                self.set_row_values(*values, row_index=2, col_name=col_name, append=append)
+                self.set_row_values(row_index=2, values=values, col_name=header, append=append)
             else:
                 # add values by header (columns)
-                col_index = self._find_col_index(col_name)
-                self.set_col_values(*values, col_index=col_index, append=append)
-
-    def remove_values(self, *values, field_name):
-        """
-        :param values: field value
-        :type values: *str
-        :param field_name: Unique row/col name in Excel.
-        :type field_name: str
-        :return:
-        """
-        if self.category == "dataset_description" or self.category == "code_description":
-            excel_row_index = self._find_row_index(field_name)
-            self._remove_values(*values, field_index=excel_row_index)
-        else:
-            col_index = self._find_col_index(field_name)
-            self._remove_values(*values, field_index=col_index)
-
-    def clear_values(self, field_name=''):
-        """
-        :param field_name:  Unique row/col name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
-        :type field_name: str
-        :return:
-        """
-        if self.category == "dataset_description" or self.category == "code_description":
-            header_name = 'Value'
-            if field_name == '':
-                self.metadata.fillna('None', inplace=True)
-                self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):],
-                                   inplace=True)
-                self.metadata['Value'] = pd.NA
-            else:
-                excel_row_index = self._find_row_index(field_name)
-                df_row_index = excel_row_index - 2
-                header_index = self.metadata.columns.get_loc(header_name)
-                self.metadata.iloc[df_row_index, header_index:] = pd.NA
-        else:
-            if field_name == '':
-                self.metadata.drop(self.metadata.index, inplace=True)
-            else:
                 col_index = self._find_col_index(field_name)
-                self.metadata.iloc[:, col_index] = pd.NA
+                self.set_col_values(col_index=col_index, values=values, append=append)
 
-    def set_row_values(self, *values, row_index, col_name='Value', append=True):
+    def set_row_values(self, row_index, values, col_name='Value', append=True):
         """
         Set row fields/values by row idx/name and column name (the header)
 
         :param row_index: row index in Excel. Excel index starts from 1 where index 1 is the header row. so actual data index starts from 2
         :type row_index: int
-        :param header: column name. the header is the first row
-        :type header: str
+        :param col_name: column name. the header is the first row
+        :type col_name: str
         :param values: field values
-        :type values: *str
+        :type values: list | str | int | bool
         :param append: insert values into last col or row
         :type append: bool
         :return: updated dataset
         :rtype: dict
         """
+        values = self._validate_input_values(values)
         insert_header = col_name
         if not isinstance(row_index, int):
             msg = "row_index should be 'int'."
@@ -159,17 +123,18 @@ class Metadata:
                 self.metadata.index = self.metadata.index + 1
                 self.metadata.sort_index()
 
-    def set_col_values(self, *values, col_index, append=True):
+    def set_col_values(self, col_index, values, append=True):
         """
         Set col fields/values by col index
         :param values: field values
-        :type values: *str
+        :type values: list | str | int | bool
         :param col_index: the header index
         :type col_index: int
         :param append: insert values into last col or row
         :type append: bool
         :return:
         """
+        values = self._validate_input_values(values)
         if append:
             if self.metadata.iloc[:, col_index].isnull().any():
                 nan_row_index = self.metadata[self.metadata.iloc[:, col_index].isnull()].index[0]
@@ -188,14 +153,59 @@ class Metadata:
             for i, value in enumerate(values):
                 self.metadata.iat[i, col_index] = value
 
+    """********************************* Clear & Remove values *********************************"""
+
+    def clear_values(self, field_name=''):
+        """
+        :param field_name:  Unique row/col name in Excel. (Ex: if subjects is category, a row name can be a unique subjet id)
+        :type field_name: str
+        :return:
+        """
+        if self.category == "dataset_description" or self.category == "code_description":
+            header_name = 'Value'
+            if field_name == '':
+                self.metadata.fillna('None', inplace=True)
+                self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):],
+                                   inplace=True)
+                self.metadata['Value'] = pd.NA
+                if self.category == "dataset_description":
+                    self.add_values(field_name="Metadata version", values="2.0.0", append=False)
+            else:
+                excel_row_index = self._find_row_index(field_name)
+                df_row_index = excel_row_index - 2
+                header_index = self.metadata.columns.get_loc(header_name)
+                self.metadata.iloc[df_row_index, header_index:] = pd.NA
+        else:
+            if field_name == '':
+                self.metadata.drop(self.metadata.index, inplace=True)
+            else:
+                col_index = self._find_col_index(field_name)
+                self.metadata.iloc[:, col_index] = pd.NA
+
+    def remove_values(self, field_name, values):
+        """
+        :param values: field value
+        :type values: list | str | int | bool
+        :param field_name: Unique row/col name in Excel.
+        :type field_name: str
+        :return:
+        """
+        validate_values = self._validate_input_values(values)
+        if self.category == "dataset_description" or self.category == "code_description":
+            excel_row_index = self._find_row_index(field_name)
+            self._remove_values(field_index=excel_row_index, values=validate_values)
+        else:
+            col_index = self._find_col_index(field_name)
+            self._remove_values(field_index=col_index, values=validate_values)
+
     def remove_row(self, value):
         rows_to_delete = self.metadata[self.metadata.eq(value).any(axis=1)]
         self.metadata.drop(rows_to_delete.index, inplace=True)
 
-    def _remove_values(self, *values, field_index):
+    def _remove_values(self, field_index, values):
         """
         :param values: field values
-        :type values: *str
+        :type values: list | int | str | bool
         :param field_index: a col/row name index in Excel
         :type field_index: int
         :return:
@@ -224,17 +234,7 @@ class Metadata:
 
         return re.sub(r'\s', '', s).lower()
 
-    def _get_values(self, field_index):
-        """
-        :param field_index: a col/row name index in Excel
-        :return:
-        """
-        if self.category == "dataset_description" or self.category == "code_description":
-            value_header_start = self.metadata.columns.get_loc('Value')
-            values = self.metadata.iloc[field_index - 2, value_header_start:]
-        else:
-            values = self.metadata.iloc[:, field_index]
-        return values
+    """********************************* Get values *********************************"""
 
     def get_values(self, field_name):
         """
@@ -249,25 +249,19 @@ class Metadata:
             col_index = self._find_col_index(field_name)
             return self._get_values(col_index)
 
-    def _validate_input(self, field_name, elements):
+    def _get_values(self, field_index):
         """
-
-        :param field_name: row/col name in excel
-        :param elements: dataset metadata elements
+        :param field_index: a col/row name index in Excel
         :return:
         """
-        if not isinstance(field_name, str):
-            msg = "row_name / col_name should be string."
-            raise ValueError(msg)
+        if self.category == "dataset_description" or self.category == "code_description":
+            value_header_start = self.metadata.columns.get_loc('Value')
+            values = self.metadata.iloc[field_index - 2, value_header_start:]
+        else:
+            values = self.metadata.iloc[:, field_index]
+        return values
 
-        # Assumes that all excel files first column contains the unique value field
-        # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified.
-        # This method need to be fixed to accomadate this
-
-        row_name_cleaned = self._remove_spaces_and_lower(field_name)
-        matching_indices = [index for index, value in enumerate(elements) if
-                            self._remove_spaces_and_lower(value) == row_name_cleaned]
-        return matching_indices
+    """********************************* Find col/row index *********************************"""
 
     def _find_row_index(self, row_name):
         """
@@ -302,6 +296,8 @@ class Metadata:
             msg = f"No valid field name is found!"
             raise KeyError(msg)
 
+    """********************************* Edit column *********************************"""
+
     def _edit_column(self, insert_header, nums, operator='+'):
         """
 
@@ -335,6 +331,41 @@ class Metadata:
                 idx += 1
             else:
                 return (idx, f"Value {idx}")
+
+    """********************************* Validate inputs *********************************"""
+
+    def _validate_input(self, field_name, elements):
+        """
+
+        :param field_name: row/col name in excel
+        :param elements: dataset metadata elements
+        :return:
+        """
+        if not isinstance(field_name, str):
+            msg = "row_name / col_name should be string."
+            raise ValueError(msg)
+
+        # Assumes that all excel files first column contains the unique value field
+        # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified.
+        # This method need to be fixed to accomadate this
+
+        row_name_cleaned = self._remove_spaces_and_lower(field_name)
+        matching_indices = [index for index, value in enumerate(elements) if
+                            self._remove_spaces_and_lower(value) == row_name_cleaned]
+        return matching_indices
+
+    def _validate_input_values(self, values):
+        new_values = []
+        if isinstance(values, str) or isinstance(values, int) or isinstance(values, bool):
+            new_values.append(values)
+        elif not isinstance(values, list):
+            msg = "Please provide a correct values parameter, if is a single value, use str, int, bool, if multiple values please put values into a list."
+            raise TypeError(msg)
+        else:
+            new_values = values
+        return new_values
+
+    """********************************* Save *********************************"""
 
     def save(self, path=""):
         try:

@@ -52,6 +52,12 @@ class Dataset(object):
         """
         return str(self._dataset_path)
 
+    def get_dataset(self):
+        """
+        :return: current dataset dict
+        """
+        return self._dataset
+
     def _get_template_dir(self, version):
         """
         Get template directory path
@@ -143,7 +149,6 @@ class Dataset(object):
 
         self._generate_metadata()
 
-        return self._dataset
 
     def _convert_version_format(self, version):
         """
@@ -419,7 +424,7 @@ class Dataset(object):
         categories = self.list_categories(self._version, print_list=False)
         for category in categories:
             metadata = self._dataset.get(category).get("metadata")
-            self._metadata[category] = Metadata(category, metadata, self._dataset_path)
+            self._metadata[category] = Metadata(category, metadata, self._version, self._dataset_path)
 
     def get_metadata(self, category):
         """
@@ -530,7 +535,8 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
-        metadata = self._dataset.get(category).get("metadata")
+        # metadata = self._dataset.get(category).get("metadata")
+        category_metadata = self.get_metadata(category)
         if check_exist:
             # In version 1, the unique column is not the column 0. Hence, unique column must be specified
             if unique_column is None:
@@ -538,7 +544,7 @@ class Dataset(object):
                 raise ValueError(error_msg)
 
             try:
-                row_index = check_row_exist(metadata, unique_column, unique_value=row[unique_column])
+                row_index = check_row_exist(category_metadata.metadata, unique_column, unique_value=row[unique_column])
             except ValueError:
                 error_msg = "Row values provided does not contain a unique identifier"
                 raise ValueError(error_msg)
@@ -548,14 +554,14 @@ class Dataset(object):
         if row_index == -1:
             # Add row
             row_df = pd.DataFrame([row])
-            metadata = pd.concat([metadata, row_df], axis=0,
+            category_metadata.metadata = pd.concat([category_metadata.metadata, row_df], axis=0,
                                  ignore_index=True)  # If new header comes, it will be added as a new column with its value
         else:
             # Append row with additional values
             for key, value in row.items():
-                metadata.loc[row_index, key] = value
+                category_metadata.metadata.loc[row_index, key] = value
 
-        self._dataset[category]["metadata"] = metadata
+        self._dataset[category]["metadata"] = category_metadata.metadata
         return self._dataset
 
     def update_by_json(self, category, json_file):
@@ -728,7 +734,7 @@ class Dataset(object):
         if not os.path.exists(subjects_file_path):
             self.generate_file_from_template(subjects_file_path, 'subjects')
 
-        self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
+        # self.load_dataset(dataset_path=self._dataset_path, from_template=False, version=self._version)
 
         if not sample_metadata:
             self.append(
@@ -811,7 +817,7 @@ class Dataset(object):
             raise ValueError(msg)
         else:
             filename = file_source_path.name
-            destination_path = self._dataset_path.joinpath('primary', filename)
+            destination_path = self._dataset_path.joinpath('docs', filename)
             if destination_path.exists():
                 if overwrite:
                     self._delete_data(destination_path)
@@ -1083,8 +1089,8 @@ class Dataset(object):
                 folders = get_sub_folder_paths_in_folder(sub)
                 sample_folders.extend(folders)
         dataset_description_metadata = self._metadata["dataset_description"]
-        dataset_description_metadata.add_values(len(subject_folders), row_name="Number of subjects",
-                                                col_name='Value', append=False)
-        dataset_description_metadata.add_values(len(sample_folders), row_name="Number of samples",
-                                                col_name='Value', append=False)
+        dataset_description_metadata.add_values(field_name="Number of subjects",values=len(subject_folders),
+                                                append=False)
+        dataset_description_metadata.add_values(field_name="Number of samples", values=len(sample_folders),
+                                                append=False)
         dataset_description_metadata.save()
