@@ -536,7 +536,7 @@ class Dataset(object):
             raise ValueError(msg)
 
         # metadata = self._dataset.get(metadata_file).get("metadata")
-        metadata_file_metadata = self.get_metadata(metadata_file)
+        current_metadata = self.get_metadata(metadata_file)
         if check_exist:
             # In version 1, the unique column is not the column 0. Hence, unique column must be specified
             if unique_column is None:
@@ -544,7 +544,7 @@ class Dataset(object):
                 raise ValueError(error_msg)
 
             try:
-                row_index = check_row_exist(metadata_file_metadata.metadata, unique_column, unique_value=row[unique_column])
+                row_index = check_row_exist(current_metadata.data, unique_column, unique_value=row[unique_column])
             except ValueError:
                 error_msg = "Row values provided does not contain a unique identifier"
                 raise ValueError(error_msg)
@@ -554,14 +554,14 @@ class Dataset(object):
         if row_index == -1:
             # Add row
             row_df = pd.DataFrame([row])
-            metadata_file_metadata.metadata = pd.concat([metadata_file_metadata.metadata, row_df], axis=0,
+            current_metadata.data = pd.concat([current_metadata.data, row_df], axis=0,
                                  ignore_index=True)  # If new header comes, it will be added as a new column with its value
         else:
             # Append row with additional values
             for key, value in row.items():
-                metadata_file_metadata.metadata.loc[row_index, key] = value
+                current_metadata.data.loc[row_index, key] = value
 
-        self._dataset[metadata_file]["metadata"] = metadata_file_metadata.metadata
+        self._dataset[metadata_file]["metadata"] = current_metadata.data
         return self._dataset
 
     def update_by_json(self, metadata_file, json_file):
@@ -956,8 +956,8 @@ class Dataset(object):
 
     def _update_dataset_by_df(self, df, metadata_file):
         manifest_metadata = self._metadata[metadata_file]
-        manifest_metadata.metadata = df
-        self._dataset[metadata_file]["metadata"] = manifest_metadata.metadata
+        manifest_metadata.data = df
+        self._dataset[metadata_file]["metadata"] = manifest_metadata.data
 
     """************************************ Delete Data Functions ************************************"""
 

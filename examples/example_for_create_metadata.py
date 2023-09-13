@@ -3,7 +3,6 @@ from sparc_me.core.schema import Schema, Validator
 
 
 def add_values_dataset_description(dataset_description):
-    dataset_description.add_values('metadataversion', "2.0.0")
     dataset_description.add_values(field_name='type', values="experimental")
     dataset_description.add_values(field_name='Title', values="Duke breast cancer MRI preprocessing")
     dataset_description.add_values(field_name='subtitle',
@@ -14,8 +13,7 @@ def add_values_dataset_description(dataset_description):
     dataset_description.add_values(field_name="Study primary conclusion", values="The result is great.")
     dataset_description.add_values(field_name='Study data Collection',
                                    values="derived from Duke Breast Cancer MRI dataset")
-    dataset_description.add_values(field_name='Study primary conclusion', values="NA")
-    dataset_description.add_values(field_name='Study primary conclusion', values="NA")
+    dataset_description.add_values(field_name='Study primary conclusion', values="Your conclusion here!")
     dataset_description.add_values(field_name='Study organ system', values="breast")
     dataset_description.add_values(field_name='Study approach', values="image processing")
     dataset_description.add_values(field_name='Study technique', values="dicom2nifti", )

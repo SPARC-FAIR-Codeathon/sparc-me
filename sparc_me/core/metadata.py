@@ -16,7 +16,7 @@ class Metadata:
         :type dataset_path: Path
         """
         self.metadata_file = metadata_file
-        self.metadata = metadata
+        self.data = metadata
         self.version = version
         self.metadata_file_path = Path(dataset_path).joinpath(f"{metadata_file}.xlsx")
 
@@ -46,7 +46,7 @@ class Metadata:
             if field_name == '':
                 # add values by rows start at (0,0)
                 # get first header
-                header = self.metadata.columns[0]
+                header = self.data.columns[0]
                 self.set_row_values(row_index=2, values=values, col_name=header, append=append)
             else:
                 # add values by header (columns)
@@ -77,36 +77,36 @@ class Metadata:
             try:
                 row_index = row_index - 2
                 # find out column index
-                row_has_null = self.metadata.iloc[row_index].isnull().any()
+                row_has_null = self.data.iloc[row_index].isnull().any()
                 if append:
                     if row_has_null:
-                        start_header = (self.metadata.isnull().idxmax(axis=1))[row_index]
+                        start_header = (self.data.isnull().idxmax(axis=1))[row_index]
                         insert_header = start_header
-                        start_column_index = self.metadata.columns.get_loc(start_header)
+                        start_column_index = self.data.columns.get_loc(start_header)
                     else:
-                        last_value_col_index = len(self.metadata.iloc[row_index].values) - 1
-                        last_value_col_name = self.metadata.columns[last_value_col_index]
+                        last_value_col_index = len(self.data.iloc[row_index].values) - 1
+                        last_value_col_name = self.data.columns[last_value_col_index]
                         value_header_order = last_value_col_name.replace('Value', '')
                         if value_header_order == '':
-                            self.metadata.insert(last_value_col_index + 1, f"Value {1}", None)
+                            self.data.insert(last_value_col_index + 1, f"Value {1}", None)
                         else:
                             try:
                                 if value_header_order == ' n':
                                     value_header_order = 3
-                                self.metadata.insert(last_value_col_index + 1, f"Value {int(value_header_order) + 1}",
+                                self.data.insert(last_value_col_index + 1, f"Value {int(value_header_order) + 1}",
                                                      None)
                             except ValueError:
                                 msg = "Please private a correct header, e.g, Value, Value1, Value2..."
                                 raise ValueError(msg)
 
-                        insert_header = self.metadata.columns[-1]
+                        insert_header = self.data.columns[-1]
                         start_column_index = last_value_col_index + 1
                 else:
-                    start_column_index = self.metadata.columns.get_loc(col_name)
+                    start_column_index = self.data.columns.get_loc(col_name)
 
                 if len(values) > 0:
                     self._edit_column(insert_header, len(values))
-                    self.metadata.iloc[row_index, start_column_index:start_column_index + len(values)] = values
+                    self.data.iloc[row_index, start_column_index:start_column_index + len(values)] = values
                 else:
                     msg = f"please provide values"
                     raise ValueError(msg)
@@ -117,11 +117,11 @@ class Metadata:
                 raise ValueError(msg)
         else:
             if append:
-                self.metadata.loc[len(self.metadata)] = values
+                self.data.loc[len(self.data)] = values
             else:
-                self.metadata.loc[-1] = values
-                self.metadata.index = self.metadata.index + 1
-                self.metadata.sort_index()
+                self.data.loc[-1] = values
+                self.data.index = self.data.index + 1
+                self.data.sort_index()
 
     def set_col_values(self, col_index, values, append=True):
         """
@@ -136,22 +136,22 @@ class Metadata:
         """
         values = self._validate_input_values(values)
         if append:
-            if self.metadata.iloc[:, col_index].isnull().any():
-                nan_row_index = self.metadata[self.metadata.iloc[:, col_index].isnull()].index[0]
-                self.metadata.iloc[nan_row_index:nan_row_index + len(values), col_index] = values
+            if self.data.iloc[:, col_index].isnull().any():
+                nan_row_index = self.data[self.data.iloc[:, col_index].isnull()].index[0]
+                self.data.iloc[nan_row_index:nan_row_index + len(values), col_index] = values
             else:
                 for value in values:
-                    new_row = [None] * len(self.metadata.columns)
+                    new_row = [None] * len(self.data.columns)
                     new_row[col_index] = value
-                    self.metadata.loc[len(self.metadata)] = new_row
+                    self.data.loc[len(self.data)] = new_row
         else:
-            if len(self.metadata) < len(values):
-                diff = len(values) - len(self.metadata)
+            if len(self.data) < len(values):
+                diff = len(values) - len(self.data)
                 for _ in range(diff):
-                    self.metadata.loc[len(self.metadata)] = None
+                    self.data.loc[len(self.data)] = None
 
             for i, value in enumerate(values):
-                self.metadata.iat[i, col_index] = value
+                self.data.iat[i, col_index] = value
 
     """********************************* Clear & Remove values *********************************"""
 
@@ -164,23 +164,23 @@ class Metadata:
         if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             header_name = 'Value'
             if field_name == '':
-                self.metadata.fillna('None', inplace=True)
-                self.metadata.drop(columns=self.metadata.columns[self.metadata.columns.get_loc(header_name):],
+                self.data.fillna('None', inplace=True)
+                self.data.drop(columns=self.data.columns[self.data.columns.get_loc(header_name):],
                                    inplace=True)
-                self.metadata['Value'] = pd.NA
+                self.data['Value'] = pd.NA
                 if self.metadata_file == "dataset_description":
                     self.add_values(field_name="Metadata version", values="2.0.0", append=False)
             else:
                 excel_row_index = self._find_row_index(field_name)
                 df_row_index = excel_row_index - 2
-                header_index = self.metadata.columns.get_loc(header_name)
-                self.metadata.iloc[df_row_index, header_index:] = pd.NA
+                header_index = self.data.columns.get_loc(header_name)
+                self.data.iloc[df_row_index, header_index:] = pd.NA
         else:
             if field_name == '':
-                self.metadata.drop(self.metadata.index, inplace=True)
+                self.data.drop(self.data.index, inplace=True)
             else:
                 col_index = self._find_col_index(field_name)
-                self.metadata.iloc[:, col_index] = pd.NA
+                self.data.iloc[:, col_index] = pd.NA
 
     def remove_values(self, field_name, values):
         """
@@ -199,8 +199,8 @@ class Metadata:
             self._remove_values(field_index=col_index, values=validate_values)
 
     def remove_row(self, value):
-        rows_to_delete = self.metadata[self.metadata.eq(value).any(axis=1)]
-        self.metadata.drop(rows_to_delete.index, inplace=True)
+        rows_to_delete = self.data[self.data.eq(value).any(axis=1)]
+        self.data.drop(rows_to_delete.index, inplace=True)
 
     def _remove_values(self, field_index, values):
         """
@@ -216,14 +216,14 @@ class Metadata:
         df_field_index = field_index - 2
         for value in values:
             if value in current_values.tolist():
-                self.metadata.fillna('None', inplace=True)
+                self.data.fillna('None', inplace=True)
                 if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
-                    column_with_value = self.metadata.loc[df_field_index].eq(value)
-                    self.metadata.loc[df_field_index, column_with_value] = 'None'
+                    column_with_value = self.data.loc[df_field_index].eq(value)
+                    self.data.loc[df_field_index, column_with_value] = 'None'
                 else:
-                    self.metadata.loc[
-                        self.metadata.iloc[:, field_index] == value, self.metadata.columns[field_index]] = 'None'
-        self.metadata[self.metadata == 'None'] = pd.NA
+                    self.data.loc[
+                        self.data.iloc[:, field_index] == value, self.data.columns[field_index]] = 'None'
+        self.data[self.data == 'None'] = pd.NA
 
     def _remove_spaces_and_lower(self, s):
         """
@@ -255,10 +255,10 @@ class Metadata:
         :return:
         """
         if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
-            value_header_start = self.metadata.columns.get_loc('Value')
-            values = self.metadata.iloc[field_index - 2, value_header_start:]
+            value_header_start = self.data.columns.get_loc('Value')
+            values = self.data.iloc[field_index - 2, value_header_start:]
         else:
-            values = self.metadata.iloc[:, field_index]
+            values = self.data.iloc[:, field_index]
         return values
 
     """********************************* Find col/row index *********************************"""
@@ -270,13 +270,13 @@ class Metadata:
         :type row_name: str
         :return:
         """
-        elements = self.metadata[self.metadata.columns[0]].tolist()
+        elements = self.data[self.data.columns[0]].tolist()
         matching_indices = self._validate_input(row_name, elements)
         if not matching_indices:
-            msg = f"No row with given unique name, {row_name}, was found in the unique column {self.metadata.columns[0]}"
+            msg = f"No row with given unique name, {row_name}, was found in the unique column {self.data.columns[0]}"
             raise ValueError(msg)
         elif len(matching_indices) > 1:
-            msg = f"More than one row with given unique name, {row_name}, was found in the unique column {self.metadata.columns[0]}"
+            msg = f"More than one row with given unique name, {row_name}, was found in the unique column {self.data.columns[0]}"
             raise ValueError(msg)
         else:
             excel_row_index = matching_indices[0] + 2
@@ -288,7 +288,7 @@ class Metadata:
         :type col_name: str
         :return:
         """
-        elements = self.metadata.columns.tolist()
+        elements = self.data.columns.tolist()
         matching_indices = self._validate_input(col_name, elements)
         if len(matching_indices) == 1:
             return matching_indices[0]
@@ -309,9 +309,9 @@ class Metadata:
         :type operator: "+" | "-"
         :return:
         """
-        start_column_idx = self.metadata.columns.get_loc(insert_header)
-        remain_headers = self.metadata.columns[start_column_idx:]
-        last_header_index = self.metadata.columns.get_loc(self.metadata.columns[-1])
+        start_column_idx = self.data.columns.get_loc(insert_header)
+        remain_headers = self.data.columns[start_column_idx:]
+        last_header_index = self.data.columns.get_loc(self.data.columns[-1])
         if operator == "+":
             if len(remain_headers) < nums:
                 length = nums - len(remain_headers)
@@ -320,14 +320,14 @@ class Metadata:
                     (idx, unique_header) = self._create_unique_header(idx)
 
                     try:
-                        self.metadata.insert(last_header_index + i + 1, unique_header, None)
+                        self.data.insert(last_header_index + i + 1, unique_header, None)
                     except ValueError:
                         msg = "Please provide a correct header, e.g, Value, Value 1, Value 2..."
                         raise ValueError(msg)
 
     def _create_unique_header(self, idx):
         while True:
-            if f"Value {idx}" in self.metadata.columns:
+            if f"Value {idx}" in self.data.columns:
                 idx += 1
             else:
                 return (idx, f"Value {idx}")
@@ -372,7 +372,7 @@ class Metadata:
             if path == "":
                 path = self.metadata_file_path
 
-            self.metadata.to_excel(path, index=False)
+            self.data.to_excel(path, index=False)
         except:
-            msg = f"Please provide a correct path for {self.metadata_file}"
+            msg = f"Please provide a correct path for {self.Testmetadata_file}"
             raise ValueError(msg)
