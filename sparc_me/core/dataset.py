@@ -295,6 +295,10 @@ class Dataset(object):
                     os.remove(file_path)
                     os.rename(file_path_tmp, file_path)
 
+        for gitkeep_path in save_dir.rglob('.gitkeep'):
+            gitkeep_path.unlink()
+
+
     def load_metadata(self, path):
         """
         Load & update a single metadata
