@@ -6,6 +6,8 @@ import openpyxl
 import os
 import math
 
+from sparc_me.core.utils import CaseInsensitiveDict, validate_metadata_file
+
 from xlrd import XLRDError
 
 from jsonschema import validate
@@ -159,6 +161,7 @@ class Schema(object):
         :type version: str
         :return: dict
         """
+        metadata_file = validate_metadata_file(metadata_file, version)
         filename = metadata_file + ".json"
         if version == "2.0.0":
             schema_path = resources_dir / "templates" / "version_2_0_0" / "schema" / filename
@@ -167,11 +170,12 @@ class Schema(object):
         else:
             msg = "Please provide a correct version 2.0.0 or 1.2.3"
             raise ValueError(msg)
+
         with open(schema_path, 'r') as file:
             schema_json: Dict = json.load(file)
             if print_schema:
-                print(schema_json.get('properties'))
-            return schema_json.get('properties')
+                print(json.dumps(schema_json.get('properties'), indent=4))
+            return CaseInsensitiveDict(schema_json.get('properties'))
 
     def set_schema(self, schema):
         self._schema = schema

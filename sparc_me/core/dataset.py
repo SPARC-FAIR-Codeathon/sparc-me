@@ -11,7 +11,7 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from datetime import datetime, timezone
-from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_sub_sam_name
+from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_sub_sam_name, remove_spaces_and_lower, validate_metadata_file
 from sparc_me.core.metadata import Metadata
 
 
@@ -380,7 +380,7 @@ class Dataset(object):
         :rtype: list
         """
         fields = None
-
+        metadata_file = validate_metadata_file(metadata_file, version)
         if metadata_file == "dataset_description":
             axis = 1
 
@@ -440,7 +440,9 @@ class Dataset(object):
             msg = "Dataset not defined. Please load the dataset in advance."
             raise ValueError(msg)
 
+        metadata_file = validate_metadata_file(metadata_file, self._version)
         return self._metadata[metadata_file]
+
 
     def set_field(self, metadata_file, row_index, header, value):
         """
