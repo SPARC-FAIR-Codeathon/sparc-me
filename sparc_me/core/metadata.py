@@ -1,6 +1,6 @@
-import re
 import pandas as pd
 from pathlib import Path
+from sparc_me.core.utils import remove_spaces_and_lower
 
 
 class Metadata:
@@ -225,14 +225,6 @@ class Metadata:
                         self.data.iloc[:, field_index] == value, self.data.columns[field_index]] = 'None'
         self.data[self.data == 'None'] = pd.NA
 
-    def _remove_spaces_and_lower(self, s):
-        """
-        :param s: the str need to deal with
-        :type s: str
-        :return: a str with lower case and without space
-        """
-
-        return re.sub(r'\s', '', s).lower()
 
     """********************************* Get values *********************************"""
 
@@ -349,9 +341,9 @@ class Metadata:
         # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified.
         # This method need to be fixed to accomadate this
 
-        row_name_cleaned = self._remove_spaces_and_lower(field_name)
+        row_name_cleaned = remove_spaces_and_lower(field_name)
         matching_indices = [index for index, value in enumerate(elements) if
-                            self._remove_spaces_and_lower(value) == row_name_cleaned]
+                            remove_spaces_and_lower(value) == row_name_cleaned]
         return matching_indices
 
     def _validate_input_values(self, values):

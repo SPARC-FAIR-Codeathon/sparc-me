@@ -2,15 +2,16 @@ from sparc_me import Dataset
 from sparc_me.core.schema import Schema, Validator
 
 
+
 def add_values_dataset_description(dataset_description):
     dataset_description.add_values(field_name='type', values="experimental")
-    dataset_description.add_values(field_name='Title', values="Duke breast cancer MRI preprocessing")
+    dataset_description.add_values(field_name='Title', values="duke breast cancer MRI preprocessing")
     dataset_description.add_values(field_name='subtitle',
                                    values="""Preprocessing the breast cancer MRI images and saving in Nifti format""")
-    dataset_description.add_values(field_name='Keywords', values=["Breast cancer", "image processing"])
+    dataset_description.add_values(field_name='Keywords', values=["breast cancer", "image processing"])
     dataset_description.add_values(field_name="Study purpose",
-                                   values="""Preprocessing the breast cancer MRI images and saving in Nifti format""")
-    dataset_description.add_values(field_name="Study primary conclusion", values="The result is great.")
+                                   values="""preprocessing the breast cancer MRI images and saving in Nifti format""")
+    dataset_description.add_values(field_name="Study primary conclusion", values="the result is great.")
     dataset_description.add_values(field_name='Study data Collection',
                                    values="derived from Duke Breast Cancer MRI dataset")
     dataset_description.add_values(field_name='Study primary conclusion', values="Your conclusion here!")
@@ -45,7 +46,7 @@ def add_values_for_sample_metadata(sample_metadata):
                                values=["pool id 1", "pool id 2", "pool id 3", "pool id 4", "pool id 5", "pool id 6"],
                                append=False)
     sample_metadata.add_values(field_name="also in dataset", values=[*["Yes"] * 5, "No"], append=False)
-    sample_metadata.add_values(field_name="member of", values=["Global"] * 6, append=False)
+    sample_metadata.add_values(field_name="member of", values=["global"] * 6, append=False)
     sample_metadata.add_values(
         field_name="laboratory internal id",
         values=["laboratory 1", "laboratory 2", "laboratory 3", "laboratory 4", "laboratory 5", "laboratory 6"],
@@ -65,10 +66,10 @@ def add_values_for_subject_metadata(subject_metadata):
     subject_metadata.add_values(field_name="age category", values="old", append=False)
     subject_metadata.add_values(field_name="pool id", values=["pool id 1", "pool id 2", "pool id 3"],
                                 append=False)
-    subject_metadata.add_values(field_name="also in dataset", values=["Yes"] * 3, append=False)
+    subject_metadata.add_values(field_name="also in dataset", values=["yes"] * 3, append=False)
     subject_metadata.add_values(field_name="RRID for strain", values=["515dsd1515", "da515daa69", "515dsa62a"],
                                 append=False)
-    subject_metadata.add_values(field_name="member of", values=["Global"] * 3, append=False)
+    subject_metadata.add_values(field_name="member of", values=["global"] * 3, append=False)
     subject_metadata.add_values(
         field_name="laboratory internal id", values=["laboratory 1", "laboratory 2", "laboratory 3"],
         append=False)
@@ -105,7 +106,8 @@ if __name__ == '__main__':
     # code_description = dataset.get_metadata(metadata_file="code_description")
 
     des_schema = schema.get_schema("dataset_description")
-    print(des_schema.get('Subtitle'))
+    print("daa")
+    des_schema.get('subtitle')
 
     # NOTE: Step3.1(optional), remove entire values in dataset_description
     dataset_description.clear_values()
@@ -135,7 +137,7 @@ if __name__ == '__main__':
     # print(code_description.get_values(field_name="TSR1: Define Context Clearly Rating (0-4)"))
 
     # NOTE: Step6, remove values in specific header/row_name, code_parameters
-    dataset_description.remove_values( field_name="contributor role", values="tester")
+    dataset_description.remove_values(field_name="contributor role", values=["tester"])
     # code_parameters.remove_values(field_name="name", values="test1_name")
     # Step6, remove entire values in code_parameters_editor
     # code_parameters.clear_values()
@@ -155,19 +157,19 @@ if __name__ == '__main__':
 
     # NOTE: Step8, move files to dataset primary and derivative folder
     # NOTE: Step8.1, Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_samples(source_paths=["./test_data/sample1/raw", "./test_data/sample2/raw"], subject="sub-xyz",
+    dataset.add_samples(source_paths=["./test_data/sample1/raw", "./test_data/sample2/raw"], subject="sub-1",
                         samples=["sam-1", "sam-2"],
                         data_type="primary", sds_parent_dir=save_dir)
 
     # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_sample(source_path="./test_data/sample1/derived", subject="sub-xyz", sample="sam-abc",
+    dataset.add_sample(source_path="./test_data/sample1/derived", subject="sub-1", sample="sam-1",
                        data_type="derivative", sds_parent_dir=save_dir, sample_metadata={})
 
     # NOTE: Step8.2, add subject with subject and sample metadata
 
     # copy data from "source_data_primary" to "sds_dataset" primary(default) directory
     dataset.add_subjects(source_paths=["./test_data/bids_data/sub-01", "./test_data/bids_data/sub-02"],
-                         subjects=["1", "sub-2"], subject_metadata={
+                         subjects=["sub-2", "sub-3"], subject_metadata={
             "subject experimental group": "experimental",
             "age": "041Y",
             "sex": "Female",
@@ -182,7 +184,7 @@ if __name__ == '__main__':
     # NOTE: Step8.3 Copy single sample file data to dataset
     #
     #  from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_sample(source_path="./test_data/sample1/raw/simple_test1.txt", subject="sub-xyz",
+    dataset.add_sample(source_path="./test_data/sample1/raw/simple_test1.txt", subject="sub-1",
                        sample="sam-2",
                        data_type="primary", sds_parent_dir=save_dir)
 
