@@ -106,7 +106,6 @@ if __name__ == '__main__':
     # code_description = dataset.get_metadata(metadata_file="code_description")
 
     des_schema = schema.get_schema("dataset_description")
-    print("daa")
     des_schema.get('subtitle')
 
     # NOTE: Step3.1(optional), remove entire values in dataset_description
