@@ -1,6 +1,9 @@
 import pandas as pd
 from pathlib import Path
 from sparc_me.core.utils import remove_spaces_and_lower
+import shutil
+from sparc_me.core.utils import find_col_element
+from datetime import datetime, timezone
 
 
 class Metadata:
@@ -22,13 +25,13 @@ class Metadata:
 
     """********************************* Add values *********************************"""
 
-    def add_values(self, field_name, values, append=True):
+    def add_values(self, element, values, append=True):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
         :param values: field values
         :type values: list | str | int | bool
-        :param field_name: a col/row name in Excel
-        :type field_name: str
+        :param element: a col/row name in Excel
+        :type element: str
         :param append: insert values into last col or row
         :type append: bool
         :return: updated dataset
@@ -36,21 +39,21 @@ class Metadata:
         """
         values = self._validate_input_values(values)
         if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
-            if field_name == '':
+            if element == '':
                 return
             else:
                 col_name = 'Value'
-            excel_row_index = self._find_row_index(field_name)
+            excel_row_index = self._find_row_index(element)
             self.set_row_values(row_index=excel_row_index, values=values, col_name=col_name, append=append)
         else:
-            if field_name == '':
+            if element == '':
                 # add values by rows start at (0,0)
                 # get first header
                 header = self.data.columns[0]
                 self.set_row_values(row_index=2, values=values, col_name=header, append=append)
             else:
                 # add values by header (columns)
-                col_index = self._find_col_index(field_name)
+                col_index = self._find_col_index(element)
                 self.set_col_values(col_index=col_index, values=values, append=append)
 
     def set_row_values(self, row_index, values, col_name='Value', append=True):
@@ -94,7 +97,7 @@ class Metadata:
                                 if value_header_order == ' n':
                                     value_header_order = 3
                                 self.data.insert(last_value_col_index + 1, f"Value {int(value_header_order) + 1}",
-                                                     None)
+                                                 None)
                             except ValueError:
                                 msg = "Please private a correct header, e.g, Value, Value1, Value2..."
                                 raise ValueError(msg)
@@ -155,47 +158,47 @@ class Metadata:
 
     """********************************* Clear & Remove values *********************************"""
 
-    def clear_values(self, field_name=''):
+    def clear_values(self, element=''):
         """
-        :param field_name:  Unique row/col name in Excel. (Ex: if subjects is metadata_file, a row name can be a unique subjet id)
-        :type field_name: str
+        :param element:  Unique row/col name in Excel. (Ex: if subjects is metadata_file, a row name can be a unique subjet id)
+        :type element: str
         :return:
         """
         if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
             header_name = 'Value'
-            if field_name == '':
+            if element == '':
                 self.data.fillna('None', inplace=True)
                 self.data.drop(columns=self.data.columns[self.data.columns.get_loc(header_name):],
-                                   inplace=True)
+                               inplace=True)
                 self.data['Value'] = pd.NA
                 if self.metadata_file == "dataset_description":
-                    self.add_values(field_name="Metadata version", values="2.0.0", append=False)
+                    self.add_values(element="Metadata version", values="2.0.0", append=False)
             else:
-                excel_row_index = self._find_row_index(field_name)
+                excel_row_index = self._find_row_index(element)
                 df_row_index = excel_row_index - 2
                 header_index = self.data.columns.get_loc(header_name)
                 self.data.iloc[df_row_index, header_index:] = pd.NA
         else:
-            if field_name == '':
+            if element == '':
                 self.data.drop(self.data.index, inplace=True)
             else:
-                col_index = self._find_col_index(field_name)
+                col_index = self._find_col_index(element)
                 self.data.iloc[:, col_index] = pd.NA
 
-    def remove_values(self, field_name, values):
+    def remove_values(self, element, values):
         """
         :param values: field value
         :type values: list | str | int | bool
-        :param field_name: Unique row/col name in Excel.
-        :type field_name: str
+        :param element: Unique row/col name in Excel.
+        :type element: str
         :return:
         """
         validate_values = self._validate_input_values(values)
         if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
-            excel_row_index = self._find_row_index(field_name)
+            excel_row_index = self._find_row_index(element)
             self._remove_values(field_index=excel_row_index, values=validate_values)
         else:
-            col_index = self._find_col_index(field_name)
+            col_index = self._find_col_index(element)
             self._remove_values(field_index=col_index, values=validate_values)
 
     def remove_row(self, value):
@@ -225,20 +228,19 @@ class Metadata:
                         self.data.iloc[:, field_index] == value, self.data.columns[field_index]] = 'None'
         self.data[self.data == 'None'] = pd.NA
 
-
     """********************************* Get values *********************************"""
 
-    def get_values(self, field_name):
+    def get_values(self, element):
         """
 
-        :param field_name: a col/row name in Excel
+        :param element: a col/row name in Excel
         :return:
         """
         if self.metadata_file == "dataset_description" or self.metadata_file == "code_description":
-            excel_row_index = self._find_row_index(field_name)
+            excel_row_index = self._find_row_index(element)
             return self._get_values(excel_row_index)
         else:
-            col_index = self._find_col_index(field_name)
+            col_index = self._find_col_index(element)
             return self._get_values(col_index)
 
     def _get_values(self, field_index):
@@ -263,7 +265,7 @@ class Metadata:
         :return:
         """
         elements = self.data[self.data.columns[0]].tolist()
-        matching_indices = self._validate_input(row_name, elements)
+        matching_indices = self.validate_input(row_name, elements)
         if not matching_indices:
             msg = f"No row with given unique name, {row_name}, was found in the unique column {self.data.columns[0]}"
             raise ValueError(msg)
@@ -281,7 +283,7 @@ class Metadata:
         :return:
         """
         elements = self.data.columns.tolist()
-        matching_indices = self._validate_input(col_name, elements)
+        matching_indices = self.validate_input(col_name, elements)
         if len(matching_indices) == 1:
             return matching_indices[0]
         else:
@@ -326,14 +328,14 @@ class Metadata:
 
     """********************************* Validate inputs *********************************"""
 
-    def _validate_input(self, field_name, elements):
+    def validate_input(self, element, elements):
         """
 
-        :param field_name: row/col name in excel
+        :param element: row/col name in excel
         :param elements: dataset metadata elements
         :return:
         """
-        if not isinstance(field_name, str):
+        if not isinstance(element, str):
             msg = "row_name / col_name should be string."
             raise ValueError(msg)
 
@@ -341,7 +343,7 @@ class Metadata:
         # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified.
         # This method need to be fixed to accomadate this
 
-        row_name_cleaned = remove_spaces_and_lower(field_name)
+        row_name_cleaned = remove_spaces_and_lower(element)
         matching_indices = [index for index, value in enumerate(elements) if
                             remove_spaces_and_lower(value) == row_name_cleaned]
         return matching_indices
@@ -368,3 +370,205 @@ class Metadata:
         except:
             msg = f"Please provide a correct path for {self.Testmetadata_file}"
             raise ValueError(msg)
+
+
+class Subject:
+    count = 0
+    _dataset_path = Path('./')
+    _metadata = None
+
+    def __init__(self):
+
+        self.subject_id = ""
+        self.subject_dir = Path()
+        self.index = -1
+        self.samples = []
+        self._generate_subject_path_and_id()
+
+    def get_sample(self, sample_sds_id):
+        if not isinstance(sample_sds_id, int) or sample_sds_id > len(self.samples) or sample_sds_id < 0:
+            msg = f"Subject not found, please provide an integer subject_sds_id!, you subject_sds_id type is {type(sample_sds_id)}"
+            raise ValueError(msg)
+
+        return self.samples[sample_sds_id - 1]
+
+    def _generate_subject_path_and_id(self):
+        primary_dir = self._dataset_path.joinpath("primary")
+        if primary_dir.exists():
+            sub_dirs = []
+            for sub_dir in primary_dir.iterdir():
+                if sub_dir.is_dir():
+                    sub_dirs.append(sub_dir.name)
+            while True:
+                Subject.count += 1
+                self.subject_id = f"sub-{Subject.count}"
+                if self.subject_id not in sub_dirs:
+                    break
+        else:
+            Subject.count += 1
+            self.subject_id = f"sub-{Subject.count}"
+        self.subject_dir = primary_dir.joinpath(self.subject_id)
+        self._add_subject_row()
+
+    def add_samples(self, samples):
+        if isinstance(samples, list):
+            for sample in samples:
+                if isinstance(sample, Sample):
+                    self.samples.append(sample)
+                    self._create_sample(sample)
+        elif isinstance(samples, Sample):
+            self.samples.append(samples)
+            self._create_sample(samples)
+
+    def _create_sample(self, sample):
+        sample.set_subject_id(self.subject_id)
+
+    def _add_subject_row(self):
+        df = self._metadata.data
+        if self.subject_id in df['subject id']:
+            self.index = df.loc[df['subject id'] == self.subject_id].index[0]
+        else:
+            subject = [self.subject_id] + [float('nan')] * (len(df.columns) -1)
+            # Create new row
+            self.index = len(df)
+            df.loc[self.index] = subject
+
+    def set_values(self, metadata={}):
+        for element, value in metadata.items():
+            if element == 'subject id':
+                continue
+            else:
+                self.set_value(element, value)
+
+    def set_value(self, element, value):
+        df = self._metadata.data
+        index = df.loc[df['subject id'] == self.subject_id].index[0]
+        if find_col_element(element, self._metadata):
+            if index == self.index:
+                df.loc[index, element] = value
+
+        self.save()
+
+    def move(self):
+        for sample in self.samples:
+            sample.move()
+
+    def remove_values(self):
+        pass
+
+    def save(self):
+        self._metadata.save()
+
+
+
+class Sample:
+    count = 0
+    _dataset_path: Path = Path('./')
+    _metadata: Metadata = None
+    _manifest_metadata: Metadata = None
+
+    def __init__(self):
+        self.sample_id = ""
+        self.subject_id = ""
+        self.sample_dir = Path()
+        self.source_sam_dir = Path()
+        self.index = -1
+
+    def set_subject_id(self, sub_id):
+        self.subject_id = sub_id
+        self._generate_sample_path_and_id()
+
+    def _generate_sample_path_and_id(self):
+        subject_dir = self._dataset_path.joinpath("primary", self.subject_id)
+        if subject_dir.exists():
+            sub_dirs = []
+            for sub_dir in subject_dir.iterdir():
+                if sub_dir.is_dir():
+                    sub_dirs.append(sub_dir.name)
+            while True:
+                Sample.count += 1
+                self.sample_id = f"sam-{Sample.count}"
+                if self.sample_id not in sub_dirs:
+                    break
+        else:
+            Sample.count += 1
+            self.sample_id = f"sam-{Sample.count}"
+        self.sample_dir = subject_dir.joinpath(self.sample_id)
+        self._add_sample_row()
+
+    def get_sample_id(self):
+        return self.sample_id
+
+    def _add_sample_row(self):
+        df = self._metadata.data
+        if self.sample_id in df['sample id'].values and self.subject_id in df['subject id']:
+            self.index = df.loc[df['sample id'] == self.sample_id].index[0]
+        else:
+            sample = [self.sample_id, self.subject_id] + [float('nan')] * (len(df.columns)-2)
+            # Create new row
+            self.index = len(df)
+            df.loc[self.index] = sample
+
+    def add_path(self, source_path):
+        self.source_sam_dir = Path(source_path)
+
+    def set_values(self, metadata={}):
+        for element, value in metadata.items():
+            if element == 'sample id' or element == 'subject id':
+                continue
+            else:
+                self.set_value(element, value)
+
+    def set_value(self, element, value):
+        df = self._metadata.data
+        index = df.loc[(df['sample id'] == self.sample_id) & (df['subject id'] == self.subject_id)].index[0]
+        if find_col_element(element, self._metadata):
+            if index == self.index:
+                df.loc[index, element] = value
+
+        self.save()
+
+    def move(self):
+        if not self.sample_dir.exists():
+            self.sample_dir.mkdir(parents=True, exist_ok=True)
+
+        source_sample_files = self.source_sam_dir.glob("*")
+        for file in source_sample_files:
+            if file.is_file():
+                shutil.copy(file, self.sample_dir)
+                sample_path = self.sample_dir.joinpath(file.name)
+                self._update_manifest(sample_path)
+
+    def _update_manifest(self, sample_path):
+        file_path = Path(
+            str(sample_path).replace(str(self._dataset_path), '')[1:]).as_posix()
+
+        row = {
+            'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            'description': f"File of subject {self.subject_id} sample {self.sample_id}",
+            'file type': sample_path.suffix
+        }
+
+        df_manifest = self._manifest_metadata.data
+        # check is exist
+        if file_path in df_manifest['filename'].values:
+            manifest_index = df_manifest.loc[df_manifest['filename'] == file_path].index[0]
+        else:
+            manifest_row = [file_path] + [float('nan')] * (len(df_manifest.columns)-1)
+            # Create new row
+            manifest_index = len(df_manifest)
+            df_manifest.loc[manifest_index] = manifest_row
+
+        for element, value in row.items():
+            if find_col_element(element, self._manifest_metadata):
+                df_manifest.loc[manifest_index, element] = value
+
+        self._manifest_metadata.save()
+
+
+
+    def remove_values(self):
+        pass
+
+    def save(self):
+        self._metadata.save()
