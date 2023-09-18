@@ -1,28 +1,29 @@
 from sparc_me import Dataset
 from sparc_me.core.schema import Schema, Validator
+from sparc_me.core.metadata import Sample
 
 
 
 def add_values_dataset_description(dataset_description):
-    dataset_description.add_values(field_name='type', values="experimental")
-    dataset_description.add_values(field_name='Title', values="duke breast cancer MRI preprocessing")
-    dataset_description.add_values(field_name='subtitle',
+    dataset_description.add_values(element='type', values="experimental")
+    dataset_description.add_values(element='Title', values="duke breast cancer MRI preprocessing")
+    dataset_description.add_values(element='subtitle',
                                    values="""Preprocessing the breast cancer MRI images and saving in Nifti format""")
-    dataset_description.add_values(field_name='Keywords', values=["breast cancer", "image processing"])
-    dataset_description.add_values(field_name="Study purpose",
+    dataset_description.add_values(element='Keywords', values=["breast cancer", "image processing"])
+    dataset_description.add_values(element="Study purpose",
                                    values="""preprocessing the breast cancer MRI images and saving in Nifti format""")
-    dataset_description.add_values(field_name="Study primary conclusion", values="the result is great.")
-    dataset_description.add_values(field_name='Study data Collection',
+    dataset_description.add_values(element="Study primary conclusion", values="the result is great.")
+    dataset_description.add_values(element='Study data Collection',
                                    values="derived from Duke Breast Cancer MRI dataset")
-    dataset_description.add_values(field_name='Study primary conclusion', values="Your conclusion here!")
-    dataset_description.add_values(field_name='Study organ system', values="breast")
-    dataset_description.add_values(field_name='Study approach', values="image processing")
-    dataset_description.add_values(field_name='Study technique', values="dicom2nifti", )
-    dataset_description.add_values(field_name='contributorname', values=["Lin, Chinchien", "Gao, Linkun"])
-    dataset_description.add_values(field_name='contributorNAME', values=["Prasad", "Jiali"])
-    dataset_description.add_values(field_name="contributor name", values=["bob", "db"])
+    dataset_description.add_values(element='Study primary conclusion', values="Your conclusion here!")
+    dataset_description.add_values(element='Study organ system', values="breast")
+    dataset_description.add_values(element='Study approach', values="image processing")
+    dataset_description.add_values(element='Study technique', values="dicom2nifti", )
+    dataset_description.add_values(element='contributorname', values=["Lin, Chinchien", "Gao, Linkun"])
+    dataset_description.add_values(element='contributorNAME', values=["Prasad", "Jiali"])
+    dataset_description.add_values(element="contributor name", values=["bob", "db"])
     dataset_description.add_values(
-        field_name='Contributor orcid',
+        element='Contributor orcid',
         values=["https://orcid.org/0000-0001-8170-199X",
                 "https://orcid.org/0000-0001-8171-199X",
                 "https://orcid.org/0000-0001-8172-199X",
@@ -31,49 +32,49 @@ def add_values_dataset_description(dataset_description):
                 "https://orcid.org/0000-0001-8176-199X"],
         append=False)
 
-    dataset_description.add_values(field_name='Contributor affiliation', values=["University of Auckland"] * 6, )
-    dataset_description.add_values(field_name="contributor role",
+    dataset_description.add_values(element='Contributor affiliation', values=["University of Auckland"] * 6, )
+    dataset_description.add_values(element="contributor role",
                                    values=["developer", "developer", "Researcher", "Researcher", "tester", "tester"])
-    dataset_description.add_values(field_name='Identifier description', values="source")
-    dataset_description.add_values(field_name='Relation type', values="WasDerivedFrom")
-    dataset_description.add_values(field_name='Identifier', values="DTP-UUID")
-    dataset_description.add_values(field_name='Identifier type', values="12L digital twin UUID")
+    dataset_description.add_values(element='Identifier description', values="source")
+    dataset_description.add_values(element='Relation type', values="WasDerivedFrom")
+    dataset_description.add_values(element='Identifier', values="DTP-UUID")
+    dataset_description.add_values(element='Identifier type', values="12L digital twin UUID")
 
 
 def add_values_for_sample_metadata(sample_metadata):
-    sample_metadata.add_values(field_name="was derived from", values=["test"] * 6, append=False)
-    sample_metadata.add_values(field_name="pool id",
+    sample_metadata.add_values(element="was derived from", values=["test"] * 6, append=False)
+    sample_metadata.add_values(element="pool id",
                                values=["pool id 1", "pool id 2", "pool id 3", "pool id 4", "pool id 5", "pool id 6"],
                                append=False)
-    sample_metadata.add_values(field_name="also in dataset", values=[*["Yes"] * 5, "No"], append=False)
-    sample_metadata.add_values(field_name="member of", values=["global"] * 6, append=False)
+    sample_metadata.add_values(element="also in dataset", values=[*["Yes"] * 5, "No"], append=False)
+    sample_metadata.add_values(element="member of", values=["global"] * 6, append=False)
     sample_metadata.add_values(
-        field_name="laboratory internal id",
+        element="laboratory internal id",
         values=["laboratory 1", "laboratory 2", "laboratory 3", "laboratory 4", "laboratory 5", "laboratory 6"],
         append=False)
-    sample_metadata.add_values(field_name="date of derivation", values=[*["1991-05-25"] * 3, *["1991-06-10"] * 3],
+    sample_metadata.add_values(element="date of derivation", values=[*["1991-05-25"] * 3, *["1991-06-10"] * 3],
                                append=False)
 
     sample_metadata.save()
 
 
 def add_values_for_subject_metadata(subject_metadata):
-    subject_metadata.add_values(field_name='subject experimental group', values="test-xyz", append=False)
-    subject_metadata.add_values(field_name='age', values="30", append=False)
-    subject_metadata.add_values(field_name='sex', values="Male", append=False)
-    subject_metadata.add_values(field_name='species', values="P", append=False)
-    subject_metadata.add_values(field_name='strain', values="test", append=False)
-    subject_metadata.add_values(field_name="age category", values="old", append=False)
-    subject_metadata.add_values(field_name="pool id", values=["pool id 1", "pool id 2", "pool id 3"],
+    subject_metadata.add_values(element='subject experimental group', values="test-xyz", append=False)
+    subject_metadata.add_values(element='age', values="30", append=False)
+    subject_metadata.add_values(element='sex', values="Male", append=False)
+    subject_metadata.add_values(element='species', values="P", append=False)
+    subject_metadata.add_values(element='strain', values="test", append=False)
+    subject_metadata.add_values(element="age category", values="old", append=False)
+    subject_metadata.add_values(element="pool id", values=["pool id 1", "pool id 2", "pool id 3"],
                                 append=False)
-    subject_metadata.add_values(field_name="also in dataset", values=["yes"] * 3, append=False)
-    subject_metadata.add_values(field_name="RRID for strain", values=["515dsd1515", "da515daa69", "515dsa62a"],
+    subject_metadata.add_values(element="also in dataset", values=["yes"] * 3, append=False)
+    subject_metadata.add_values(element="RRID for strain", values=["515dsd1515", "da515daa69", "515dsa62a"],
                                 append=False)
-    subject_metadata.add_values(field_name="member of", values=["global"] * 3, append=False)
+    subject_metadata.add_values(element="member of", values=["global"] * 3, append=False)
     subject_metadata.add_values(
-        field_name="laboratory internal id", values=["laboratory 1", "laboratory 2", "laboratory 3"],
+        element="laboratory internal id", values=["laboratory 1", "laboratory 2", "laboratory 3"],
         append=False)
-    subject_metadata.add_values(field_name="date of birth", values=["1996-03-25", "1995-09-05", "1996-04-11"],
+    subject_metadata.add_values(element="date of birth", values=["1996-03-25", "1995-09-05", "1996-04-11"],
                                 append=False)
     subject_metadata.save()
 
@@ -85,6 +86,12 @@ if __name__ == '__main__':
     schema = Schema()
     validator = Validator()
     dataset.set_dataset_path(save_dir)
+    sample_1 = Sample("sas")
+    print("samp_1*********： ", sample_1._dataset_path)
+    print(sample_1.get_dataset_path())
+    print(sample_1.get_sample_id())
+    print(Sample("22").get_sample_id())
+
     # NOTE: Step:1 list categories and dataset_description elements
     categories = dataset.list_metadata_files(version="2.0.0")
     elements = dataset.list_elements(metadata_file="dataset_description", version="2.0.0")
@@ -114,7 +121,7 @@ if __name__ == '__main__':
     # NOTE: Step4, add values for dataset_description need to specify row_name
     add_values_dataset_description(dataset_description)
 
-    # Step4, add values for code_description_editor need to specify field_name
+    # Step4, add values for code_description_editor need to specify element
     # code_description.add_values(*["test..1", "test2", "test3", "test4", "test5...", ],
     #                                    row_name="TSR1: Define Context Clearly Rating (0-4)", append=False)
     # # Step4, add values for code_parameters_editor to add values in a row, append = False
@@ -124,20 +131,20 @@ if __name__ == '__main__':
     # code_parameters.add_values(
     #     *["breast_append", "test1_append", "test2_append", "test3_append", "test4_append", "test5..._append",
     #       "test3_append", "test4_append", "test5_append"], append=True)
-    # # Step4, add values for code_parameters_editor to add values in a column need to specify field_name, append = True
+    # # Step4, add values for code_parameters_editor to add values in a column need to specify element, append = True
     # code_parameters.add_values(*["test1_name", "test2_name", "test3_name", "test4_name"], header='name',
     #                                   append=True)
 
     # NOTE: Step5: Get Values
     # get values for dataset_description_editor
-    print(dataset_description.get_values(field_name="contributorrole"))
+    print(dataset_description.get_values(element="contributorrole"))
     # get values for code_parameters_editor
-    # print(code_parameters.get_values(field_name="name")
-    # print(code_description.get_values(field_name="TSR1: Define Context Clearly Rating (0-4)"))
+    # print(code_parameters.get_values(element="name")
+    # print(code_description.get_values(element="TSR1: Define Context Clearly Rating (0-4)"))
 
     # NOTE: Step6, remove values in specific header/row_name, code_parameters
-    dataset_description.remove_values(field_name="contributor role", values=["tester"])
-    # code_parameters.remove_values(field_name="name", values="test1_name")
+    dataset_description.remove_values(element="contributor role", values=["tester"])
+    # code_parameters.remove_values(element="name", values="test1_name")
     # Step6, remove entire values in code_parameters_editor
     # code_parameters.clear_values()
     # Step6, remove entire values in dataset_description_editor
@@ -146,9 +153,9 @@ if __name__ == '__main__':
     # code_description.clear_values()
 
     # Step6, remove all values in one specific row/col
-    # code_parameters.clear_values(field_name="name")
-    # dataset_description.clear_values(field_name="Contributor role")
-    # code_description.clear_values(field_name="TSR1: Define Context Clearly Rating (0-4)")
+    # code_parameters.clear_values(element="name")
+    # dataset_description.clear_values(element="Contributor role")
+    # code_description.clear_values(element="TSR1: Define Context Clearly Rating (0-4)")
 
     # NOTE: Step7, save current dataset
     # dataset.save(save_dir=save_dir)

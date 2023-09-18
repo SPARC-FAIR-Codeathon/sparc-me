@@ -12,7 +12,7 @@ from styleframe import StyleFrame
 from xlrd import XLRDError
 from datetime import datetime, timezone
 from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_sub_sam_name, remove_spaces_and_lower, validate_metadata_file
-from sparc_me.core.metadata import Metadata
+from sparc_me.core.metadata import Metadata, Sample
 
 
 class Dataset(object):
@@ -43,6 +43,7 @@ class Dataset(object):
         :type path: string
         """
         self._dataset_path = Path(path)
+        Sample._dataset_path = self._dataset_path
 
     def get_dataset_path(self):
         """
@@ -1095,8 +1096,8 @@ class Dataset(object):
                 folders = get_sub_folder_paths_in_folder(sub)
                 sample_folders.extend(folders)
         dataset_description_metadata = self._metadata["dataset_description"]
-        dataset_description_metadata.add_values(field_name="Number of subjects",values=len(subject_folders),
+        dataset_description_metadata.add_values(element="Number of subjects",values=len(subject_folders),
                                                 append=False)
-        dataset_description_metadata.add_values(field_name="Number of samples", values=len(sample_folders),
+        dataset_description_metadata.add_values(element="Number of samples", values=len(sample_folders),
                                                 append=False)
         dataset_description_metadata.save()
