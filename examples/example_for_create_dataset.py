@@ -86,11 +86,6 @@ if __name__ == '__main__':
     schema = Schema()
     validator = Validator()
     dataset.set_dataset_path(save_dir)
-    sample_1 = Sample("sas")
-    print("samp_1*********： ", sample_1._dataset_path)
-    print(sample_1.get_dataset_path())
-    print(sample_1.get_sample_id())
-    print(Sample("22").get_sample_id())
 
     # NOTE: Step:1 list categories and dataset_description elements
     categories = dataset.list_metadata_files(version="2.0.0")
@@ -100,6 +95,12 @@ if __name__ == '__main__':
 
     # NOTE: Step2, way1: load dataset from template
     dataset.load_from_template(version="2.0.0")
+
+    sample_1 = Sample()
+    print("samp_1*********： ", sample_1._dataset_path)
+    print(sample_1.get_dataset_path())
+    print(sample_1.get_sample_id())
+    print(Sample().get_sample_id())
     #
     # Save the template dataset.
     # dataset.save(save_dir=save_dir)

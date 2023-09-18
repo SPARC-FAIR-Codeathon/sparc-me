@@ -1,7 +1,9 @@
 import pandas as pd
 from pathlib import Path
 from sparc_me.core.utils import remove_spaces_and_lower
-from abc import ABC, abstractmethod
+import shutil
+from sparc_me.core.utils import find_col_element
+from datetime import datetime, timezone
 
 
 class Metadata:
@@ -263,7 +265,7 @@ class Metadata:
         :return:
         """
         elements = self.data[self.data.columns[0]].tolist()
-        matching_indices = self._validate_input(row_name, elements)
+        matching_indices = self.validate_input(row_name, elements)
         if not matching_indices:
             msg = f"No row with given unique name, {row_name}, was found in the unique column {self.data.columns[0]}"
             raise ValueError(msg)
@@ -281,7 +283,7 @@ class Metadata:
         :return:
         """
         elements = self.data.columns.tolist()
-        matching_indices = self._validate_input(col_name, elements)
+        matching_indices = self.validate_input(col_name, elements)
         if len(matching_indices) == 1:
             return matching_indices[0]
         else:
@@ -326,7 +328,7 @@ class Metadata:
 
     """********************************* Validate inputs *********************************"""
 
-    def _validate_input(self, element, elements):
+    def validate_input(self, element, elements):
         """
 
         :param element: row/col name in excel
@@ -370,66 +372,203 @@ class Metadata:
             raise ValueError(msg)
 
 
-class Operator(ABC):
+class Subject:
+    count = 0
+    _dataset_path = Path('./')
+    _metadata = None
+
     def __init__(self):
-        pass
 
-    @abstractmethod
-    def set_dataset_root_path(self, path):
-        pass
+        self.subject_id = ""
+        self.subject_dir = Path()
+        self.index = -1
+        self.samples = []
+        self._generate_subject_path_and_id()
 
-    @abstractmethod
-    def add(self):
-        pass
+    def get_sample(self, sample_sds_id):
+        if not isinstance(sample_sds_id, int) or sample_sds_id > len(self.samples) or sample_sds_id < 0:
+            msg = f"Subject not found, please provide an integer subject_sds_id!, you subject_sds_id type is {type(sample_sds_id)}"
+            raise ValueError(msg)
 
-    @abstractmethod
-    def add_values(self):
-        pass
+        return self.samples[sample_sds_id - 1]
 
-    @abstractmethod
+    def _generate_subject_path_and_id(self):
+        primary_dir = self._dataset_path.joinpath("primary")
+        if primary_dir.exists():
+            sub_dirs = []
+            for sub_dir in primary_dir.iterdir():
+                if sub_dir.is_dir():
+                    sub_dirs.append(sub_dir.name)
+            while True:
+                Subject.count += 1
+                self.subject_id = f"sub-{Subject.count}"
+                if self.subject_id not in sub_dirs:
+                    break
+        else:
+            Subject.count += 1
+            self.subject_id = f"sub-{Subject.count}"
+        self.subject_dir = primary_dir.joinpath(self.subject_id)
+        self._add_subject_row()
+
+    def add_samples(self, samples):
+        if isinstance(samples, list):
+            for sample in samples:
+                if isinstance(sample, Sample):
+                    self.samples.append(sample)
+                    self._create_sample(sample)
+        elif isinstance(samples, Sample):
+            self.samples.append(samples)
+            self._create_sample(samples)
+
+    def _create_sample(self, sample):
+        sample.set_subject_id(self.subject_id)
+
+    def _add_subject_row(self):
+        df = self._metadata.data
+        if self.subject_id in df['subject id']:
+            self.index = df.loc[df['subject id'] == self.subject_id].index[0]
+        else:
+            subject = [self.subject_id] + [float('nan')] * (len(df.columns) -1)
+            # Create new row
+            self.index = len(df)
+            df.loc[self.index] = subject
+
+    def set_values(self, metadata={}):
+        for element, value in metadata.items():
+            if element == 'subject id':
+                continue
+            else:
+                self.set_value(element, value)
+
+    def set_value(self, element, value):
+        df = self._metadata.data
+        index = df.loc[df['subject id'] == self.subject_id].index[0]
+        if find_col_element(element, self._metadata):
+            if index == self.index:
+                df.loc[index, element] = value
+
+        self.save()
+
+    def move(self):
+        for sample in self.samples:
+            sample.move()
+
     def remove_values(self):
         pass
 
-    @abstractmethod
     def save(self):
-        pass
+        self._metadata.save()
+
 
 
 class Sample:
     count = 0
-    _dataset_path = Path('./')
+    _dataset_path: Path = Path('./')
+    _metadata: Metadata = None
+    _manifest_metadata: Metadata = None
 
     def __init__(self):
-        Sample.count += 1
-        self.sam_id = f"sam-{Sample.count}"
-        self.sub_id = ""
-        self.sam_dir = ""
-        self.source_sam_dir = ""
+        self.sample_id = ""
+        self.subject_id = ""
+        self.sample_dir = Path()
+        self.source_sam_dir = Path()
+        self.index = -1
 
-    def set_sub_id(self, sub_id):
-        self.sub_id = sub_id
-        self._generate_sam_path()
+    def set_subject_id(self, sub_id):
+        self.subject_id = sub_id
+        self._generate_sample_path_and_id()
 
-    def _generate_sam_path(self):
-        self.sam_dir = self._dataset_path.joinpath("primary", self.sub_id, self.sam_id)
-
-    def get_dataset_path(self):
-        return self._dataset_path
+    def _generate_sample_path_and_id(self):
+        subject_dir = self._dataset_path.joinpath("primary", self.subject_id)
+        if subject_dir.exists():
+            sub_dirs = []
+            for sub_dir in subject_dir.iterdir():
+                if sub_dir.is_dir():
+                    sub_dirs.append(sub_dir.name)
+            while True:
+                Sample.count += 1
+                self.sample_id = f"sam-{Sample.count}"
+                if self.sample_id not in sub_dirs:
+                    break
+        else:
+            Sample.count += 1
+            self.sample_id = f"sam-{Sample.count}"
+        self.sample_dir = subject_dir.joinpath(self.sample_id)
+        self._add_sample_row()
 
     def get_sample_id(self):
-        return self.sam_id
+        return self.sample_id
 
-    def add(self, source_path, metadata={}):
-        self.source_sam_dir = source_path
-        metadata["subject id"] = self.sub_id
-        metadata["sample id"] = self.sam_id
+    def _add_sample_row(self):
+        df = self._metadata.data
+        if self.sample_id in df['sample id'].values and self.subject_id in df['subject id']:
+            self.index = df.loc[df['sample id'] == self.sample_id].index[0]
+        else:
+            sample = [self.sample_id, self.subject_id] + [float('nan')] * (len(df.columns)-2)
+            # Create new row
+            self.index = len(df)
+            df.loc[self.index] = sample
+
+    def add_path(self, source_path):
+        self.source_sam_dir = Path(source_path)
+
+    def set_values(self, metadata={}):
+        for element, value in metadata.items():
+            if element == 'sample id' or element == 'subject id':
+                continue
+            else:
+                self.set_value(element, value)
+
+    def set_value(self, element, value):
+        df = self._metadata.data
+        index = df.loc[(df['sample id'] == self.sample_id) & (df['subject id'] == self.subject_id)].index[0]
+        if find_col_element(element, self._metadata):
+            if index == self.index:
+                df.loc[index, element] = value
+
+        self.save()
+
+    def move(self):
+        if not self.sample_dir.exists():
+            self.sample_dir.mkdir(parents=True, exist_ok=True)
+
+        source_sample_files = self.source_sam_dir.glob("*")
+        for file in source_sample_files:
+            if file.is_file():
+                shutil.copy(file, self.sample_dir)
+                sample_path = self.sample_dir.joinpath(file.name)
+                self._update_manifest(sample_path)
+
+    def _update_manifest(self, sample_path):
+        file_path = Path(
+            str(sample_path).replace(str(self._dataset_path), '')[1:]).as_posix()
+
+        row = {
+            'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            'description': f"File of subject {self.subject_id} sample {self.sample_id}",
+            'file type': sample_path.suffix
+        }
+
+        df_manifest = self._manifest_metadata.data
+        # check is exist
+        if file_path in df_manifest['filename'].values:
+            manifest_index = df_manifest.loc[df_manifest['filename'] == file_path].index[0]
+        else:
+            manifest_row = [file_path] + [float('nan')] * (len(df_manifest.columns)-1)
+            # Create new row
+            manifest_index = len(df_manifest)
+            df_manifest.loc[manifest_index] = manifest_row
+
+        for element, value in row.items():
+            if find_col_element(element, self._manifest_metadata):
+                df_manifest.loc[manifest_index, element] = value
+
+        self._manifest_metadata.save()
 
 
-    def add_values(self):
-        pass
 
     def remove_values(self):
         pass
 
     def save(self):
-        pass
+        self._metadata.save()

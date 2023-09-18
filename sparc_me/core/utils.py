@@ -2,8 +2,9 @@ import json
 from pathlib import Path
 import re
 
-metadata_files_2_0_0 = ['code_description', 'code_parameters', 'dataset_description', 'manifest', 'performances', 'resources',
-                  'samples', 'subjects', 'submission']
+metadata_files_2_0_0 = ['code_description', 'code_parameters', 'dataset_description', 'manifest', 'performances',
+                        'resources',
+                        'samples', 'subjects', 'submission']
 
 
 def check_row_exist(dataframe, unique_column, unique_value):
@@ -69,6 +70,16 @@ def validate_metadata_file(metadata_file, version="2.0.0"):
         raise ValueError(msg)
     elif version == "1.2.3" or version == "1_2_3":
         return metadata_file
+
+
+def find_col_element(element, metadata):
+    elements = metadata.data.columns.tolist()
+    matching_indices = metadata.validate_input(element, elements)
+    if len(matching_indices) == 1:
+        return True
+    else:
+        msg = f"No sample valid element is found!"
+        raise KeyError(msg)
 
 
 def remove_spaces_and_lower(s):

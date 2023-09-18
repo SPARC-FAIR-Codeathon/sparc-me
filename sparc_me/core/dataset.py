@@ -11,8 +11,9 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from datetime import datetime, timezone
-from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_sub_sam_name, remove_spaces_and_lower, validate_metadata_file
-from sparc_me.core.metadata import Metadata, Sample
+from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_sub_sam_name, \
+    remove_spaces_and_lower, validate_metadata_file
+from sparc_me.core.metadata import Metadata, Sample, Subject
 
 
 class Dataset(object):
@@ -26,6 +27,7 @@ class Dataset(object):
         self._resources_path = Path.joinpath(self._current_path, "../resources")
         self._template_dir = Path()
         self._template = dict()
+        self._subjects = []
 
         self._dataset_path = Path()
         self._dataset = dict()
@@ -34,6 +36,9 @@ class Dataset(object):
         self._subject_id_field = None
         self._sample_id_field = None
         self._metadata: Dict[str, Metadata] = {}
+
+    def set_path(self, path):
+        self.set_dataset_path(path)
 
     def set_dataset_path(self, path):
         """
@@ -44,6 +49,7 @@ class Dataset(object):
         """
         self._dataset_path = Path(path)
         Sample._dataset_path = self._dataset_path
+        Subject._dataset_path = self._dataset_path
 
     def get_dataset_path(self):
         """
@@ -134,6 +140,9 @@ class Dataset(object):
 
         return dataset
 
+    def create_empty_dataset(self, version='2.0.0'):
+        self.load_from_template(version=version)
+
     def load_from_template(self, version):
         """
         Load dataset from SPARC template
@@ -149,7 +158,6 @@ class Dataset(object):
         self._dataset = self._load(str(template_dataset_path))
 
         self._generate_metadata()
-
 
     def _convert_version_format(self, version):
         """
@@ -299,7 +307,6 @@ class Dataset(object):
         for gitkeep_path in save_dir.rglob('.gitkeep'):
             gitkeep_path.unlink()
 
-
     def load_metadata(self, path):
         """
         Load & update a single metadata
@@ -394,7 +401,8 @@ class Dataset(object):
             try:
                 element_description = pd.read_excel(element_description_file, sheet_name=metadata_file)
             except XLRDError:
-                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file, engine='openpyxl')
+                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file,
+                                                    engine='openpyxl')
 
             print("metadata_file: " + str(metadata_file))
             for index, row in element_description.iterrows():
@@ -430,6 +438,12 @@ class Dataset(object):
         for metadata_file in metadata_files:
             metadata = self._dataset.get(metadata_file).get("metadata")
             self._metadata[metadata_file] = Metadata(metadata_file, metadata, self._version, self._dataset_path)
+            if metadata_file == "subjects":
+                Subject._metadata = self._metadata[metadata_file]
+            elif metadata_file == 'samples':
+                Sample._metadata = self._metadata[metadata_file]
+
+        Sample._manifest_metadata = self._metadata['manifest']
 
     def get_metadata(self, metadata_file):
         """
@@ -443,7 +457,6 @@ class Dataset(object):
 
         metadata_file = validate_metadata_file(metadata_file, self._version)
         return self._metadata[metadata_file]
-
 
     def set_field(self, metadata_file, row_index, header, value):
         """
@@ -562,7 +575,7 @@ class Dataset(object):
             # Add row
             row_df = pd.DataFrame([row])
             current_metadata.data = pd.concat([current_metadata.data, row_df], axis=0,
-                                 ignore_index=True)  # If new header comes, it will be added as a new column with its value
+                                              ignore_index=True)  # If new header comes, it will be added as a new column with its value
         else:
             # Append row with additional values
             for key, value in row.items():
@@ -631,60 +644,79 @@ class Dataset(object):
         else:
             data.to_excel(save_path, index=False)
 
-    def add_subjects(self, source_paths, subjects, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
-                     sample_metadata={}, subject_metadata={}):
-        if len(source_paths) != len(subjects):
-            msg = f"The number of source_paths {len(source_paths)} not match subjects number {len(subjects)}"
+    """***************************New Add subjects ***************************"""
+
+    def add_subjects(self, subjects):
+
+        self.save()
+        if not isinstance(subjects, list):
+            msg = "Please provide a list of subjects"
             raise ValueError(msg)
-        else:
-            for idx, subject_name in enumerate(subjects):
-                self.add_subject(source_path=source_paths[idx], subject=subject_name, data_type=data_type,
-                                 sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
-                                 sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+        for subject in subjects:
+            self._subjects.append(subject)
+            subject.move()
 
-    def add_subject(self, source_path, subject, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
-                    sample_metadata={}, subject_metadata={}):
-
-        subject_source_folder = Path(source_path)
-        if subject_source_folder.is_dir():
-            for sample_folder in subject_source_folder.iterdir():
-                if sample_folder.is_dir():
-                    self.add_sample(source_path=sample_folder, subject=subject, sample=sample_folder.name,
-                                    data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
-                                    sample_metadata=sample_metadata, subject_metadata=subject_metadata)
-        else:
-            msg = f"The subject {source_path} must be a folder"
+    def get_subject(self, subject_sds_id):
+        if not isinstance(subject_sds_id, int) or subject_sds_id > len(self._subjects) or subject_sds_id < 0:
+            msg = f"Subject not found, please provide an integer subject_sds_id!, you subject_sds_id type is {type(subject_sds_id)}"
             raise ValueError(msg)
 
-    def add_samples(self, source_paths, subject, samples, data_type="primary", sds_parent_dir=None, copy=True,
-                    overwrite=True, sample_metadata={}, subject_metadata={}):
-        if len(source_paths) != len(samples):
-            msg = f"The number of source_paths {len(source_paths)} not match samples number {len(samples)}"
-            raise ValueError(msg)
-        else:
-            for idx, sample_name in enumerate(samples):
-                self.add_sample(source_path=source_paths[idx], subject=subject, sample=sample_name,
-                                data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
-                                sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+        return self._subjects[subject_sds_id - 1]
 
-    def add_sample(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
-                   overwrite=True, sample_metadata={}, subject_metadata={}):
-
-        subject = validate_sub_sam_name(subject, "sub")
-        sample = validate_sub_sam_name(sample, "sam")
-        subject_metadata["subject id"] = subject
-        sample_metadata["sample id"] = sample
-        sample_metadata["subject id"] = subject
-
-        if sds_parent_dir:
-            self._dataset_path = Path(sds_parent_dir)
-        if data_type == "primary":
-            self.add_primary_data(source_path, subject, sample, copy, overwrite, sample_metadata, subject_metadata)
-        elif data_type == 'derivative':
-            self.add_derivative_data(source_path, subject, sample, copy, overwrite)
-        else:
-            msg = f"The data_type should be 'primary' or 'derivative'"
-            raise ValueError(msg)
+    # def add_subjects(self, source_paths, subjects, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
+    #                  sample_metadata={}, subject_metadata={}):
+    #     if len(source_paths) != len(subjects):
+    #         msg = f"The number of source_paths {len(source_paths)} not match subjects number {len(subjects)}"
+    #         raise ValueError(msg)
+    #     else:
+    #         for idx, subject_name in enumerate(subjects):
+    #             self.add_subject(source_path=source_paths[idx], subject=subject_name, data_type=data_type,
+    #                              sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+    #                              sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+    #
+    # def add_subject(self, source_path, subject, data_type="primary", sds_parent_dir=None, copy=True, overwrite=True,
+    #                 sample_metadata={}, subject_metadata={}):
+    #
+    #     subject_source_folder = Path(source_path)
+    #     if subject_source_folder.is_dir():
+    #         for sample_folder in subject_source_folder.iterdir():
+    #             if sample_folder.is_dir():
+    #                 self.add_sample(source_path=sample_folder, subject=subject, sample=sample_folder.name,
+    #                                 data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+    #                                 sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+    #     else:
+    #         msg = f"The subject {source_path} must be a folder"
+    #         raise ValueError(msg)
+    #
+    # def add_samples(self, source_paths, subject, samples, data_type="primary", sds_parent_dir=None, copy=True,
+    #                 overwrite=True, sample_metadata={}, subject_metadata={}):
+    #     if len(source_paths) != len(samples):
+    #         msg = f"The number of source_paths {len(source_paths)} not match samples number {len(samples)}"
+    #         raise ValueError(msg)
+    #     else:
+    #         for idx, sample_name in enumerate(samples):
+    #             self.add_sample(source_path=source_paths[idx], subject=subject, sample=sample_name,
+    #                             data_type=data_type, sds_parent_dir=sds_parent_dir, copy=copy, overwrite=overwrite,
+    #                             sample_metadata=sample_metadata, subject_metadata=subject_metadata)
+    #
+    # def add_sample(self, source_path, subject, sample, data_type="primary", sds_parent_dir=None, copy=True,
+    #                overwrite=True, sample_metadata={}, subject_metadata={}):
+    #
+    #     subject = validate_sub_sam_name(subject, "sub")
+    #     sample = validate_sub_sam_name(sample, "sam")
+    #     subject_metadata["subject id"] = subject
+    #     sample_metadata["sample id"] = sample
+    #     sample_metadata["subject id"] = subject
+    #
+    #     if sds_parent_dir:
+    #         self._dataset_path = Path(sds_parent_dir)
+    #     if data_type == "primary":
+    #         self.add_primary_data(source_path, subject, sample, copy, overwrite, sample_metadata, subject_metadata)
+    #     elif data_type == 'derivative':
+    #         self.add_derivative_data(source_path, subject, sample, copy, overwrite)
+    #     else:
+    #         msg = f"The data_type should be 'primary' or 'derivative'"
+    #         raise ValueError(msg)
 
     def add_primary_data(self, source_path, subject, sample, copy=True, overwrite=True, sample_metadata={},
                          subject_metadata={}):
@@ -836,7 +868,6 @@ class Dataset(object):
             description = f"This is a thumbnail file"
             self._modify_manifest(fname=filename, manifest_folder_path=str(self._dataset_path),
                                   destination_path=str(destination_path.parent), description=description)
-
 
     def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
                          overwrite=True):
@@ -1096,7 +1127,7 @@ class Dataset(object):
                 folders = get_sub_folder_paths_in_folder(sub)
                 sample_folders.extend(folders)
         dataset_description_metadata = self._metadata["dataset_description"]
-        dataset_description_metadata.add_values(element="Number of subjects",values=len(subject_folders),
+        dataset_description_metadata.add_values(element="Number of subjects", values=len(subject_folders),
                                                 append=False)
         dataset_description_metadata.add_values(element="Number of samples", values=len(sample_folders),
                                                 append=False)
