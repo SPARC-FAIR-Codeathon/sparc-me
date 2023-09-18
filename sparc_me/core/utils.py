@@ -76,9 +76,9 @@ def find_col_element(element, metadata):
     elements = metadata.data.columns.tolist()
     matching_indices = metadata.validate_input(element, elements)
     if len(matching_indices) == 1:
-        return True
+        return elements[matching_indices[0]]
     else:
-        msg = f"No sample valid element is found!"
+        msg = f"No '{element}' valid element is found! Please find correct element in {metadata.metadata_file}.xlsx file."
         raise KeyError(msg)
 
 

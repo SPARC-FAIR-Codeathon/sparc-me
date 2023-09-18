@@ -49,9 +49,6 @@ class Validator(object):
 
         for metadata_file in currently_support_metadata_files:
             metadata = dataset.get_metadata(metadata_file)
-            # metadata.data.fillna("", inplace=True)
-            # data_dict = metadata.data.to_dict()
-            # data = schema.generate_validate_data(metadata_file, data_dict)
             data = schema.load_data(metadata.metadata_file_path)
             self.validate(data, metadata_file=metadata_file, version=metadata.version)
 
