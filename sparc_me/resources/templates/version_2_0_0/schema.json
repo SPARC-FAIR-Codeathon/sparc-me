@@ -322,7 +322,7 @@
             "Description": "Lab-based schema for identifying each sample, must be unique.",
             "Example": "sam-2"
         },
-        "was Derived From": {
+        "was derived from": {
             "Required": "Y",
             "Type": "string",
             "Description": "sample_id of the sample from which the current sample was derived (e.g., slice, tissue punch, biopsy, etc.).",
