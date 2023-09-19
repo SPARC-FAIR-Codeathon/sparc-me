@@ -17,13 +17,13 @@ from pathlib import Path
 current_script_path = Path(__file__)
 project_root = current_script_path.resolve().parent.parent.parent
 sys.path.append(str(project_root))
-# sys.path.insert(0, project_root / )
+sys.path.insert(0, str(project_root / "sparc_me"))
 
-print("pathlib: ",project_root)
+print("pathlib: ", project_root)
 print("os: ", os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
-project = 'Sparc_me Api'
+project = 'Sparc_me API'
 copyright = '2023, Linkun Gao, Chinchien Lin, Jiali Xu, Thiranja Prasad Babarenda Gamage'
 author = 'Linkun Gao, Chinchien Lin, Jiali Xu, Thiranja Prasad Babarenda Gamage'
 
