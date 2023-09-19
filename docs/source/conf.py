@@ -19,8 +19,6 @@ project_root = current_script_path.resolve().parent.parent.parent
 sys.path.append(str(project_root))
 sys.path.insert(0, str(project_root / "sparc_me"/ "core"))
 
-print("pathlib: ", project_root)
-print("os: ", os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'Sparc_me API'
@@ -28,7 +26,7 @@ copyright = '2023, Linkun Gao, Chinchien Lin, Jiali Xu, Thiranja Prasad Babarend
 author = 'Linkun Gao, Chinchien Lin, Jiali Xu, Thiranja Prasad Babarenda Gamage'
 
 # The full version, including alpha/beta/rc tags
-release = 'v2.2.7'
+release = 'v2.2.10'
 
 # -- General configuration ---------------------------------------------------
 
