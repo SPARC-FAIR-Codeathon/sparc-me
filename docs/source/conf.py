@@ -13,8 +13,7 @@
 import os
 import sys
 
-sys.path.append(r'C:\Users\lgao142\OneDrive - The University of Auckland\Desktop\digital-twin-plateform\sparc-me')
-sys.path.insert(0, os.path.abspath(r'C:\Users\lgao142\OneDrive - The University of Auckland\Desktop\digital-twin-plateform\sparc-me\sparc_me'))
+sys.path.append(os.path.abspath('../../'))
 
 
 
