@@ -1,7 +1,7 @@
-aa module
+bb module
 =========
 
-.. automodule:: aa
+.. automodule:: bb
    :members:
    :undoc-members:
    :show-inheritance:
