@@ -17,7 +17,7 @@ from pathlib import Path
 current_script_path = Path(__file__)
 project_root = current_script_path.resolve().parent.parent.parent
 sys.path.append(str(project_root))
-sys.path.insert(0, str(project_root / "sparc_me"))
+sys.path.insert(0, str(project_root / "sparc_me"/ "core"))
 
 print("pathlib: ", project_root)
 print("os: ", os.path.abspath('../../'))

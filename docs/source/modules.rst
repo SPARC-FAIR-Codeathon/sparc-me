@@ -4,4 +4,8 @@ sparc_me
 .. toctree::
    :maxdepth: 4
 
-   sparc_me
+   dataset
+   metadata
+   schema
+   utils
+   api_tools

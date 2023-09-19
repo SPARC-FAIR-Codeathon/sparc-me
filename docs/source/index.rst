@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to SPARC-ME documentation!
-================================
+=====================================
 
 .. toctree::
    :maxdepth: 2
