@@ -12,7 +12,8 @@ from xlrd import XLRDError
 
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-from jsonschema import Draft202012Validator
+# from jsonschema import Draft202012Validator
+from jsonschema import Draft7Validator
 from jsonschema.exceptions import best_match
 
 current_dir = Path(__file__).parent.resolve()
@@ -114,7 +115,7 @@ class Validator(object):
             print("Validation: Passed")
             return True
         except ValidationError:
-            print(best_match(Draft202012Validator(self._schema_ref).iter_errors(data)).message)
+            print(best_match(Draft7Validator(self._schema_ref).iter_errors(data)).message)
             print("Validation: Failed")
             return False
         except Exception as e:
@@ -170,23 +171,24 @@ class Schema(object):
 
         with open(schema_path, 'r') as file:
             schema_json: Dict = json.load(file)
-            if print_schema:
-                if required_only:
-                    if name_only:
-                        print(f"The required elements for {metadata_file}:")
-                        print(json.dumps(schema_json.get('required'), indent=4))
-                    else:
-                        required_items = []
-                        for key, value in schema_json.get('properties').items():
-                            if "required" in value and value["required"] == "Y":
-                                required_items.append({key: value})
 
+            if required_only:
+                if name_only:
+                    if print_schema:
+                        print(f"The required elements for {metadata_file} name_only:")
+                        print(json.dumps(schema_json.get('required'), indent=4))
+                    return schema_json.get('required')
+                else:
+                    required_items = []
+                    for key, value in schema_json.get('properties').items():
+                        if "required" in value and value["required"] == "Y":
+                            required_items.append({key: value})
+                    if print_schema:
                         print(f"The required elements for {metadata_file}:")
                         print(json.dumps(required_items, indent=4))
-                        return required_items
-                else:
-                    print(json.dumps(schema_json.get('properties'), indent=4))
-
+                    return required_items
+            else:
+                print(json.dumps(schema_json.get('properties'), indent=4))
             return CaseInsensitiveDict(schema_json.get('properties'))
 
     def set_schema(self, schema):
