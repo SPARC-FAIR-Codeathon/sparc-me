@@ -22,3 +22,7 @@ class Aa(object):
         """
         find_col_element("daad","daad")
         return x / y
+
+    def ad_api(self):
+        print("test")
+        remove_spaces_and_lower("dsaas")
