@@ -4,6 +4,7 @@ from sparc_me.core.utils import remove_spaces_and_lower
 import shutil
 from sparc_me.core.utils import find_col_element
 from datetime import datetime, timezone
+from typing import List
 
 
 class Metadata:
@@ -406,11 +407,12 @@ class Sample:
     _metadata: Metadata = None
     _manifest_metadata: Metadata = None
 
+
     def __init__(self):
         self.sample_id = ""
         self.subject_id = ""
         self.sample_dir = Path()
-        self.source_sam_dir = Path()
+        self.source_sample_paths: List[Path] = []
         self.index = -1
 
     def set_subject_id(self, sub_id):
@@ -469,16 +471,42 @@ class Sample:
         Add sample source path to sample object
 
         :param source_path: sample folder source path
-        :type source_path: str
+        :type source_path: str | list
 
         """
-        self.source_sam_dir = Path(source_path)
+        if isinstance(source_path, list):
+            for file_path in source_path:
+                self.source_sample_paths.append(Path(file_path))
+        else:
+            self.source_sample_paths.append(Path(source_path))
+
+
+    def set_path(self, source_path):
+        """
+        Add sample source path to sample object
+        Override the Previous path
+
+        :param source_path: sample folder source path
+        :type source_path: str | list
+
+        """
+        if isinstance(source_path, list):
+            self.source_sample_paths = []
+            for file_path in source_path:
+                self.source_sample_paths.append(Path(file_path))
+        else:
+            self.source_sample_paths = [Path(source_path)]
+
 
     def set_values(self, metadata={}):
         """
         :param metadata: key : value dict (element:value)
         :type metadata: dict
         """
+        if not isinstance(metadata, dict):
+            msg = f"You should use a dict here, you provide parameter type is {type(metadata)}"
+            raise TypeError(msg)
+
         for element, value in metadata.items():
             if element == 'sample id' or element == 'subject id':
                 continue
@@ -511,15 +539,19 @@ class Sample:
         if not self.sample_dir.exists():
             self.sample_dir.mkdir(parents=True, exist_ok=True)
 
-        source_sample_files = self.source_sam_dir.rglob("*")
-        for file in source_sample_files:
-            if file.is_file():
-                relative_path = file.relative_to(self.source_sam_dir)
-                target_file = self.sample_dir / relative_path
-                target_file.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy(str(file), str(target_file))
-                self._update_manifest(sample_path=str(target_file))
-
+        for source_sam in self.source_sample_paths:
+            if source_sam.is_dir():
+                source_sample_files = source_sam.rglob("*")
+                for file in source_sample_files:
+                    if file.is_file():
+                        relative_path = file.relative_to(source_sam)
+                        target_file = self.sample_dir / relative_path
+                        target_file.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy(str(file), str(target_file))
+                        self._update_manifest(sample_path=str(target_file))
+            elif source_sam.is_file():
+                shutil.copy(str(source_sam), str(self.sample_dir))
+                self._update_manifest(sample_path=str(self.sample_dir / source_sam.name))
     def _update_manifest(self, sample_path):
         """
         Update manifest metadata, after remove samples
@@ -661,6 +693,10 @@ class Subject:
         :param metadata: key : value dict (element:value)
         :type metadata: dict
         """
+        if not isinstance(metadata, dict):
+            msg = f"You should use a dict here, you provide parameter type is {type(metadata)}"
+            raise TypeError(msg)
+
         for element, value in metadata.items():
             if element == 'subject id':
                 continue

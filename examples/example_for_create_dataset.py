@@ -103,8 +103,10 @@ if __name__ == '__main__':
     # code_parameters = dataset.get_metadata(metadata_file="code_parameters")
     # code_description = dataset.get_metadata(metadata_file="code_description")
 
-    des_schema = schema.get_schema("dataset_description")
-    des_schema.get('subtitle')
+    print("******************************************")
+    des_schema = schema.get_schema("dataset_description", name_only=False)
+    print(des_schema)
+
 
     # NOTE: Step3.1(optional), remove entire values in dataset_description
     dataset_description.clear_values()
@@ -191,19 +193,49 @@ if __name__ == '__main__':
     # add_values_for_subject_metadata(subject_metadata)
 
     # New function for add subjects and samples
-    subjects = []
-    for subject_user_id in [1, 2]:
-        samples = []
-        for sample_user_id in [1, 2]:
-            sample = sm.Sample()
-            sample.add_path(
-                "./test_data/bids_data/sub-0{0}/sequence{1}/".format(
-                    subject_user_id, sample_user_id))
-            samples.append(sample)
+    # subjects = []
+    # for subject_user_id in [1, 2]:
+    #     samples = []
+    #     for sample_user_id in [1, 2]:
+    #         sample = sm.Sample()
+    #         sample.add_path(
+    #             "./test_data/bids_data/sub-0{0}/sequence{1}/".format(
+    #                 subject_user_id, sample_user_id))
+    #         samples.append(sample)
+    #
+    #     subject = sm.Subject()
+    #     subject.add_samples(samples)
+    #     subjects.append(subject)
 
-        subject = sm.Subject()
-        subject.add_samples(samples)
-        subjects.append(subject)
+    subjects = []
+    samples = []
+
+    sample1 = sm.Sample()
+    sample1.add_path("./test_data/bids_data/sub-01/sequence1/")
+    sample1.add_path("./test_data/sample2/raw/dummy_sam2.txt")
+    samples.append(sample1)
+
+    sample2 = sm.Sample()
+    sample2.add_path("./test_data/bids_data/sub-01/sequence2/")
+    samples.append(sample2)
+
+    subject1 = sm.Subject()
+    subject1.add_samples(samples)
+    subjects.append(subject1)
+
+    samples = []
+
+    sample1 = sm.Sample()
+    sample1.add_path("./test_data/bids_data/sub-02/sequence1/")
+    samples.append(sample1)
+
+    sample2 = sm.Sample()
+    sample2.add_path("./test_data/bids_data/sub-02/sequence2/")
+    samples.append(sample2)
+
+    subject2 = sm.Subject()
+    subject2.add_samples(samples)
+    subjects.append(subject2)
 
     dataset.add_subjects(subjects)
 
