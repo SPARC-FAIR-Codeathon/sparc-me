@@ -12,13 +12,15 @@
 #
 import os
 import sys
+from pathlib import Path
 
-sys.path.append('../../')
-sys.path.insert(0, os.path.abspath('../../'))
+current_script_path = Path(__file__)
+project_root = current_script_path.resolve().parent.parent.parent
+sys.path.append(str(project_root))
+# sys.path.insert(0, project_root / )
 
-
-
-
+print("pathlib: ",project_root)
+print("os: ", os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'Sparc_me Api'
