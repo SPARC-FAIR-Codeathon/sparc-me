@@ -1,20 +1,20 @@
-# import json
-# import pandas as pd
-# from pathlib import Path
-# from typing import Dict
-# import openpyxl
-# import os
-# import math
-#
-# from sparc_me.core.utils import CaseInsensitiveDict, validate_metadata_file
-#
-# from xlrd import XLRDError
-#
-# from jsonschema import validate
-# from jsonschema.exceptions import ValidationError
-# # from jsonschema import Draft202012Validator
-# from jsonschema import Draft7Validator
-# from jsonschema.exceptions import best_match
+import json
+import pandas as pd
+from pathlib import Path
+from typing import Dict
+import openpyxl
+import os
+import math
+
+from sparc_me.core.utils import CaseInsensitiveDict, validate_metadata_file
+
+from xlrd import XLRDError
+
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
+# from jsonschema import Draft202012Validator
+from jsonschema import Draft7Validator
+from jsonschema.exceptions import best_match
 
 current_dir = Path(__file__).parent.resolve()
 resources_dir = Path.joinpath(current_dir, "../resources")
