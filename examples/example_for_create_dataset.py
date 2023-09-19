@@ -212,7 +212,8 @@ if __name__ == '__main__':
 
     sample1 = sm.Sample()
     sample1.add_path("./test_data/bids_data/sub-01/sequence1/")
-    sample1.add_path("./test_data/sample2/raw/dummy_sam2.txt")
+
+    sample1.add_path(["./test_data/sample2/raw/dummy_sam2.txt", "./test_data/sample1/raw/dummy_sam1.txt"])
     samples.append(sample1)
 
     sample2 = sm.Sample()
