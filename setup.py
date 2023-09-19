@@ -17,7 +17,7 @@ setup(
         'styleframe',
         'xlrd',
         'openpyxl',
-        'jsonschema~=4.19.0',
+        'jsonschema',
         'requests'
     ]
 )
