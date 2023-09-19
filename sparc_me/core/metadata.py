@@ -406,6 +406,7 @@ class Sample:
     _dataset_path: Path = Path('./')
     _metadata: Metadata = None
     _manifest_metadata: Metadata = None
+    _previous_sub_id = ""
 
 
     def __init__(self):
@@ -422,6 +423,9 @@ class Sample:
         :type sub_id: str
         """
         self.subject_id = sub_id
+        if sub_id != Sample._previous_sub_id:
+            Sample._previous_sub_id = sub_id
+            Sample.count = 0
         self._generate_sample_path_and_id()
 
     def _generate_sample_path_and_id(self):
