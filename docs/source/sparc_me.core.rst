@@ -1,10 +1,6 @@
 sparc\_me.core package
 ======================
 
-Submodules
-----------
-
-
 
 sparc\_me.core.dataset module
 -----------------------------
