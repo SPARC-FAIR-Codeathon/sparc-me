@@ -1,8 +1,8 @@
 sparc\_me package
 =================
 
-Subpackages
------------
+Sparc_me Core
+------------------
 
 .. toctree::
    :maxdepth: 4
@@ -10,7 +10,7 @@ Subpackages
    sparc_me.core
 
 Module contents
----------------
+----------------
 
 .. automodule:: sparc_me
    :members:
