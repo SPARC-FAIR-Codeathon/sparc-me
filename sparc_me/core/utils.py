@@ -1,11 +1,10 @@
-import os
 import json
-import shutil
-import openpyxl
-import pandas as pd
 from pathlib import Path
+import re
 
-from xlrd import XLRDError
+metadata_files_2_0_0 = ['code_description', 'code_parameters', 'dataset_description', 'manifest', 'performances',
+                        'resources',
+                        'samples', 'subjects', 'submission']
 
 
 def check_row_exist(dataframe, unique_column, unique_value):
@@ -28,7 +27,6 @@ def check_row_exist(dataframe, unique_column, unique_value):
     else:
         row_index = row_index[0]
     return row_index
-
 
 
 def get_sub_folder_paths_in_folder(folder_path):
@@ -60,3 +58,68 @@ def validate_sub_sam_name(validate_str, validate_type):
         return validate_str
     else:
         return f"{v_str}{validate_str}"
+
+
+def validate_metadata_file(metadata_file, version="2.0.0"):
+    if version == "2.0.0" or version == "2_0_0":
+        for item in metadata_files_2_0_0:
+            if remove_spaces_and_lower(item) == remove_spaces_and_lower(metadata_file):
+                return item
+
+        msg = f"no metadata files match {metadata_file}, please provide a correct one!"
+        raise ValueError(msg)
+    elif version == "1.2.3" or version == "1_2_3":
+        return metadata_file
+
+
+def find_col_element(element, metadata):
+    elements = metadata.data.columns.tolist()
+    matching_indices = metadata.validate_input(element, elements)
+    if len(matching_indices) == 1:
+        return elements[matching_indices[0]]
+    else:
+        msg = f"No '{element}' valid element is found! Please find correct element in {metadata.metadata_file}.xlsx file."
+        raise KeyError(msg)
+
+
+def remove_spaces_and_lower(s):
+    """
+    :param s: the str need to deal with
+    :type s: str
+    :return: a str with lower case and without space, and _
+    """
+
+    return re.sub(r'[\s_]', '', s).lower()
+
+
+# Customise dict
+
+class CaseInsensitiveDict(dict):
+    def __init__(self, *args, **kwargs):
+        super(CaseInsensitiveDict, self).__init__(*args, **kwargs)
+        self._key_map = {key.lower().replace(" ", ""): key for key in self.keys()}
+
+    def __getitem__(self, key):
+        original_key = self._key_map.get(key.lower().replace(" ", ""))
+        if original_key is not None:
+            return super(CaseInsensitiveDict, self).__getitem__(original_key)
+        else:
+            raise KeyError(key)
+
+    def get(self, key, default=None, pprint=True):
+        try:
+            if pprint:
+                print(json.dumps(self[key], indent=4))
+            return self[key]
+        except KeyError:
+            return default
+
+    def __setitem__(self, key, value):
+        self._key_map[key.lower().replace(" ", "")] = key
+        super(CaseInsensitiveDict, self).__setitem__(key, value)
+
+    def __delitem__(self, key):
+        original_key = self._key_map.get(key.lower().replace(" ", ""))
+        if original_key is not None:
+            super(CaseInsensitiveDict, self).__delitem__(original_key)
+            del self._key_map[key.lower().replace(" ", "")]
