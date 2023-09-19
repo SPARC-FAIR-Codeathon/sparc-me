@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="sparc_me",
-    version="2.2.3",
+    version="2.2.7",
     description='A python tool to explore, enhance, and expand SPARC datasets and their descriptions in accordance with FAIR principles.',
     author="Thiranja Prasad Babarenda Gamage, Chinchien Lin, Savindi Wijenayaka, Michael Hoffman, Linkun Gao, Haribalan Kumar",
     email="psam012@aucklanduni.ac.nz, clin864@aucklanduni.ac.nz",
@@ -17,7 +17,7 @@ setup(
         'styleframe',
         'xlrd',
         'openpyxl',
-        'jsonschema~=4.19.0',
+        'jsonschema',
         'requests'
     ]
 )
