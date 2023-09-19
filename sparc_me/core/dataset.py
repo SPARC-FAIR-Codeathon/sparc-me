@@ -14,8 +14,12 @@ from datetime import datetime, timezone
 from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_metadata_file
 from sparc_me.core.metadata import Metadata, Sample, Subject
 
-
+"""All related to Dataset"""
 class Dataset(object):
+
+    """
+    The core api for dataset
+    """
     def __init__(self):
         DEFAULT_DATASET_VERSION = "2.0.0"
         EXTENSIONS = [".xlsx"]
