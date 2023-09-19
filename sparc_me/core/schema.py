@@ -52,7 +52,6 @@ class Validator(object):
             data = schema.load_data(metadata.metadata_file_path)
             self.validate(data, metadata_file=metadata_file, version=metadata.version)
 
-
     def validate(self, data, metadata_file, version):
         """
         Validate data instance
@@ -149,9 +148,10 @@ class Schema(object):
 
         return schema
 
-    def get_schema(self, metadata_file, version="2.0.0", print_schema=True):
+    def get_schema(self, metadata_file, version="2.0.0", print_schema=True, required_only=True, name_only=True):
         """
         get a schema via metadata_file/metadate file name
+
         :param metadata_file: the metadata file name
         :type metadata_file: str
         :param version: "2.0.0"|"1.2.3"
@@ -171,7 +171,22 @@ class Schema(object):
         with open(schema_path, 'r') as file:
             schema_json: Dict = json.load(file)
             if print_schema:
-                print(json.dumps(schema_json.get('properties'), indent=4))
+                if required_only:
+                    if name_only:
+                        print(f"The required elements for {metadata_file}:")
+                        print(json.dumps(schema_json.get('required'), indent=4))
+                    else:
+                        required_items = []
+                        for key, value in schema_json.get('properties').items():
+                            if "required" in value and value["required"] == "Y":
+                                required_items.append({key: value})
+
+                        print(f"The required elements for {metadata_file}:")
+                        print(json.dumps(required_items, indent=4))
+                        return required_items
+                else:
+                    print(json.dumps(schema_json.get('properties'), indent=4))
+
             return CaseInsensitiveDict(schema_json.get('properties'))
 
     def set_schema(self, schema):
