@@ -82,7 +82,7 @@ class Dataset(object):
 
         return template_dir
 
-    def set_template_version(self, version):
+    def _set_template_version(self, version):
         """
         Choose a template version
 
@@ -146,6 +146,11 @@ class Dataset(object):
         return dataset
 
     def create_empty_dataset(self, version='2.0.0'):
+        """
+        Create an empty dataset from template via dataset version
+        :param version: the dataset version
+        :type version: '2.0.0' | '1.2.3'
+        """
         self.load_from_template(version=version)
 
     def load_from_template(self, version):
@@ -157,7 +162,7 @@ class Dataset(object):
         :return: loaded dataset
         :rtype: dict
         """
-        self.set_version(version)
+        self._set_version(version)
         # self._dataset_path = self._get_template_dir(self._version)
         template_dataset_path = self._get_template_dir(self._version)
         self._dataset = self._load(str(template_dataset_path))
@@ -179,7 +184,7 @@ class Dataset(object):
 
         return version
 
-    def set_version(self, version):
+    def _set_version(self, version):
         """
         Set dataset version version
 
@@ -191,7 +196,7 @@ class Dataset(object):
         self._version = version
         self._set_version_specific_variables(version)
 
-    def load_template(self, version):
+    def _load_template(self, version):
         """
         Load template
 
@@ -202,15 +207,16 @@ class Dataset(object):
         """
 
         version = self._convert_version_format(version)
-        self.set_template_version(version)
+        self._set_template_version(version)
         self._template_dir = self._get_template_dir(self._template_version)
         self._template = self._load(str(self._template_dir))
 
         return self._template
 
-    def save_template(self, save_dir, version=None):
+    def _save_template(self, save_dir, version=None):
         """
         Save the template directory locally
+        TODO: will delete later
 
         :param save_dir: path to the output folder
         :type save_dir: string
@@ -241,7 +247,7 @@ class Dataset(object):
         :rtype: dict
         """
         if version:
-            self.set_version(version)
+            self._set_version(version)
 
         if not self._dataset_path:
             self._dataset_path = Path(dataset_path)
@@ -281,7 +287,7 @@ class Dataset(object):
                     data = self._filter(data, filename)
 
                 if isinstance(data, pd.DataFrame):
-                    self.set_version(self._version)
+                    self._set_version(self._version)
                     template_dir = self._get_template_dir(self._version)
 
                     if keep_style:
@@ -363,7 +369,7 @@ class Dataset(object):
         """
         metadata_files = list()
 
-        self.load_template(version=version)
+        self._load_template(version=version)
 
         for key, value in self._template.items():
             if isinstance(value, dict):
@@ -421,7 +427,7 @@ class Dataset(object):
             return fields
 
         if not self._template:
-            self.load_template(version=None)
+            self._load_template(version=None)
 
         data = self._template.get(metadata_file)
         metadata = data.get("metadata")
@@ -452,7 +458,15 @@ class Dataset(object):
 
     def get_metadata(self, metadata_file):
         """
-        :param metadata_file: one of string of [code_description, code_parameters, dataset_description,manifest,performances,resources,samples,subjects,submission]
+        Get a Metadata object based on the metadata file name
+        To edit values for a metadata
+
+        :param metadata_file: one of string of [code_description,
+                                                code_parameters,
+                                                dataset_description,
+                                                manifest,performances,
+                                                resources,samples,
+                                                subjects,submission]
         :type  metadata_file: string
         :return: give a metadata editor for a specific metadata
         """
@@ -463,9 +477,10 @@ class Dataset(object):
         metadata_file = validate_metadata_file(metadata_file, self._version)
         return self._metadata[metadata_file]
 
-    def set_field(self, metadata_file, row_index, header, value):
+    def _set_field(self, metadata_file, row_index, header, value):
         """
         Set single field by row idx/name and column name (the header)
+        TODO: will delete later
 
         :param metadata_file: metadata metadata_file
         :type metadata_file: string
@@ -500,7 +515,7 @@ class Dataset(object):
 
         return self._dataset
 
-    def set_field_using_row_name(self, metadata_file, row_name, header, value):
+    def _set_field_using_row_name(self, metadata_file, row_name, header, value):
         """
         Set single cell. The row is identified by the given unique name and column is identified by the header.
 
@@ -538,9 +553,9 @@ class Dataset(object):
             raise ValueError(msg)
         else:
             excel_row_index = matching_indices[0] + 2
-            return self.set_field(metadata_file=metadata_file, row_index=excel_row_index, header=header, value=value)
+            return self._set_field(metadata_file=metadata_file, row_index=excel_row_index, header=header, value=value)
 
-    def append(self, metadata_file, row, check_exist=False, unique_column=None):
+    def _append(self, metadata_file, row, check_exist=False, unique_column=None):
         """
         Append a row to a metadata file
 
@@ -629,8 +644,9 @@ class Dataset(object):
 
         return metadata
 
-    def generate_file_from_template(self, save_path, metadata_file, data=pd.DataFrame(), keep_style=False):
+    def _generate_file_from_template(self, save_path, metadata_file, data=pd.DataFrame(), keep_style=False):
         """Generate file from a template and populate with data if givn
+        TODO: will delete later
 
         :param save_path: destination to save the generated file
         :type save_path: string
@@ -653,6 +669,17 @@ class Dataset(object):
 
     def add_subjects(self, subjects):
 
+        """
+        Add Subejct list to dataset.
+        This function will add subjects and samples to metadata,
+        And will move the sample files from origin source path to dataset
+        primary subject sample folder.
+        It will automatically update manifest and dataset_description metadata files.
+
+        :param subjects: Subject dataset
+        :type subjects: list
+        """
+
         self.save()
         if not isinstance(subjects, list):
             msg = "Please provide a list of subjects"
@@ -666,6 +693,7 @@ class Dataset(object):
     def get_subject(self, subject_sds_id) -> Subject:
         """
         Get a subject by subject sds id
+
         :param subject_sds_id: subject sds id
         :type subject_sds_id: str
         :return: Subject
@@ -712,7 +740,14 @@ class Dataset(object):
         self._add_sample_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
                               overwrite=overwrite)
 
-    def add_element(self, metadata_file, element):
+    def _add_element(self, metadata_file, element):
+        """
+        May need to delete
+
+        :param metadata_file:
+        :param element:
+        :return:
+        """
         metadata = self._dataset.get(metadata_file).get("metadata")
         if metadata_file in self._column_based:
             row_pd = pd.DataFrame([{"Metadata element": element}])
@@ -742,6 +777,7 @@ class Dataset(object):
             description = f"This is a thumbnail file"
             self._modify_manifest(fname=filename, manifest_folder_path=str(self._dataset_path),
                                   destination_path=str(destination_path.parent), description=description)
+
 
     def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
                          overwrite=True):
@@ -963,7 +999,26 @@ class Dataset(object):
                 samples_metadata.remove_row(sam_folder.name)
                 samples_metadata.save()
 
+    def delete_thumbnail(self, destination_path):
+        """
+        Delete a thumbnail from dataset
+        Will automatically update manifest metadata.
+
+        :param destination_path: The thumbnail path in dataset that you want to delete.
+        :type destination_path: str
+        """
+        self.delete_data(destination_path)
+
     def delete_data(self, destination_path):
+        """
+        Delete file based on ,the file path in dataset
+        It will automatically update mainfest metadata
+        TODO: need to connect delete sample and subject, and update subject and sample metadata
+
+        :param destination_path: the file path that you want to delete
+        :type destination_path: str
+        :return:
+        """
         if not Path(destination_path).exists():
             msg = f"The file {str(destination_path)} is not existing"
             raise FileNotFoundError(msg)

@@ -14,10 +14,13 @@ class Dataset_Api:
         pass
 
     def get_dataset_versions_pensieve(self, datasetId):
-        '''
-            get one dataset all versions
+        """
+        get one dataset all versions
+        
+        :param datasetId: the dataset id from SPARC
+        :type datasetId: str|int
         :return: versions
-        '''
+        """
 
         if not isinstance(datasetId, str):
             datasetId = str(datasetId)
@@ -33,15 +36,16 @@ class Dataset_Api:
             return versions
 
     def get_all_datasets_all_versions(self):
-        '''
-            Get all datasets with all versions
-            It may cost a few minutes to get the whole data,
-            Because some dataset have a lot of versions, e.g, 20,
-            And every time when the version number getter than 1,
-            it will request server for getting new data, so it waste a lot of time.
+        """
+        
+        Get all datasets with all versions
+        It may cost a few minutes to get the whole data,
+        Because some dataset have a lot of versions, e.g, 20,
+        And every time when the version number getter than 1,
+        it will request server for getting new data, so it waste a lot of time.
 
         :return: datasets
-        '''
+        """
         datasets = []
 
         latest_datasets = self.get_all_datasets_latest_version_pensieve()
@@ -56,10 +60,11 @@ class Dataset_Api:
         return datasets
 
     def get_all_datasets_latest_version_pensieve(self):
-        '''
-            Get all datasets with latest version
+        """
+        Get all datasets with latest version
+            
         :return: datasets | []
-        '''
+        """
 
         url = "https://api.pennsieve.io/discover/datasets?limit=2147483647&offset=0&orderBy=relevance&orderDirection=desc"
 
@@ -77,10 +82,13 @@ class Dataset_Api:
         return []
 
     def get_dataset_latest_version_pensieve(self, datasetId):
-        '''
-         :parameter: datasetId : String
-         :return:
-        '''
+        """
+        
+        :param datasetId: the dataset id from SPARC
+        :type datasetId: str|int
+        :return:
+        """
+
         if isinstance(datasetId, int):
             datasetId = str(datasetId)
         elif isinstance(datasetId, str):
@@ -97,10 +105,15 @@ class Dataset_Api:
             return json.loads(response.text)
 
     def get_metadata_pensieve(self, datasetId, versionId):
-        '''
-            Get a metadata from the specific version
-        :return: metadata json format
-        '''
+        """
+         Get a metadata from the specific version
+
+         :param datasetId: 
+         :type datasetId: str | int
+         :param versionId:
+         :type versionId: str | int
+         :return: metadata json format
+        """
 
         if not isinstance(datasetId, str):
             datasetId = str(datasetId)
@@ -129,10 +142,14 @@ class Dataset_Api:
             versionId = ""
         return versionId
 
-    def download_file(self, datasetId, filepath):
-        '''
-          Download bytes files from Pennsieve
-        '''
+    def _download_file(self, datasetId, filepath):
+        """
+        Download bytes files from Pennsieve
+        
+        :param datasetId: 
+        :param filepath: file path from 
+        :return: 
+        """
         versionId = self.get_dataset_latest_version_number(datasetId)
 
         url = "https://api.pennsieve.io/zipit/discover"
@@ -150,13 +167,14 @@ class Dataset_Api:
             return response.reason
 
     def get_xlsx_csv_file_pennsieve(self, datasetId, filepath, savepath):
-        '''
-            store excel file locally
-        :param datasetId:
-        :param filepath:
-        :param savepath:
-        :return:
-        '''
+        """
+        
+        store excel file locally
+        :param datasetId: dataset id from SPARC
+        :param filepath: dataset version from SPARC
+        :param savepath: Path for save dataset
+        """
+            
         pathList = filepath.split('.')
         extension = pathList[1]
         fileStrList = filepath.split('/')
@@ -169,8 +187,8 @@ class Dataset_Api:
 
         save_dir = Path(savepath)
         if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
-        response = self.download_file(datasetId, filepath)
+            save_dir._mkdir(parents=True, exist_ok=False)
+        response = self._download_file(datasetId, filepath)
 
         if extension == "xlsx":
             with io.BytesIO(response.content) as fh:
@@ -186,7 +204,7 @@ class Dataset_Api:
             df.to_csv(savepath + filename, sep=',', header=False, index=False)
 
     def get_UBERONs_From_Dataset(self, datasetId, filepath):
-        response = self.download_file(datasetId, filepath)
+        response = self._download_file(datasetId, filepath)
         with io.BytesIO(response.content) as fh:
             df = pd.read_csv(fh)
         df = df.dropna(axis=0, how='any')
@@ -196,7 +214,7 @@ class Dataset_Api:
     TODO: download whole dataset
     '''
 
-    def mkdir(self, paths):
+    def _mkdir(self, paths):
         for path in paths:
             savepath = "dataset/"
             fileStrList = path.split('/')
@@ -223,7 +241,7 @@ class Dataset_Api:
                 paths.append(files[idx]["path"])
             return paths
 
-    def craw(self, datasetId, versionId, url_queue: queue.Queue, html_queue: queue.Queue):
+    def _craw(self, datasetId, versionId, url_queue: queue.Queue, html_queue: queue.Queue):
         '''
           Download bytes files from Pennsieve
         '''
@@ -254,8 +272,7 @@ class Dataset_Api:
             except Exception as e:
                 print(f"The file: {filepath} download failed! The error is {e}")
 
-
-    def parse(self, html_queue: queue.Queue):
+    def _parse(self, html_queue: queue.Queue):
         while True:
             res = html_queue.get()
             if res is None:
@@ -282,7 +299,7 @@ class Dataset_Api:
             print("Invalid version id, Now will download the first version of the dataset for you!")
 
         paths = self.get_all_files_path(dataset_id, version_id)
-        self.mkdir(paths)
+        self._mkdir(paths)
         url_queue = queue.Queue()
         html_queue = queue.Queue()
         threads = []
@@ -295,11 +312,11 @@ class Dataset_Api:
         url_queue.put(None)
 
         for idx in range(3):
-            t1 = threading.Thread(target=self.craw, args=(dataset_id, version_id, url_queue, html_queue))
+            t1 = threading.Thread(target=self._craw, args=(dataset_id, version_id, url_queue, html_queue))
             threads.append(t1)
             t1.start()
         for idx in range(2):
-            t2 = threading.Thread(target=self.parse, args=(html_queue,))
+            t2 = threading.Thread(target=self._parse, args=(html_queue,))
             t2.start()
 
         for t in threads:
@@ -318,7 +335,7 @@ class Dataset_Api:
     def get_protocolsio_text(self, datasetId, dir):
         save_dir = Path(dir)
         if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
+            save_dir._mkdir(parents=True, exist_ok=False)
 
         protocol_url = self.get_dataset_protocolsio_link(datasetId)
         if protocol_url:
