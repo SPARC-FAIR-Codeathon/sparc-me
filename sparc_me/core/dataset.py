@@ -999,7 +999,7 @@ class Dataset(object):
                 samples_metadata.remove_row(sam_folder.name)
                 samples_metadata.save()
 
-    def delete_thumbnail(self, destination_path):
+    def remove_thumbnail(self, destination_path):
         """
         Delete a thumbnail from dataset
         Will automatically update manifest metadata.
