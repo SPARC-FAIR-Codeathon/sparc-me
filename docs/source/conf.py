@@ -17,7 +17,8 @@ from pathlib import Path
 current_script_path = Path(__file__)
 project_root = current_script_path.resolve().parent.parent.parent
 sys.path.append(str(project_root))
-sys.path.insert(0, str(project_root / "sparc_me"/ "docs_py"))
+sys.path.insert(0, str(project_root / "sparc_me"/ "core"))
+# sys.path.insert(0, str(project_root / "sparc_me"/ "docs_py"))
 
 # -- Project information -----------------------------------------------------
 
