@@ -1,7 +1,6 @@
 import os
 import shutil
 import json
-import tempfile
 
 from pathlib import Path
 from distutils.dir_util import copy_tree
@@ -11,11 +10,15 @@ import pandas as pd
 from styleframe import StyleFrame
 from xlrd import XLRDError
 from datetime import datetime, timezone
-from sparc_me.core.utils import check_row_exist, get_sub_folder_paths_in_folder, validate_metadata_file
+from sparc_me.core.utils import get_sub_folder_paths_in_folder, validate_metadata_file
 from sparc_me.core.metadata import Metadata, Sample, Subject
 
-
+"""All related to Dataset"""
 class Dataset(object):
+
+    """
+    The core api for dataset
+    """
     def __init__(self):
         DEFAULT_DATASET_VERSION = "2.0.0"
         EXTENSIONS = [".xlsx"]
@@ -38,16 +41,7 @@ class Dataset(object):
 
     def set_path(self, path):
         """
-        Set the dataset path
-
-        :param path: path to the dataset directory
-        :type path: string
-        """
-        self.set_dataset_path(path)
-
-    def set_dataset_path(self, path):
-        """
-        Set the path to the dataset
+        Set the dataset path, and set the path to Sample and Subject Class
 
         :param path: path to the dataset directory
         :type path: string
@@ -55,6 +49,113 @@ class Dataset(object):
         self._dataset_path = Path(path)
         Sample._dataset_path = self._dataset_path
         Subject._dataset_path = self._dataset_path
+
+    def list_metadata_files(self, version, print_list=True):
+        """
+        list all metadata_files based on the metadata files in the template dataset
+
+        :param version: reference template version
+        :type version: string
+        :return: all metadata metadata_files
+        :rtype: list
+        """
+        metadata_files = list()
+
+        self._load_template(version=version)
+
+        for key, value in self._template.items():
+            if isinstance(value, dict):
+                file_path = Path(value.get("path"))
+                metadata_file = file_path.stem
+                metadata_files.append(metadata_file)
+
+        if print_list:
+            print("metadata_files:")
+            for metadata_file in metadata_files:
+                print(metadata_file)
+
+        return metadata_files
+
+    def list_elements(self, metadata_file, axis=0, version=None):
+        """
+        List field from a metadata file
+
+        :param metadata_file: metadata metadata_file
+        :type metadata_file: string
+        :param axis: If axis=0, column-based. list all column headers. i.e. the first row.
+                     If axis=1, row-based. list all row index. i.e. the first column in each row
+        :type axis: int
+        :param version: reference template version
+        :type version: string
+        :return: a list of fields
+        :rtype: list
+        """
+        fields = None
+        metadata_file = validate_metadata_file(metadata_file, version)
+        if metadata_file == "dataset_description":
+            axis = 1
+
+        if version:
+            version = self._convert_version_format(version)
+            template_dir = self._get_template_dir(version)
+
+            element_description_file = template_dir / "../schema.xlsx"
+
+            try:
+                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file)
+            except XLRDError:
+                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file,
+                                                    engine='openpyxl')
+
+            print("metadata_file: " + str(metadata_file))
+            for index, row in element_description.iterrows():
+                print(str(row["Element"]))
+                print("    Required: " + str(row["Required"]))
+                print("    Type: " + str(row["Type"]))
+                print("    Description: " + str(row["Description"]))
+                print("    Example: " + str(row["Example"]))
+
+            fields = element_description.values.tolist()
+            return fields
+
+        if not self._template:
+            self._load_template(version=None)
+
+        data = self._template.get(metadata_file)
+        metadata = data.get("metadata")
+        # set the first column as the index column
+        metadata = metadata.set_index(list(metadata)[0])
+        if axis == 0:
+            fields = list(metadata.columns)
+        elif axis == 1:
+            fields = list(metadata.index)
+
+        print("Fields:")
+        for field in fields:
+            print(field)
+
+        return fields
+
+    def get_metadata(self, metadata_file):
+        """
+        Get a Metadata object based on the metadata file name
+        To edit values for a metadata
+
+        :param metadata_file: one of string of [code_description,
+                                                code_parameters,
+                                                dataset_description,
+                                                manifest,performances,
+                                                resources,samples,
+                                                subjects,submission]
+        :type  metadata_file: string
+        :return: give a metadata editor for a specific metadata
+        """
+        if not self._dataset:
+            msg = "Dataset not defined. Please load the dataset in advance."
+            raise ValueError(msg)
+
+        metadata_file = validate_metadata_file(metadata_file, self._version)
+        return self._metadata[metadata_file]
 
     def get_dataset_path(self):
         """
@@ -151,23 +252,14 @@ class Dataset(object):
         :param version: the dataset version
         :type version: '2.0.0' | '1.2.3'
         """
-        self.load_from_template(version=version)
 
-    def load_from_template(self, version):
-        """
-        Load dataset from SPARC template
-
-        :param version: template version
-        :type version: string
-        :return: loaded dataset
-        :rtype: dict
-        """
+        # TODO: need to check if the path has already a dataset, if yes, need to delete it
         self._set_version(version)
-        # self._dataset_path = self._get_template_dir(self._version)
         template_dataset_path = self._get_template_dir(self._version)
         self._dataset = self._load(str(template_dataset_path))
-
         self._generate_metadata()
+
+
 
     def _convert_version_format(self, version):
         """
@@ -201,7 +293,7 @@ class Dataset(object):
         Load template
 
         :param version: template version
-        :type version: string
+        :type version: string | None
         :return: loaded template
         :rtype: dict
         """
@@ -213,25 +305,7 @@ class Dataset(object):
 
         return self._template
 
-    def _save_template(self, save_dir, version=None):
-        """
-        Save the template directory locally
-        TODO: will delete later
 
-        :param save_dir: path to the output folder
-        :type save_dir: string
-        :param version: template version
-        :type version: string
-        """
-        if version:
-            version = self._convert_version_format(version)
-            template_dir = self._get_template_dir(version)
-        elif not version and self._template_version:
-            template_dir = self._get_template_dir(self._template_version)
-        else:
-            raise ValueError("Template path not found.")
-
-        copy_tree(str(template_dir), str(save_dir))
 
     def load_dataset(self, dataset_path=None, from_template=False, version=None):
         """
@@ -253,12 +327,28 @@ class Dataset(object):
             self._dataset_path = Path(dataset_path)
 
         if from_template:
-            self._dataset = self.load_from_template(version=version)
+            self.create_empty_dataset(version=version)
         else:
             self._dataset = self._load(dataset_path)
             self._generate_metadata()
 
         return self._dataset
+
+    def _generate_metadata(self):
+        """
+        Generate all Metadata Class after loading/create a dataset
+        :return:
+        """
+        metadata_files = self.list_metadata_files(self._version, print_list=False)
+        for metadata_file in metadata_files:
+            metadata = self._dataset.get(metadata_file).get("metadata")
+            self._metadata[metadata_file] = Metadata(metadata_file, metadata, self._version, self._dataset_path)
+            if metadata_file == "subjects":
+                Subject._metadata = self._metadata[metadata_file]
+            elif metadata_file == 'samples':
+                Sample._metadata = self._metadata[metadata_file]
+
+        Sample._manifest_metadata = self._metadata['manifest']
 
     def save(self, save_dir="", remove_empty=False, keep_style=False):
         """
@@ -358,314 +448,9 @@ class Dataset(object):
 
         return metadata
 
-    def list_metadata_files(self, version, print_list=True):
-        """
-        list all metadata_files based on the metadata files in the template dataset
 
-        :param version: reference template version
-        :type version: string
-        :return: all metadata metadata_files
-        :rtype: list
-        """
-        metadata_files = list()
 
-        self._load_template(version=version)
-
-        for key, value in self._template.items():
-            if isinstance(value, dict):
-                file_path = Path(value.get("path"))
-                metadata_file = file_path.stem
-                metadata_files.append(metadata_file)
-
-        if print_list:
-            print("metadata_files:")
-            for metadata_file in metadata_files:
-                print(metadata_file)
-
-        return metadata_files
-
-    def list_elements(self, metadata_file, axis=0, version=None):
-        """
-        List field from a metadata file
-
-        :param metadata_file: metadata metadata_file
-        :type metadata_file: string
-        :param axis: If axis=0, column-based. list all column headers. i.e. the first row.
-                     If axis=1, row-based. list all row index. i.e. the first column in each row
-        :type axis: int
-        :param version: reference template version
-        :type version: string
-        :return: a list of fields
-        :rtype: list
-        """
-        fields = None
-        metadata_file = validate_metadata_file(metadata_file, version)
-        if metadata_file == "dataset_description":
-            axis = 1
-
-        if version:
-            version = self._convert_version_format(version)
-            template_dir = self._get_template_dir(version)
-
-            element_description_file = template_dir / "../schema.xlsx"
-
-            try:
-                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file)
-            except XLRDError:
-                element_description = pd.read_excel(element_description_file, sheet_name=metadata_file,
-                                                    engine='openpyxl')
-
-            print("metadata_file: " + str(metadata_file))
-            for index, row in element_description.iterrows():
-                print(str(row["Element"]))
-                print("    Required: " + str(row["Required"]))
-                print("    Type: " + str(row["Type"]))
-                print("    Description: " + str(row["Description"]))
-                print("    Example: " + str(row["Example"]))
-
-            fields = element_description.values.tolist()
-            return fields
-
-        if not self._template:
-            self._load_template(version=None)
-
-        data = self._template.get(metadata_file)
-        metadata = data.get("metadata")
-        # set the first column as the index column
-        metadata = metadata.set_index(list(metadata)[0])
-        if axis == 0:
-            fields = list(metadata.columns)
-        elif axis == 1:
-            fields = list(metadata.index)
-
-        print("Fields:")
-        for field in fields:
-            print(field)
-
-        return fields
-
-    def _generate_metadata(self):
-        metadata_files = self.list_metadata_files(self._version, print_list=False)
-        for metadata_file in metadata_files:
-            metadata = self._dataset.get(metadata_file).get("metadata")
-            self._metadata[metadata_file] = Metadata(metadata_file, metadata, self._version, self._dataset_path)
-            if metadata_file == "subjects":
-                Subject._metadata = self._metadata[metadata_file]
-            elif metadata_file == 'samples':
-                Sample._metadata = self._metadata[metadata_file]
-
-        Sample._manifest_metadata = self._metadata['manifest']
-
-    def get_metadata(self, metadata_file):
-        """
-        Get a Metadata object based on the metadata file name
-        To edit values for a metadata
-
-        :param metadata_file: one of string of [code_description,
-                                                code_parameters,
-                                                dataset_description,
-                                                manifest,performances,
-                                                resources,samples,
-                                                subjects,submission]
-        :type  metadata_file: string
-        :return: give a metadata editor for a specific metadata
-        """
-        if not self._dataset:
-            msg = "Dataset not defined. Please load the dataset in advance."
-            raise ValueError(msg)
-
-        metadata_file = validate_metadata_file(metadata_file, self._version)
-        return self._metadata[metadata_file]
-
-    def _set_field(self, metadata_file, row_index, header, value):
-        """
-        Set single field by row idx/name and column name (the header)
-        TODO: will delete later
-
-        :param metadata_file: metadata metadata_file
-        :type metadata_file: string
-        :param row_index: row index in Excel. Excel index starts from 1 where index 1 is the header row. so actual data index starts from 2
-        :type row_index: int
-        :param header: column name. the header is the first row
-        :type header: string
-        :param value: field value
-        :type value: string
-        :return: updated dataset
-        :rtype: dict
-        """
-        if not self._dataset:
-            msg = "Dataset not defined. Please load the dataset in advance."
-            raise ValueError(msg)
-
-        metadata = self._dataset.get(metadata_file).get("metadata")
-
-        if not isinstance(row_index, int):
-            msg = "row_index should be 'int'."
-            raise ValueError(msg)
-
-        try:
-            # Convert Excel row index to dataframe index: index - 2
-            row_index = row_index - 2
-            metadata.loc[row_index, header] = value
-        except ValueError:
-            msg = "Value error. row does not exists."
-            raise ValueError(msg)
-
-        self._dataset[metadata_file]["metadata"] = metadata
-
-        return self._dataset
-
-    def _set_field_using_row_name(self, metadata_file, row_name, header, value):
-        """
-        Set single cell. The row is identified by the given unique name and column is identified by the header.
-
-        :param metadata_file: metadata metadata_file
-        :type metadata_file: string
-        :param row_name: Unique row name in Excel. (Ex: if subjects is metadata_file, a row name can be a unique subjet id)
-        :type row_name: string
-        :param header: column name. the header is the first row
-        :type header: string
-        :param value: field value
-        :type value: string
-        :return: updated dataset
-        :rtype: dict
-        """
-        if not self._dataset:
-            msg = "Dataset not defined. Please load the dataset in advance."
-            raise ValueError(msg)
-
-        metadata = self._dataset.get(metadata_file).get("metadata")
-
-        if not isinstance(row_name, str):
-            msg = "row_name should be string."
-            raise ValueError(msg)
-
-        # Assumes that all excel files first column contains the unique value field
-        # TODO: In version 1, the unique column is not the column 0. Hence, unique column must be specified. 
-        # This method need to be fixed to accomadate this 
-        matching_indices = metadata.index[metadata[metadata.columns[0]] == row_name].tolist()
-
-        if not matching_indices:
-            msg = f"No row with given unique name, {row_name}, was found in the unique column {metadata.columns[0]}"
-            raise ValueError(msg)
-        elif len(matching_indices) > 1:
-            msg = f"More than one row with given unique name, {row_name}, was found in the unique column {metadata.columns[0]}"
-            raise ValueError(msg)
-        else:
-            excel_row_index = matching_indices[0] + 2
-            return self._set_field(metadata_file=metadata_file, row_index=excel_row_index, header=header, value=value)
-
-    def _append(self, metadata_file, row, check_exist=False, unique_column=None):
-        """
-        Append a row to a metadata file
-
-        :param metadata_file: metadata metadata_file
-        :type metadata_file: string
-        :param row: a row to be appended
-        :type row: dic
-        :param check_exist: Check if row exist before appending, if exist, update row, defaults to False
-        :type check_exist: bool, optional
-        :param unique_column: if check_exist is True, provide which column in metadata_file is unique, defaults to None
-        :type unique_column: string, optional
-        :raises ValueError: _description_
-        :return: updated dataset
-        :rtype: dict
-        """
-        if not self._dataset:
-            msg = "Dataset not defined. Please load the dataset in advance."
-            raise ValueError(msg)
-
-        # metadata = self._dataset.get(metadata_file).get("metadata")
-        current_metadata = self.get_metadata(metadata_file)
-        if check_exist:
-            # In version 1, the unique column is not the column 0. Hence, unique column must be specified
-            if unique_column is None:
-                error_msg = "Provide which column in metadata_file is unique. Ex: subject_id"
-                raise ValueError(error_msg)
-
-            try:
-                row_index = check_row_exist(current_metadata.data, unique_column, unique_value=row[unique_column])
-            except ValueError:
-                error_msg = "Row values provided does not contain a unique identifier"
-                raise ValueError(error_msg)
-        else:
-            row_index = -1
-
-        if row_index == -1:
-            # Add row
-            row_df = pd.DataFrame([row])
-            current_metadata.data = pd.concat([current_metadata.data, row_df], axis=0,
-                                              ignore_index=True)  # If new header comes, it will be added as a new column with its value
-        else:
-            # Append row with additional values
-            for key, value in row.items():
-                current_metadata.data.loc[row_index, key] = value
-
-        self._dataset[metadata_file]["metadata"] = current_metadata.data
-        return self._dataset
-
-    def update_by_json(self, metadata_file, json_file):
-        """
-        Given json file, update metadata file
-        :param metadata_file: metadata metadata_file/filename
-        :type metadata_file: string
-        :param json_file: path to metadata file in json
-        :type json_file: string
-        :return:
-        :rtype:
-        """
-        metadata = self._dataset.get(metadata_file).get("metadata")
-
-        with open(json_file, "r") as f:
-            data = json.load(f)
-
-        for key, value in data.items():
-            if isinstance(value, dict):
-                for key_1, value_1 in value.items():
-                    if isinstance(value, list):
-                        field = "    " + key_1
-                        value = str(value_1)
-                    else:
-                        field = "    " + key_1
-                        value = value_1
-
-                    index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
-                    metadata.loc[index, "Value"] = value
-
-            elif isinstance(value, list):
-                field = key
-                value = str(value)
-                index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
-                metadata.loc[index, "Value"] = value
-            else:
-                field = key
-                index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
-                metadata.loc[index, "Value"] = value
-
-        return metadata
-
-    def _generate_file_from_template(self, save_path, metadata_file, data=pd.DataFrame(), keep_style=False):
-        """Generate file from a template and populate with data if givn
-        TODO: will delete later
-
-        :param save_path: destination to save the generated file
-        :type save_path: string
-        :param metadata_file: SDS metadata_file (Ex: samples, subjects)
-        :type metadata_file: string
-        :param data: pandas dataframe containing data, defaults to pd.DataFrame()
-        :type data: pd.DataFrame, optional
-        """
-
-        if keep_style:
-            self._template_dir = self._get_template_dir(version=self._version)
-            sf = StyleFrame.read_excel_as_template(os.path.join(self._template_dir, f'{metadata_file}.xlsx'), data)
-            writer = StyleFrame.ExcelWriter(save_path)
-            sf.to_excel(writer)
-            writer.save()
-        else:
-            data.to_excel(save_path, index=False)
-
-    """***************************New Add subjects ***************************"""
+    """***************************New Add subjects & samples ***************************"""
 
     def add_subjects(self, subjects):
 
@@ -709,53 +494,7 @@ class Dataset(object):
             msg = f"Subject not found with {subject_sds_id}! Please check your subject_sds_id in subject metadata file"
             raise ValueError(msg)
 
-    def add_derivative_data(self, source_path, subject, sample, copy=True, overwrite=True):
-        """Add raw data of a sample to correct SDS location and update relavent metadata files.
-        Requires you to already have the folder structure inplace.
 
-        :param source_path: original location of raw data
-        :type source_path: string
-        :param subject: subject id
-        :type subject: string
-        :param sample: sample id
-        :type sample: string
-        :param sds_parent_dir: path to existing sds dataset parent
-        :type sds_parent_dir: string, optional
-        :param copy: if True, source directory data will not be deleted after copying, defaults to True
-        :type copy: bool, optional
-        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
-        :type overwrite: bool, optional
-        :raises NotADirectoryError: if the derivative in sds_parent_dir is not a folder, this wil be raised.
-        """
-
-        derivative_folder = os.path.join(str(self._dataset_path), 'derivative')
-
-        # Check if sds_parent_directory contains the derivative folder. If not create it.
-        if os.path.exists(derivative_folder):
-            if not os.path.isdir(derivative_folder):
-                raise NotADirectoryError(f'{derivative_folder} is not a directory')
-        else:
-            os.mkdir(derivative_folder)
-
-        self._add_sample_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
-                              overwrite=overwrite)
-
-    def _add_element(self, metadata_file, element):
-        """
-        May need to delete
-
-        :param metadata_file:
-        :param element:
-        :return:
-        """
-        metadata = self._dataset.get(metadata_file).get("metadata")
-        if metadata_file in self._column_based:
-            row_pd = pd.DataFrame([{"Metadata element": element}])
-            metadata = pd.concat([metadata, row_pd], axis=0, ignore_index=True)
-        else:
-            metadata[element] = None
-
-        self._dataset[metadata_file]["metadata"] = metadata
 
     def add_thumbnail(self, source_path, copy=True, overwrite=True):
 
@@ -779,133 +518,7 @@ class Dataset(object):
                                   destination_path=str(destination_path.parent), description=description)
 
 
-    def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
-                         overwrite=True):
-        """Copy or move data from source folder to destination folder
 
-        :param source_path: path to the original data
-        :type source_path: string
-        :param destination_path_list: folder path in a list[root, data_pype, subject, sample] to be copied into
-        :type destination_path_list: list
-        :param copy: if True, source directory data will not be deleted after copying, defaults to True
-        :type copy: bool, optional
-        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
-        :type overwrite: bool, optional
-        :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
-        """
-        destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
-        # If overwrite is True, remove existing sample
-        if os.path.exists(destination_path):
-            if os.path.isdir(source_path):
-                if overwrite:
-                    shutil.rmtree(destination_path)
-                    os.makedirs(destination_path)
-                else:
-                    raise FileExistsError(
-                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
-            else:
-                if overwrite:
-                    file_path = Path(destination_path).joinpath(Path(source_path).name)
-                    self._delete_data(file_path)
-                else:
-                    raise FileExistsError(
-                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
-        else:
-            # Create destination folder
-            os.makedirs(destination_path)
-
-        description = f"File of subject {subject} sample {sample}"
-        if os.path.isdir(source_path):
-            for fname in os.listdir(source_path):
-                file_path = os.path.join(source_path, fname)
-                if os.path.isdir(file_path):
-                    # Warn user if a subdirectory exist in the input_path
-                    print(
-                        f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying")
-                    return
-                else:
-                    self._move_single_file(file_path=file_path, destination_path=destination_path,
-                                           fname=fname, copy=copy)
-                    self._modify_manifest(fname=fname, manifest_folder_path=dataset_path,
-                                          destination_path=destination_path,
-                                          description=description)
-        else:
-            fname = os.path.basename(source_path)
-            self._move_single_file(file_path=source_path, destination_path=destination_path,
-                                   fname=fname, copy=copy)
-            self._modify_manifest(fname=fname, manifest_folder_path=dataset_path, destination_path=destination_path,
-                                  description=description)
-
-    def _move_single_file(self, file_path, destination_path, fname, copy):
-        if copy:
-            # Copy data
-            shutil.copy2(file_path, destination_path)
-        else:
-            # Move data
-            shutil.move(file_path, os.path.join(destination_path, fname))
-
-    def _modify_manifest(self, fname, manifest_folder_path, destination_path, description=""):
-        # Check if manifest exist
-        # If can be "xlsx", "csv" or "json"
-        files = os.listdir(manifest_folder_path)
-        manifest_file_path = [f for f in files if "manifest" in f]
-        # Case 1: manifest file exists
-        if len(manifest_file_path) != 0:
-            manifest_file_path = os.path.join(manifest_folder_path, manifest_file_path[0])
-            # Check the extension and read file accordingly
-            extension = os.path.splitext(manifest_file_path)[-1].lower()
-            if extension == ".xlsx":
-                df = pd.read_excel(manifest_file_path)
-            elif extension == ".csv":
-                df = pd.read_csv(manifest_file_path)
-            elif extension == ".json":
-                # TODO: Check what structure a manifest json is in
-                # Below code assumes json structure is like
-                # '{"row 1":{"col 1":"a","col 2":"b"},"row 2":{"col 1":"c","col 2":"d"}}'
-                df = pd.read_json(manifest_file_path, orient="index")
-            else:
-                raise ValueError(f"Unauthorized manifest file extension: {extension}")
-        # Case 2: create manifest file
-        else:
-            # Default extension to xlsx
-            extension = ".xlsx"
-            # Creat manifest file path
-            manifest_file_path = os.path.join(manifest_folder_path, "manifest.xlsx")
-            df = pd.DataFrame(columns=['filename', 'description', 'timestamp', 'file type'])
-
-        file_path = Path(
-            str(os.path.join(destination_path, fname)).replace(str(manifest_folder_path), '')[1:]).as_posix()
-
-        row = {
-            'filename': file_path,
-            'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
-            'description': description,
-            'file type': os.path.splitext(fname)[-1].lower()[1:]
-        }
-
-        exsiting_row = df['filename'] == row['filename']
-        if exsiting_row.any():
-            df.loc[exsiting_row, 'timestamp'] = row['timestamp']
-        else:
-            row_pd = pd.DataFrame([row])
-            df = pd.concat([df, row_pd], axis=0, ignore_index=True)
-
-        # update dataset metadata
-        self._update_dataset_by_df(df, "manifest")
-
-        # Save editted manifest file
-        if extension == ".xlsx":
-            df.to_excel(manifest_file_path, index=False)
-        elif extension == ".csv":
-            df = pd.to_csv(manifest_file_path, index=False)
-        elif extension == ".json":
-            df = pd.read_json(manifest_file_path, orient="index")
-        return
-
-    def _update_dataset_by_df(self, df, metadata_file):
-        manifest_metadata = self._metadata[metadata_file]
-        manifest_metadata.data = df
-        self._dataset[metadata_file]["metadata"] = manifest_metadata.data
 
     """************************************ Delete Data Functions ************************************"""
 
@@ -1059,3 +672,208 @@ class Dataset(object):
         dataset_description_metadata.set_values(element="Number of subjects", values=len(subject_folders))
         dataset_description_metadata.set_values(element="Number of samples", values=len(sample_folders))
         dataset_description_metadata.save()
+
+
+
+
+    """***************************Need to modify in the future ***************************"""
+
+    def update_by_json(self, metadata_file, json_file):
+        """
+        Given json file, update metadata file
+        :param metadata_file: metadata metadata_file/filename
+        :type metadata_file: string
+        :param json_file: path to metadata file in json
+        :type json_file: string
+        :return:
+        :rtype:
+        """
+        metadata = self._dataset.get(metadata_file).get("metadata")
+
+        with open(json_file, "r") as f:
+            data = json.load(f)
+
+        for key, value in data.items():
+            if isinstance(value, dict):
+                for key_1, value_1 in value.items():
+                    if isinstance(value, list):
+                        field = "    " + key_1
+                        value = str(value_1)
+                    else:
+                        field = "    " + key_1
+                        value = value_1
+
+                    index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
+                    metadata.loc[index, "Value"] = value
+
+            elif isinstance(value, list):
+                field = key
+                value = str(value)
+                index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
+                metadata.loc[index, "Value"] = value
+            else:
+                field = key
+                index = metadata.index[metadata['Metadata element'] == field].tolist()[0]
+                metadata.loc[index, "Value"] = value
+
+        return metadata
+
+    def add_derivative_data(self, source_path, subject, sample, copy=True, overwrite=True):
+        """Add raw data of a sample to correct SDS location and update relavent metadata files.
+        Requires you to already have the folder structure inplace.
+
+        :param source_path: original location of raw data
+        :type source_path: string
+        :param subject: subject id
+        :type subject: string
+        :param sample: sample id
+        :type sample: string
+        :param sds_parent_dir: path to existing sds dataset parent
+        :type sds_parent_dir: string, optional
+        :param copy: if True, source directory data will not be deleted after copying, defaults to True
+        :type copy: bool, optional
+        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
+        :type overwrite: bool, optional
+        :raises NotADirectoryError: if the derivative in sds_parent_dir is not a folder, this wil be raised.
+        """
+
+        derivative_folder = os.path.join(str(self._dataset_path), 'derivative')
+
+        # Check if sds_parent_directory contains the derivative folder. If not create it.
+        if os.path.exists(derivative_folder):
+            if not os.path.isdir(derivative_folder):
+                raise NotADirectoryError(f'{derivative_folder} is not a directory')
+        else:
+            os.mkdir(derivative_folder)
+
+        self._add_sample_data(source_path, self._dataset_path, subject, sample, data_type="derivative", copy=copy,
+                              overwrite=overwrite)
+
+    def _add_sample_data(self, source_path, dataset_path, subject, sample, data_type="primary", copy=True,
+                         overwrite=True):
+        """Copy or move data from source folder to destination folder
+
+        :param source_path: path to the original data
+        :type source_path: string
+        :param destination_path_list: folder path in a list[root, data_pype, subject, sample] to be copied into
+        :type destination_path_list: list
+        :param copy: if True, source directory data will not be deleted after copying, defaults to True
+        :type copy: bool, optional
+        :param overwrite: if True, any data in the destination folder will be overwritten, defaults to False
+        :type overwrite: bool, optional
+        :raises FileExistsError: if the destination folder contains data and overwritten is set to False, this wil be raised.
+        """
+        destination_path = os.path.join(str(dataset_path), data_type, subject, sample)
+        # If overwrite is True, remove existing sample
+        if os.path.exists(destination_path):
+            if os.path.isdir(source_path):
+                if overwrite:
+                    shutil.rmtree(destination_path)
+                    os.makedirs(destination_path)
+                else:
+                    raise FileExistsError(
+                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+            else:
+                if overwrite:
+                    file_path = Path(destination_path).joinpath(Path(source_path).name)
+                    self._delete_data(file_path)
+                else:
+                    raise FileExistsError(
+                        "Destination file already exist. Indicate overwrite argument as 'True' to overwrite the existing")
+        else:
+            # Create destination folder
+            os.makedirs(destination_path)
+
+        description = f"File of subject {subject} sample {sample}"
+        if os.path.isdir(source_path):
+            for fname in os.listdir(source_path):
+                file_path = os.path.join(source_path, fname)
+                if os.path.isdir(file_path):
+                    # Warn user if a subdirectory exist in the input_path
+                    print(
+                        f"Warning: Input directory consist of subdirectory {source_path}. It will be avoided during copying")
+                    return
+                else:
+                    self._move_single_file(file_path=file_path, destination_path=destination_path,
+                                           fname=fname, copy=copy)
+                    self._modify_manifest(fname=fname, manifest_folder_path=dataset_path,
+                                          destination_path=destination_path,
+                                          description=description)
+        else:
+            fname = os.path.basename(source_path)
+            self._move_single_file(file_path=source_path, destination_path=destination_path,
+                                   fname=fname, copy=copy)
+            self._modify_manifest(fname=fname, manifest_folder_path=dataset_path, destination_path=destination_path,
+                                  description=description)
+
+    def _move_single_file(self, file_path, destination_path, fname, copy):
+        if copy:
+            # Copy data
+            shutil.copy2(file_path, destination_path)
+        else:
+            # Move data
+            shutil.move(file_path, os.path.join(destination_path, fname))
+
+    def _modify_manifest(self, fname, manifest_folder_path, destination_path, description=""):
+        # Check if manifest exist
+        # If can be "xlsx", "csv" or "json"
+        files = os.listdir(manifest_folder_path)
+        manifest_file_path = [f for f in files if "manifest" in f]
+        # Case 1: manifest file exists
+        if len(manifest_file_path) != 0:
+            manifest_file_path = os.path.join(manifest_folder_path, manifest_file_path[0])
+            # Check the extension and read file accordingly
+            extension = os.path.splitext(manifest_file_path)[-1].lower()
+            if extension == ".xlsx":
+                df = pd.read_excel(manifest_file_path)
+            elif extension == ".csv":
+                df = pd.read_csv(manifest_file_path)
+            elif extension == ".json":
+                # TODO: Check what structure a manifest json is in
+                # Below code assumes json structure is like
+                # '{"row 1":{"col 1":"a","col 2":"b"},"row 2":{"col 1":"c","col 2":"d"}}'
+                df = pd.read_json(manifest_file_path, orient="index")
+            else:
+                raise ValueError(f"Unauthorized manifest file extension: {extension}")
+        # Case 2: create manifest file
+        else:
+            # Default extension to xlsx
+            extension = ".xlsx"
+            # Creat manifest file path
+            manifest_file_path = os.path.join(manifest_folder_path, "manifest.xlsx")
+            df = pd.DataFrame(columns=['filename', 'description', 'timestamp', 'file type'])
+
+        file_path = Path(
+            str(os.path.join(destination_path, fname)).replace(str(manifest_folder_path), '')[1:]).as_posix()
+
+        row = {
+            'filename': file_path,
+            'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            'description': description,
+            'file type': os.path.splitext(fname)[-1].lower()[1:]
+        }
+
+        exsiting_row = df['filename'] == row['filename']
+        if exsiting_row.any():
+            df.loc[exsiting_row, 'timestamp'] = row['timestamp']
+        else:
+            row_pd = pd.DataFrame([row])
+            df = pd.concat([df, row_pd], axis=0, ignore_index=True)
+
+        # update dataset metadata
+        self._update_dataset_by_df(df, "manifest")
+
+        # Save editted manifest file
+        if extension == ".xlsx":
+            df.to_excel(manifest_file_path, index=False)
+        elif extension == ".csv":
+            df = pd.to_csv(manifest_file_path, index=False)
+        elif extension == ".json":
+            df = pd.read_json(manifest_file_path, orient="index")
+        return
+
+    def _update_dataset_by_df(self, df, metadata_file):
+        manifest_metadata = self._metadata[metadata_file]
+        manifest_metadata.data = df
+        self._dataset[metadata_file]["metadata"] = manifest_metadata.data
+

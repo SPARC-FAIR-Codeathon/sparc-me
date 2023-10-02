@@ -1,15 +1,15 @@
 """Example for demonstrating base functionality of sparc-me.
 """
 
-from sparc_me import Dataset
+from sparc_me import Dataset, Sample, Subject
 
 if __name__ == '__main__':
     save_dir = "./tmp/template/"
 
     dataset = Dataset()
-
+    dataset.set_path(save_dir)
     # List metadata categories/files. 
-    categories = dataset.list_categories(version="2.0.0")
+    categories = dataset.list_metadata_files(version="2.0.0")
     print(categories)
 
     # List elements/fields
@@ -19,31 +19,71 @@ if __name__ == '__main__':
 
     # Load dataset from template. 
     # Dataset templates are stored here: https://github.com/SciCrunch/sparc-curation/releases
-    dataset.load_from_template(version="2.0.0")
+    dataset.create_empty_dataset(version="2.0.0")
 
     # Save the template dataset. 
     dataset.save(save_dir=save_dir)
 
+
     # Updating dataset. 
+    dataset_description = dataset.get_metadata(metadata_file="dataset_description")
 
     # Update a metadata file.
-    # Note: Excel index starts from 1 where index 1 is the header row. so actual data index starts from 2. 
-    dataset.set_field(metadata_file="dataset_description", row_index=2, header="Value", value="testValue")
-    dataset.set_field(metadata_file="dataset_description", row_index=2, header="Value 2", value="testValue")
+    # Note: give the element in the metadata file no matter their Case, space and underscore.
+    # The add value is append the values to the existing values
+    dataset_description.add_values(element='type', values="experimental")
+    dataset_description.add_values(element='Title', values="duke breast cancer MRI preprocessing")
 
-    # # Append a row to the "subjects" metadata file. "subject id" will be set to "test_id"
-    dataset.append(metadata_file="subjects", row={"subject id": "test_id"})
-    dataset.set_field_using_row_name(metadata_file="subjects", row_name="test_id", header="sex", value="male")
+    # Add multiple values via str[]
+    dataset_description.add_values(element='Keywords', values=["breast cancer", "image processing"])
+
+    # Set value to replace current values
+    dataset_description.set_values(
+        element='Contributor orcid',
+        values=["https://orcid.org/0000-0001-8170-199X",
+                "https://orcid.org/0000-0001-8171-199X",
+                "https://orcid.org/0000-0001-8172-199X",
+                "https://orcid.org/0000-0001-8173-199X",
+                "https://orcid.org/0000-0001-8174-199X",
+                "https://orcid.org/0000-0001-8176-199X"])
+
+    # Code to move the samples and subject.
+    # It will automatically update the dataset_description, manifest, samples and subjects metadata
+    subjects = []
+    samples = []
+
+    sample1 = Sample()
+    sample1.add_path("./test_data/bids_data/sub-01/sequence1/")
+
+    sample1.add_path(["./test_data/sample2/raw/dummy_sam2.txt", "./test_data/sample1/raw/dummy_sam1.txt"])
+    samples.append(sample1)
+
+    # create a subject obj
+    subject1 = Subject()
+    # add a sample obj list to subject
+    subject1.add_samples(samples)
+
+    subjects.append(subject1)
+
+    dataset.add_subjects(subjects)
+
+    subject_sds_id = "sub-1"
+    subject = dataset.get_subject(subject_sds_id)
+    subject.set_value(
+        element='age',
+        value=30)
+
+    sample_sds_id = "sam-1"
+    sample = subject.get_sample(sample_sds_id)
+    sample.set_value(
+        element='sampleexperimental group',
+        value='experimental')
+    sample.set_value(
+        element='sample type',
+        value='DCE-MRI Contrast Image {0}'.format(sample_sds_id))
+    sample.set_value(
+        element='sample anatomical location',
+        value='breast')
+
 
     dataset.save(save_dir)
-
-    # Copy data from "source_data_raw" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_sample(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1", data_type="primary", sds_parent_dir=save_dir)
-    # dataset.add_primary_data(source_path="./test_data/sample1/raw", subject="subject-xyz", sample="sample-1", sds_parent_dir=save_dir)
-    # If you want to move the data to destination directory, set copy to 'False'. 
-    dataset.add_sample(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2", data_type="primary", sds_parent_dir=save_dir)
-    # dataset.add_primary_data(source_path="./test_data/sample2/raw", subject="subject-xyz", sample="sample-2", sds_parent_dir=save_dir)
-
-    # Copy data from "source_data_derived" to a "sds_dataset" parent directory adhering to SDS framework.
-    dataset.add_sample(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc", data_type="derivative", sds_parent_dir=save_dir)
-    # dataset.add_derivative_data(source_path="./test_data/sample1/derived", subject="subject-xyz", sample="sample-abc", sds_parent_dir=save_dir)
