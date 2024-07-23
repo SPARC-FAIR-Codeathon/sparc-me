@@ -532,8 +532,6 @@ class Sample:
         if index == self.index:
             df.loc[index, element] = value
 
-        self.save()
-
     def move(self):
         """
         Move sample files from source dir to dataset primary dir
@@ -584,8 +582,6 @@ class Sample:
         for element, value in row.items():
             validate_element = find_col_element(element, self._manifest_metadata)
             df_manifest.loc[manifest_index, validate_element] = value
-
-        self._manifest_metadata.save()
 
     def remove_values(self):
         """
@@ -720,8 +716,6 @@ class Subject:
         element = find_col_element(element, self._metadata)
         if index == self.index:
             df.loc[index, element] = value
-
-        self.save()
 
     def move(self):
         for sample in self._samples.values():

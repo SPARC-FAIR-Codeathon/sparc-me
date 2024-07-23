@@ -567,7 +567,7 @@ class Dataset(object):
                 self._update_sub_sam_nums_in_dataset_description(primary_folder)
                 subjects_metadata = self._metadata["subjects"]
                 subjects_metadata.remove_row(sub_folder.name)
-                subjects_metadata.save()
+                subjects_metadata.save(str(self._dataset_path.joinpath("subjects.xlsx")))
 
     def delete_samples(self, destination_paths, data_type="primary"):
         """
@@ -610,7 +610,7 @@ class Dataset(object):
                 self._update_sub_sam_nums_in_dataset_description(primary_folder)
                 samples_metadata = self._metadata["samples"]
                 samples_metadata.remove_row(sam_folder.name)
-                samples_metadata.save()
+                samples_metadata.save(str(self._dataset_path.joinpath("samples.xlsx")))
 
     def remove_thumbnail(self, destination_path):
         """
@@ -642,7 +642,7 @@ class Dataset(object):
                                 1:]).as_posix())
                 manifest = self._metadata["manifest"]
                 manifest.remove_row(path)
-                manifest.save()
+                manifest.save(str(self._dataset_path.joinpath("manifests.xlsx")))
 
     def _delete_data(self, destination_path):
         file_path = Path(destination_path)
@@ -671,7 +671,7 @@ class Dataset(object):
         dataset_description_metadata = self._metadata["dataset_description"]
         dataset_description_metadata.set_values(element="Number of subjects", values=len(subject_folders))
         dataset_description_metadata.set_values(element="Number of samples", values=len(sample_folders))
-        dataset_description_metadata.save()
+        dataset_description_metadata.save(str(self._dataset_path.joinpath("dataset_description.xlsx")))
 
 
 
