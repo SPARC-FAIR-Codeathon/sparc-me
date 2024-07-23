@@ -6,6 +6,7 @@ from sparc_me.core.utils import find_col_element
 from datetime import datetime, timezone
 from typing import List
 
+
 class Metadata:
     def __init__(self, metadata_file, metadata, version, dataset_path):
         """
@@ -407,7 +408,6 @@ class Sample:
     _manifest_metadata: Metadata = None
     _previous_sub_id = ""
 
-
     def __init__(self):
         self.sample_id = ""
         self.subject_id = ""
@@ -483,7 +483,6 @@ class Sample:
         else:
             self.source_sample_paths.append(Path(source_path))
 
-
     def set_path(self, source_path):
         """
         Add sample source path to sample object
@@ -499,7 +498,6 @@ class Sample:
                 self.source_sample_paths.append(Path(file_path))
         else:
             self.source_sample_paths = [Path(source_path)]
-
 
     def set_values(self, metadata={}):
         """
@@ -553,6 +551,7 @@ class Sample:
             elif source_sam.is_file():
                 shutil.copy(str(source_sam), str(self.sample_dir))
                 self._update_manifest(sample_path=str(self.sample_dir / source_sam.name))
+
     def _update_manifest(self, sample_path):
         """
         Update manifest metadata, after remove samples
@@ -595,6 +594,7 @@ class Sample:
 
         """
         self._metadata.save()
+
 
 class Subject:
     count = 0
@@ -726,4 +726,3 @@ class Subject:
 
     def save(self):
         self._metadata.save()
-

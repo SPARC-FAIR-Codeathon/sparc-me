@@ -14,11 +14,13 @@ from sparc_me.core.utils import get_sub_folder_paths_in_folder, validate_metadat
 from sparc_me.core.metadata import Metadata, Sample, Subject
 
 """All related to Dataset"""
-class Dataset(object):
 
+
+class Dataset(object):
     """
     The core api for dataset
     """
+
     def __init__(self):
         DEFAULT_DATASET_VERSION = "2.0.0"
         EXTENSIONS = [".xlsx"]
@@ -259,8 +261,6 @@ class Dataset(object):
         self._dataset = self._load(str(template_dataset_path))
         self._generate_metadata()
 
-
-
     def _convert_version_format(self, version):
         """
         Convert version format
@@ -304,8 +304,6 @@ class Dataset(object):
         self._template = self._load(str(self._template_dir))
 
         return self._template
-
-
 
     def load_dataset(self, dataset_path=None, from_template=False, version=None):
         """
@@ -448,8 +446,6 @@ class Dataset(object):
 
         return metadata
 
-
-
     """***************************New Add subjects & samples ***************************"""
 
     def add_subjects(self, subjects):
@@ -494,8 +490,6 @@ class Dataset(object):
             msg = f"Subject not found with {subject_sds_id}! Please check your subject_sds_id in subject metadata file"
             raise ValueError(msg)
 
-
-
     def add_thumbnail(self, source_path, copy=True, overwrite=True):
 
         file_source_path = Path(source_path)
@@ -516,9 +510,6 @@ class Dataset(object):
             description = f"This is a thumbnail file"
             self._modify_manifest(fname=filename, manifest_folder_path=str(self._dataset_path),
                                   destination_path=str(destination_path.parent), description=description)
-
-
-
 
     """************************************ Delete Data Functions ************************************"""
 
@@ -672,9 +663,6 @@ class Dataset(object):
         dataset_description_metadata.set_values(element="Number of subjects", values=len(subject_folders))
         dataset_description_metadata.set_values(element="Number of samples", values=len(sample_folders))
         dataset_description_metadata.save(str(self._dataset_path.joinpath("dataset_description.xlsx")))
-
-
-
 
     """***************************Need to modify in the future ***************************"""
 
@@ -876,4 +864,3 @@ class Dataset(object):
         manifest_metadata = self._metadata[metadata_file]
         manifest_metadata.data = df
         self._dataset[metadata_file]["metadata"] = manifest_metadata.data
-
