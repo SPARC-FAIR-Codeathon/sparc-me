@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name="sparc_me",
 
-    version="2.2.11",
+    version="3.0.0",
 
     description='A python tool to explore, enhance, and expand SPARC datasets and their descriptions in accordance with FAIR principles.',
     author="Thiranja Prasad Babarenda Gamage, Chinchien Lin, Savindi Wijenayaka, Michael Hoffman, Linkun Gao, Haribalan Kumar",
