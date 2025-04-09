@@ -187,7 +187,7 @@ class Dataset_Api:
 
         save_dir = Path(savepath)
         if not save_dir.is_dir():
-            save_dir._mkdir(parents=True, exist_ok=False)
+            save_dir.mkdir(parents=True, exist_ok=False)
         response = self._download_file(datasetId, filepath)
 
         if extension == "xlsx":
@@ -335,7 +335,7 @@ class Dataset_Api:
     def get_protocolsio_text(self, datasetId, dir):
         save_dir = Path(dir)
         if not save_dir.is_dir():
-            save_dir._mkdir(parents=True, exist_ok=False)
+            save_dir.mkdir(parents=True, exist_ok=False)
 
         protocol_url = self.get_dataset_protocolsio_link(datasetId)
         if protocol_url:
