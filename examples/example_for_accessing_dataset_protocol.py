@@ -8,11 +8,15 @@ Dataset 273 described on the SPARC Portal
 """
 
 from sparc_me import Dataset_Api
+from pathlib import Path
 
 api_tools = Dataset_Api()
 
 def get_access_to_protocols():
-    api_tools.get_protocolsio_text(273,"./datasets")
+    # you can replace your own protocol token
+    save_dir = Path(__file__).parent / "dataset"
+    api_tools.get_protocolsio_text(273,save_dir, token="d57e959c789395fccae1146de189304222c15859283cc5c2d2dac97b9f69e7c3595da8f5c54ebd0de52b23ffe7af0d11e9f2b0eb226c818bcc295a7c807fce1f")
+
 
 if __name__ == '__main__':
     get_access_to_protocols()

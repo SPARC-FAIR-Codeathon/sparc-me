@@ -187,7 +187,7 @@ class Dataset_Api:
 
         save_dir = Path(savepath)
         if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
+            save_dir._mkdir(parents=True, exist_ok=False)
         response = self._download_file(datasetId, filepath)
 
         if extension == "xlsx":
@@ -332,25 +332,22 @@ class Dataset_Api:
 
         return protocol_url
 
-    def get_protocolsio_text(self, datasetId, dir):
-        save_dir = Path(dir)
-        if not save_dir.is_dir():
-            save_dir.mkdir(parents=True, exist_ok=False)
+    def get_protocolsio_text(self, datasetId, save_dir, token="d57e959c789395fccae1146de189304222c15859283cc5c2d2dac97b9f69e7c3595da8f5c54ebd0de52b23ffe7af0d11e9f2b0eb226c818bcc295a7c807fce1f"):
+        if not save_dir.exists():
+            save_dir.mkdir()
 
         protocol_url = self.get_dataset_protocolsio_link(datasetId)
         if protocol_url:
             doi = protocol_url
             url = "https://www.protocols.io/api/v4/protocols/" + doi
-            querystring = {
-                "Authorization": "9335c865c035bcabc986e443e4bfab3547fd3c8a4e052746ac2a10290d91b6cb",
-            }
             headers = {
                 "Accept": "*/*",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {token}"
             }
             response = requests.request(
-                "GET", url, headers=headers, params=querystring)
+                "GET", url, headers=headers)
             if response.status_code == 200:
                 protocol_json = json.loads(response.content)
-                with open(dir + '/protocol_data.json', 'w') as f:
+                with open(save_dir / 'protocol_data.json', 'w') as f:
                     json.dump(protocol_json, f)
