@@ -864,3 +864,14 @@ class Dataset(object):
         manifest_metadata = self._metadata[metadata_file]
         manifest_metadata.data = df
         self._dataset[metadata_file]["metadata"] = manifest_metadata.data
+
+    def add_element(self, category, element):
+        metadata = self._dataset.get(category).get("metadata")
+        if category in self._column_based:
+            row_pd = pd.DataFrame([{"Metadata element": element}])
+            metadata = pd.concat([metadata, row_pd], axis=0, ignore_index=True)
+        else:
+            metadata[element] = None
+
+        self._dataset[category]["metadata"] = metadata
+
