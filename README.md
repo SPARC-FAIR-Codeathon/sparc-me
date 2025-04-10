@@ -164,13 +164,13 @@ Guided tutorials have been developed describing how to use sparc-me in different
     <td> Interacting with SDS datasets on O2SPARC with sparc-me.</td>
   </tr>
   <tr>
-    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_4.ipynb">
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_4_extend_metadata.ipynb">
     4
     </a></td>
     <td> Creating an extension of the SDS to include an additional metadata field that defines data use descriptions from the <a href="https://github.com/EBISPOT/DUO">GA4GH-approved Data Use Ontology (DUO)</a>. This tutorial is a first step toward demonstrating how the SDS could be extended to describe clinical data.</td>
   </tr> 
   <tr>
-    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_5_bids_converter.py">
+    <td><a href="https://github.com/SPARC-FAIR-Codeathon/sparc-me/blob/main/examples/tutorial_5_convert_dataset_from_bids_to_sds.ipynb">
     5
     </a></td>
     <td> Converting a BIDS dataset to an SDS dataset.</td>

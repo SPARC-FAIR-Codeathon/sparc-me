@@ -8,7 +8,6 @@ import threading
 import os
 
 
-
 class Dataset_Api:
 
     def __init__(self):
@@ -352,4 +351,3 @@ class Dataset_Api:
                 protocol_json = json.loads(response.content)
                 with open(save_dir / 'protocol_data.json', 'w') as f:
                     json.dump(protocol_json, f)
-

@@ -191,6 +191,9 @@ class Schema(object):
                 print(json.dumps(schema_json.get('properties'), indent=4))
             return CaseInsensitiveDict(schema_json.get('properties'))
 
+    def get(self):
+        return self._schema
+
     def set_schema(self, schema):
         self._schema = schema
 
