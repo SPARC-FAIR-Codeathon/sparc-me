@@ -604,10 +604,20 @@ class Subject:
     def __init__(self):
 
         self.subject_id = ""
+        self._primary_dir = self._dataset_path.joinpath("primary")
         self.subject_dir = Path()
         self.index = -1
         self._samples = {}
         self._generate_subject_path_and_id()
+
+    def set_id(self, id):
+        old_id = self.subject_id
+        self.subject_id = id
+        self.subject_dir = self._primary_dir.joinpath(self.subject_id)
+        # update metadata
+        df = self._metadata.data
+        df['subject id'] = df['subject id'].replace(old_id, self.subject_id)
+
 
     def get_sample(self, sample_sds_id) -> Sample:
         """
